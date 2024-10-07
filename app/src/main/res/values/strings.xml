@@ -5,8 +5,26 @@
     <string name="btn_notes">Notas</string>
     <string name="greetings_today">Hoy es </string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textInputLayout">Título del recordatorio</string>
+    <string name="textView">Notificar cada</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>
+    </string-array>
+    
+    <string-array name="spinnerItems_1">
+        <item>Tipo de evento</item>
+        <item>Recordatorio</item>
+        <item>Cita</item>
+        <item>Cumpleaños</item>
+    </string-array>
+
+    <string-array name="spinnerItems_2">
+        <item>minutos</item>
+        <item>horas</item>
+        <item>días</item>
+        <item>semanas</item>
+        <item>meses</item>
+        <item>años</item>
     </string-array>
 </resources>
