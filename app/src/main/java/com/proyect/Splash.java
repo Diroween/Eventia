@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Splash extends AppCompatActivity {
 
@@ -48,13 +50,12 @@ public class Splash extends AppCompatActivity {
 
         animation.start();
 
-        //Creamos un manejador para que se inicie la activity main una vez termine la splash
+        //Creamos un timertask para que se inicie la activity main una vez termine la splash
         //Aquí hacemos que el hilo inicie la activity main y le decimos que espere 1600ms
         //para ello, que es el tiempo que tarda la animación en completarse
 
-        new Handler().postDelayed(new Runnable()
+        new Timer().schedule(new TimerTask()
         {
-
             @Override
             public void run()
             {
