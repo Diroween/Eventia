@@ -1,5 +1,7 @@
 package com.proyect;
 
+import static android.view.View.inflate;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,8 @@ import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.Toast;
@@ -89,7 +93,13 @@ public class CalendarFragment extends Fragment {
                 Date date = new Date(TimeUnit.SECONDS.toMillis(calendarView.getDate()));
 
                 //*--Comentario--*(hago un toast para ir probando)
-                Toast.makeText(view.getContext(), date.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(view.getContext(), date.toString(), Toast.LENGTH_SHORT).show();
+
+                //*--(Vlad): Prueba del layout de configuración de eventos--*
+                View customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker,calendar, false);
+
+                calendar.addView(customLayout);
+
             }
         });
     }
