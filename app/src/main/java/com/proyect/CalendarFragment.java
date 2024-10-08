@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.Toast;
@@ -92,10 +90,12 @@ public class CalendarFragment extends Fragment {
                 //cambiamos segundos a milisegundos, que es el formato que tiende Date
                 Date date = new Date(TimeUnit.SECONDS.toMillis(calendarView.getDate()));
 
-                //*--Comentario--*(hago un toast para ir probando)
+                //*--Comentario Yosef--*(hago un toast para ir probando)
                 //Toast.makeText(view.getContext(), date.toString(), Toast.LENGTH_SHORT).show();
 
                 //*--(Vlad): Prueba del layout de configuración de eventos--*
+                //*--(Yosef): He creado el layout al que haces referencia para poder lanzar la app =)
+
                 View customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker,calendar, false);
 
                 calendar.addView(customLayout);
