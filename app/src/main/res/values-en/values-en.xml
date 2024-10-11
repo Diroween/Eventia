@@ -5,7 +5,8 @@
     <string name="btn_events">Events</string>
     <string name="btn_notes">Notes</string>
     <string name="greetings_today">Today is </string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_opt">Delete note</string>
+    <string name="reminder_opt">Reminder</string>
     <string name="textInputLayout">Reminder title</string>
     <string name="textView">Remind every</string>
     <string name="editTextNumber">num</string>

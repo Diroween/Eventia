@@ -4,7 +4,8 @@
     <string name="btn_events">Eventos</string>
     <string name="btn_notes">Notas</string>
     <string name="greetings_today">Hoy es </string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_opt">Borrar nota</string>
+    <string name="reminder_opt">Recordatorio</string>
     <string name="textInputLayout">Título del recordatorio</string>
     <string name="textView">Notificar cada</string>
     <string name="editTextNumber">num</string>
