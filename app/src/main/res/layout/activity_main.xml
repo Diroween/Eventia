@@ -55,15 +55,25 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/btn_today"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_notas"
+            app:layout_constraintEnd_toStartOf="@id/btn_notes"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/btn_events"/>
 
-        <ImageView android:id="@+id/btn_notas"
+        <ImageView android:id="@+id/btn_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/btn_events"
             app:layout_constraintStart_toEndOf="@id/btn_events"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_friends"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/btn_events"/>
+
+        <ImageView android:id="@+id/btn_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/btn_events"
+            app:layout_constraintStart_toEndOf="@id/btn_notes"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView ivCalendar;
     ImageView ivToday;
     ImageView ivNotes;
+    ImageView ivFriends;
 
     ArrayList<String> arrayToday;
 
@@ -58,14 +59,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Inicializamos los imageview que funcionarán como botones
         ivCalendar = findViewById(R.id.btn_events);
         ivToday = findViewById(R.id.btn_today);
-        ivNotes = findViewById(R.id.btn_notas);
+        ivNotes = findViewById(R.id.btn_notes);
+        ivFriends = findViewById(R.id.btn_friends);
 
         //les ponemos como recurso una imagen
         //(yosef) he cargado más en el proyecto pero no he tenidotiempo para cambiar el tamaño a todas
         //lo haré el proximo que pueda dedicarle tiempo
-        ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored80x80);
-        ivToday.setBackgroundResource(R.drawable.btn_today_nocolor80x80);
-        ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor80x80);
+        ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
+        ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+        ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+        ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
         //Declaramos un fragment y su manager para ser el principal al abrir la app
         //que será el fragment de calendario
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivCalendar.setOnClickListener(this);
         ivToday.setOnClickListener(this);
         ivNotes.setOnClickListener(this);
+        ivFriends.setOnClickListener(this);
 
         arrayToday = new ArrayList<String>();
     }
@@ -106,26 +110,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             fragment = new TodayFragment();
 
-            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor80x80);
-            ivToday.setBackgroundResource(R.drawable.btn_today_colored80x80);
-            ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor80x80);
+            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
+            ivToday.setBackgroundResource(R.drawable.btn_today_colored50x50);
+            ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+            ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
         }
-        else if (view.getId()==R.id.btn_notas)
+        else if (view.getId()==R.id.btn_notes)
         {
             fragment = new NotesFragment();
 
-            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor80x80);
-            ivToday.setBackgroundResource(R.drawable.btn_today_nocolor80x80);
-            ivNotes.setBackgroundResource(R.drawable.btn_notes_colored80x80);
+            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
+            ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+            ivNotes.setBackgroundResource(R.drawable.btn_notes_colored50x50);
+            ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
+        }
+        else if(view.getId()==R.id.btn_friends)
+        {
+            fragment = new FriendsFragment();
+
+            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
+            ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+            ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+            ivFriends.setBackgroundResource(R.drawable.btn_laugh_colored50x50);
         }
         else
         {
             fragment = new CalendarFragment();
 
-            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored80x80);
-            ivToday.setBackgroundResource(R.drawable.btn_today_nocolor80x80);
-            ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor80x80);
+            ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
+            ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+            ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+            ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
         }
 
         //Le pasamos como argumentos al fragment nuestro bundle
