@@ -64,7 +64,7 @@ public class Splash extends AppCompatActivity {
 
                 //Creamos un intent que será la activity main pasandole el contexto de la splash
                 //y la activity que va a ser
-                Intent i = new Intent(Splash.this, MainActivity.class);
+                Intent i = new Intent(Splash.this, LoginActivity.class);
 
                 //Iniciamos la activity
                 startActivity(i);

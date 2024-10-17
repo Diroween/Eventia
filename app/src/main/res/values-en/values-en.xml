@@ -10,6 +10,17 @@
     <string name="textInputLayout">Reminder title</string>
     <string name="textView">Remind every</string>
     <string name="editTextNumber">num</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="conpass">Confirm password</string>
+    <string name="email">Email</string>
+    <string name="login">Log in</string>
+    <string name="signup">Sign up</string>
+    <string name="signupText">Don\'t have an account?</string>
+    <string name="registered">User registered, please, enter another Username</string>
+    <string name="noregistered">Username not registered, please, Sign In</string>
+    <string name="loginNoText">Please, enter Username and Password</string>
+    <string name="passdontmatch">The passwords don\'t match</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
@@ -32,4 +43,5 @@
     </string-array>
 
     <string name="hello_blank_fragment">Hello blank fragment </string>
+
 </resources>
