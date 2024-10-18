@@ -62,6 +62,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             {
                 i = new Intent(getApplicationContext(), MainActivity.class);
 
+                i.putExtra("noteStore", etUsername.getText().toString());
+
                 startActivity(i);
 
                 finish();

@@ -1,27 +1,26 @@
 package com.proyect;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,14 +40,15 @@ public class NotesFragment extends Fragment {
 
     //Creamos las variables de clase necesarias:
     //el botón flotante para añadir nuevas notas
-    private FloatingActionButton fabAddNote;
+    FloatingActionButton fabAddNote;
     //El listview donde se verán las notas
-    private ListView lvNotes;
+    RecyclerView lvNotes;
+
     //El contenedor para actualizar las notas
     private SwipeRefreshLayout srlNotes;
     //Un adaptador y un arraylist para dar forma al listview
-    ArrayAdapter<String> adapter;
-    ArrayList<String> arrayNames;
+    NotesAdapter adapter;
+    ArrayList<Note> arrayNotes;
 
     public NotesFragment()
     {
@@ -101,35 +101,33 @@ public class NotesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
+        String noteStore = "noteStore";
+
+        Toast.makeText(view.getContext(), noteStore, Toast.LENGTH_SHORT).show();
+
         //Creamos un SharedPrefereces para que guarde permanentemente las notas
-        SharedPreferences sharedNotes = view.getContext().getSharedPreferences("notesStore", Context.MODE_PRIVATE);
+        SharedPreferences sharedNotes = view.getContext().getSharedPreferences(noteStore,
+                Context.MODE_PRIVATE);
 
         //Llenamos el array con los nombres de las notas alamcenados
-        arrayNames = getNotesNames(sharedNotes);
+        arrayNotes = getNotes(sharedNotes);
 
         //inicializamos el listview y el swiperefresh indicando que son los del layout
         lvNotes = view.findViewById(R.id.lv_notes);
         srlNotes = view.findViewById(R.id.srl_notes);
 
         //inicializamos el adaptador y le pasamos como argumento el array de nombres
-        adapter= new ArrayAdapter<>(view.getContext(),
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, arrayNames);
 
-        //setteamos el array para el listview
+        adapter = new NotesAdapter(getContext(), arrayNotes);
+
+        lvNotes.setLayoutManager(new LinearLayoutManager(getContext()));
         lvNotes.setAdapter(adapter);
 
         //le ponemos funcionalidad al pulsar en cada nota
         //*--Yosef: más adelante abrirá la nota para que se pueda ver y editar
         //de momento dejo este código que es para quitar una nota, eso irá en
         //un menú contextual--*
-        lvNotes.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                deleteNote(sharedNotes, "primera nota");
-            }
-        });
+
 
         //Le damos funcionalidad al refrescarse la pagina
         srlNotes.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -138,10 +136,10 @@ public class NotesFragment extends Fragment {
             public void onRefresh()
             {
                 //Le indicamos que vacie arrayNames
-                arrayNames.clear();
+                arrayNotes.clear();
 
                 //Le indicamos que se vuelva a llenar con las shared preferences actualizadas
-                arrayNames.addAll(getNotesNames(sharedNotes));
+                arrayNotes.addAll(getNotes(sharedNotes));
                 //Le indicamos al adaptardor que ha habido cambio
                 // s
                 //y le forzamosa actualizarse
@@ -165,11 +163,15 @@ public class NotesFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                sharedNotes.edit().putString("primera nota", "primera nota jeje").apply();
+                Intent intent = new Intent(view.getContext(), NotesActivity.class);
 
-                Toast.makeText(view.getContext(), "¡funciona!", Toast.LENGTH_SHORT).show();
+                intent.putExtra("store", noteStore);
+
+                startActivity(intent);
             }
         });
+
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -177,16 +179,22 @@ public class NotesFragment extends Fragment {
      *
      * @param sharedNotes instancia de sharedpreferences pasada para coger los nombres
      * */
-    public ArrayList<String> getNotesNames(SharedPreferences sharedNotes)
+    public ArrayList<Note> getNotes(SharedPreferences sharedNotes)
     {
         //Creamos un mapa para recoger los pares clave-valor de las notas, dos String
         Map<String, ?> map = sharedNotes.getAll();
 
-        //Creamos un set son solo los nombres de las notas, las claves del mapa
-        Set<String> mapSet = map.keySet();
+        ArrayList<Note> notes = new ArrayList<Note>();
+
+        for(Map.Entry<String, ?> entry : map.entrySet())
+        {
+            String noteName = entry.getKey();
+            String noteBody = entry.getValue().toString();
+            notes.add(new Note(noteName, noteBody));
+        }
 
         //retornamos el arraylist cargado con los nombres de las notas
-        return new ArrayList<>(mapSet);
+        return notes;
     }
 
     /**

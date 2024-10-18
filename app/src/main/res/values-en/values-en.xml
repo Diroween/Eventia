@@ -21,6 +21,12 @@
     <string name="noregistered">Username not registered, please, Sign In</string>
     <string name="loginNoText">Please, enter Username and Password</string>
     <string name="passdontmatch">The passwords don\'t match</string>
+    <string name="exit">Exit</string>
+    <string name="save">Save</string>
+    <string name="title">Title</string>
+    <string name="note">Note</string>
+    <string name="savednote">Note saved</string>
+    <string name="deletednote">Nota deleted</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

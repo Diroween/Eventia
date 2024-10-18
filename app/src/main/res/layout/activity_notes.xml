@@ -5,6 +5,69 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFAE4"
     tools:context=".NotesActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_notes_activity"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="#FE9B1A">
+
+        <Button android:id="@+id/btn_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:padding="5dp"
+            android:background="@drawable/btn_exit_bckgrnd"
+            android:text="@string/exit"
+            android:fontFamily="@font/gabriela"
+            android:textSize="20sp"/>
+
+        <Button android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:padding="5dp"
+            android:background="@drawable/btn_save_bckgrnd"
+            android:text="@string/save"
+            android:fontFamily="@font/gabriela"
+            android:textSize="20sp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText android:id="@+id/et_note_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_constraintTop_toBottomOf="@id/cl_notes_activity"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="10dp"
+        android:hint="@string/title"
+        android:textColorHint="@android:color/darker_gray"
+        android:autofillHints=""
+        android:inputType="text"
+        android:layout_margin="15dp"
+        android:fontFamily="@font/aclonica"/>
+
+    <EditText android:id="@+id/et_note_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/et_note_title"
+        app:layout_constraintStart_toStartOf="parent"
+        android:minHeight="48dp"
+        android:hint="@string/note"
+        android:autofillHints=""
+        android:textColorHint="@android:color/darker_gray"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:padding="10dp"
+        android:layout_margin="15dp"
+        android:fontFamily="@font/annie_use_your_telescope"
+        android:background="#FCDD56"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

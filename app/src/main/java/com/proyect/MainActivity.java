@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ArrayList<String> arrayToday;
 
+    FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -50,6 +54,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+        onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true)
+            {
+                @Override
+                public void handleOnBackPressed()
+                {
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    CalendarFragment calendarFragment = new CalendarFragment();
+                    fragmentTransaction.add(R.id.ll_fragments_main, calendarFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
+                    ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
+                    ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+                    ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+                    ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
+                }
+            }
+        );
 
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -76,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Declaramos un fragment y su manager para ser el principal al abrir la app
         //que será el fragment de calendario
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        fragmentManager = this.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         CalendarFragment calendarFragment = new CalendarFragment();
         fragmentTransaction.add(R.id.ll_fragments_main, calendarFragment);
@@ -89,6 +113,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivFriends.setOnClickListener(this);
 
         arrayToday = new ArrayList<String>();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
+            @Override
+            public void handleOnBackPressed()
+            {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
+
+                if (currentFragment instanceof CalendarFragment)
+                {
+                    finish(); // O cierra la actividad si ya estás en el fragmento principal
+                }
+                else
+                {
+                    ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
+                    ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+                    ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+                    ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
+
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.ll_fragments_main, new CalendarFragment());
+                    transaction.commit();
+                }
+            }
+        });
     }
 
     /*
@@ -200,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    @Override
+        @Override
     protected void onDestroy()
     {
         super.onDestroy();
