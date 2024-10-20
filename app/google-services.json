@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "961682357459",
+    "firebase_url": "https://eventia-f7664-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "eventia-f7664",
+    "storage_bucket": "eventia-f7664.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961682357459:android:6a47a4f17664840e7f6826",
+        "android_client_info": {
+          "package_name": "com.proyect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAueDEzrjN-HCRLBA9iYl_0FWsGxLGsNLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

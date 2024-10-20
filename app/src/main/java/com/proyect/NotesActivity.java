@@ -26,6 +26,7 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 
     String noteName;
     String noteBody;
+    String noteStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,6 +54,7 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 
         if(intent != null && intent.getExtras() != null)
         {
+            noteStore = intent.getStringExtra("note_store");
             noteName = intent.getStringExtra("note_name");
             noteBody = intent.getStringExtra("note_body");
 
@@ -67,8 +69,6 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view)
     {
-        String noteStore = "noteStore";
-
         if(view.getId() == R.id.btn_save)
         {
             SharedPreferences sharedNotes = view.getContext().getSharedPreferences(noteStore, Context.MODE_PRIVATE);

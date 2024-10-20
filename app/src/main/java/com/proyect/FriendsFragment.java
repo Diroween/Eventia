@@ -2,6 +2,8 @@ package com.proyect;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -9,9 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FriendsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment friends creado para contener el registro de amistades de la app
  */
 public class FriendsFragment extends Fragment {
 
@@ -24,7 +24,8 @@ public class FriendsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FriendsFragment() {
+    public FriendsFragment()
+    {
         // Required empty public constructor
     }
 
@@ -37,7 +38,8 @@ public class FriendsFragment extends Fragment {
      * @return A new instance of fragment FriendsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FriendsFragment newInstance(String param1, String param2) {
+    public static FriendsFragment newInstance(String param1, String param2)
+    {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -47,17 +49,33 @@ public class FriendsFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+
+        if (getArguments() != null)
+        {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
+    /**
+     * Método necesario para el correcto funcionamiento del fragment
+     * */
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    {
+        super.onViewCreated(view, savedInstanceState);
+
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }

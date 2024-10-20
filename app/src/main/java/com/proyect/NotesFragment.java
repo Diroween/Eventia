@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -101,9 +103,15 @@ public class NotesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
-        String noteStore = "noteStore";
+        //Cogemos la base de datos de FirebaseAthenticator inicializada en la LoginActivity
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-        Toast.makeText(view.getContext(), noteStore, Toast.LENGTH_SHORT).show();
+        //Cogemos el usuario actual que ha iniciado la sesión
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        //Decimos que el contenedor de las notas es el email de la persona
+        //único para cada usuario
+        String noteStore = firebaseUser.getEmail();
 
         //Creamos un SharedPrefereces para que guarde permanentemente las notas
         SharedPreferences sharedNotes = view.getContext().getSharedPreferences(noteStore,
@@ -112,26 +120,26 @@ public class NotesFragment extends Fragment {
         //Llenamos el array con los nombres de las notas alamcenados
         arrayNotes = getNotes(sharedNotes);
 
-        //inicializamos el listview y el swiperefresh indicando que son los del layout
+        //inicializamos el recylerview y el swiperefresh indicando que son los del layout
         lvNotes = view.findViewById(R.id.lv_notes);
         srlNotes = view.findViewById(R.id.srl_notes);
 
-        //inicializamos el adaptador y le pasamos como argumento el array de nombres
-
+        //inicializamos el adaptador y le pasamos como argumento el array de nombres y el contexto
         adapter = new NotesAdapter(getContext(), arrayNotes);
 
         lvNotes.setLayoutManager(new LinearLayoutManager(getContext()));
         lvNotes.setAdapter(adapter);
 
         //le ponemos funcionalidad al pulsar en cada nota
-        //*--Yosef: más adelante abrirá la nota para que se pueda ver y editar
-        //de momento dejo este código que es para quitar una nota, eso irá en
-        //un menú contextual--*
-
+        //*-Yosef-* ya solo queda que las notas se borren
 
         //Le damos funcionalidad al refrescarse la pagina
         srlNotes.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
+            /**
+             * Sobreescribimos el método onRefresh para actualizar
+             * el array al refrescar
+             * */
             @Override
             public void onRefresh()
             {
@@ -140,8 +148,8 @@ public class NotesFragment extends Fragment {
 
                 //Le indicamos que se vuelva a llenar con las shared preferences actualizadas
                 arrayNotes.addAll(getNotes(sharedNotes));
-                //Le indicamos al adaptardor que ha habido cambio
-                // s
+
+                //Le indicamos al adaptardor que ha habido cambios
                 //y le forzamosa actualizarse
                 adapter.notifyDataSetChanged();
 
@@ -155,22 +163,28 @@ public class NotesFragment extends Fragment {
         fabAddNote = (FloatingActionButton)view.findViewById(R.id.fab_add_note);
 
         //Le incluimos funcionalidad a dar click en el botón flotante
-        //*--yosef: un poco de lo mismo de antes, de momento crea una nota vacía para probar
-        //más adelante lo que debería hacer es enlzar con una nueva activity donde introducir
-        //la nota y guardarla, de momento lo dejo en forma de prueba
+        //*--yosef--* Gracias a esto ya podemos crear notas nuevas
+        //al pinchar en cada una de las notas se pueden editar
         fabAddNote.setOnClickListener(new View.OnClickListener()
         {
+            /**
+             * Sobreescribimos el método onCLick para indicar la funcionalidad del botón
+             * */
             @Override
             public void onClick(View view)
             {
+                //Creamos un intent para NotesActivity
                 Intent intent = new Intent(view.getContext(), NotesActivity.class);
 
-                intent.putExtra("store", noteStore);
+                //Le pasamos como extra el nombre del contenedor de notas
+                intent.putExtra("note_store", noteStore);
 
+                //iniciamos el intent
                 startActivity(intent);
             }
         });
 
+        //le indicamos al adaptador que cuando se cree el fragment se actualice
         adapter.notifyDataSetChanged();
     }
 
@@ -179,13 +193,19 @@ public class NotesFragment extends Fragment {
      *
      * @param sharedNotes instancia de sharedpreferences pasada para coger los nombres
      * */
+
     public ArrayList<Note> getNotes(SharedPreferences sharedNotes)
     {
         //Creamos un mapa para recoger los pares clave-valor de las notas, dos String
         Map<String, ?> map = sharedNotes.getAll();
 
+        //Creamos un arraylist de notas
         ArrayList<Note> notes = new ArrayList<Note>();
 
+        //En el bucle se hace lo siguiente
+        //Se recorre el mapa
+        //se guardan el par y el valor según su correspondencia para una nota
+        //se mete en el arraylist que creamos una nueva nota con los datos recogidos
         for(Map.Entry<String, ?> entry : map.entrySet())
         {
             String noteName = entry.getKey();
@@ -193,15 +213,17 @@ public class NotesFragment extends Fragment {
             notes.add(new Note(noteName, noteBody));
         }
 
-        //retornamos el arraylist cargado con los nombres de las notas
+        //retornamos el arraylist cargado con las notas
         return notes;
     }
 
     /**
      * Método que borra una nota de las sharedpreferences
      *
-     * @param noteName El nombre de la nota a borrar
-     * @param sp instancia de sharedpreferences pasada para borrar de ella la nota
+     * @param noteName El nombre de la nota a borrar.
+     * @param sp instancia de sharedpreferences pasada para borrar de ella la nota.
+     *
+     * *--Yosef--* hay que hacer un menú contextual para poder borrar las notas
      * */
 
     public void deleteNote(SharedPreferences sp, String noteName)

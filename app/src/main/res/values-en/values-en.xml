@@ -27,6 +27,11 @@
     <string name="note">Note</string>
     <string name="savednote">Note saved</string>
     <string name="deletednote">Nota deleted</string>
+    <string name="emaildoesntmatch">Email does not match with format example@example.com</string>
+    <string name="accountnotcreated">The account could not be created, please, check email and password</string>
+    <string name="accountnotfound">Account not found</string>
+    <string name="userregistered">User registered</string>
+    <string name="registererror">Register error</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

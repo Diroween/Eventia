@@ -21,24 +21,30 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
+
 import java.util.ArrayList;
 
-/*
+/**
 * Creamos MainActivity con implementación de View.OnClickListener para mejorar la gestión del
 * método onClick
 * */
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
-    //Declaramos tres variables de imagen que funcionarán como botones
+    //Declaramos cuatro variables de imagen que funcionarán como botones
 
     ImageView ivCalendar;
     ImageView ivToday;
     ImageView ivNotes;
     ImageView ivFriends;
 
+    //hacemos un arraylist para today
+    //*-Yosef-* Creo que esto abrá que borrarlo a futuro, ya que es un método rudimentario
+    //y poco eficaz para poder implmentar las cosas de hoy, abrá que hacer otro RecyclerView
     ArrayList<String> arrayToday;
 
+    //El manejador de fragments
     FragmentManager fragmentManager;
 
     @Override
@@ -54,26 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
-        onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true)
-            {
-                @Override
-                public void handleOnBackPressed()
-                {
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    CalendarFragment calendarFragment = new CalendarFragment();
-                    fragmentTransaction.add(R.id.ll_fragments_main, calendarFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-
-                    ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
-                    ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
-                    ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
-                    ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
-                }
-            }
-        );
 
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -116,16 +102,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
         {
+            /**
+             * Le damos funcionalidad al botón de volver atrás
+             * En este caso queremos que cuando se de atrás en cualquier fragment cargado
+             * Se cargue el fragment principal para que no pase por los demás
+             * Y si el Fragment principal está cargado se salga de la aplicación
+             * al darle al botón atrás
+             * */
+
             @Override
             public void handleOnBackPressed()
             {
+                //Cogemos el manejador de eventos
                 FragmentManager fragmentManager = getSupportFragmentManager();
+
+                //cogemos el fragment que esté cargado en ese momento
                 Fragment currentFragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
 
+                //Si el fragment cargado es una instacia del fragment principal
+                //El calendarfragment, se cierra la actividad
                 if (currentFragment instanceof CalendarFragment)
                 {
-                    finish(); // O cierra la actividad si ya estás en el fragmento principal
+                    // Se cierra la actividad si ya estás en el fragmento principal
+                    finishAffinity();
                 }
+                //Sino lo que pasa es que se cambia al actividad principal
                 else
                 {
                     ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    /*
+    /**
      * Orverrideamos el método onClick para dar funcionalidad a los iv que funcionan como botones
      *
     */
@@ -249,6 +250,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return true;
     }
+
+    /**
+     * Sobreescritura de onDestroy, por si debemos cerrar algo, de momento no es necesario.
+     * */
 
         @Override
     protected void onDestroy()
