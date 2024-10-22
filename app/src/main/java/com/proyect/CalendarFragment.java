@@ -1,21 +1,24 @@
 package com.proyect;
 
-import static android.view.View.inflate;
-
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.Toast;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import java.time.LocalDate;             // Permite almacenar fechas en formato yyyy-mm-dd
+import java.time.LocalTime;             // Permite almacenar horas en formato hh:mm:ss:nn
+import java.time.LocalDateTime;         // Combinación de las dos anteriores
+import java.time.Month;
+import java.time.ZoneOffset;            // Diferencia en hh:mm respecto a Greenwich
+import java.time.OffsetDateTime;        // Combinación de LocalDateTime y ZoneOffset
+import java.time.format.DateTimeFormatter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,17 +27,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class CalendarFragment extends Fragment {
 
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    public static View customLayout;
+    //Creamos un CalendarView
+    public static CalendarView calendar;
+    public static TextView tView;
+    public static LocalTime horaSelec = LocalTime.of(0, 0);
+    public static String str;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    //Creamos un CalendarView
-    public CalendarView calendar;
 
 
     public CalendarFragment() {
@@ -70,46 +76,103 @@ public class CalendarFragment extends Fragment {
 
     }
 
-    /*
-    * Creamos este método para poder usar los widgets correctamente
-    * */
-
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
-    {
-        //inicializamos el calendario
-        calendar = (CalendarView)view.findViewById(R.id.cv_calendar);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        //Inicializamos el calendario
+        calendar = view.findViewById(R.id.cv_calendar);
 
         //Le setteamos un manejador de eventos para cuando pulsamos en alguna fecha
-        calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
-        {
+        calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2)
-            {
-                //Cogemos la fecha que han pulsado, como es un long con TimeUnit
-                //cambiamos segundos a milisegundos, que es el formato que tiende Date
-                Date date = new Date(TimeUnit.SECONDS.toMillis(calendarView.getDate()));
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
 
-                //*--Comentario Yosef--*(hago un toast para ir probando)
-                //Toast.makeText(view.getContext(), date.toString(), Toast.LENGTH_SHORT).show();
-
-                //*--(Vlad): Prueba del layout de configuración de eventos--*
-                //*--(Yosef): He creado el layout al que haces referencia para poder lanzar la app =)
-
-                View customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker,calendar, false);
-
+                //Al cambiar de fecha mostramos el menú event_type_picker.xml
+                customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker, calendar, false);
                 calendar.addView(customLayout);
+
+                Button button1 = view.findViewById(R.id.btnCancelar);
+                Button button2 = view.findViewById(R.id.btnAceptar);
+                Button button3 = view.findViewById(R.id.btnTimePicker);
+
+                tView = view.findViewById(R.id.textView2);
+
+                button1.setOnClickListener(new MyOnClickListener());
+                button2.setOnClickListener(new MyOnClickListener());
+                button3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        openDialog();
+                    }
+                });
+
+                TextView tView2 = view.findViewById(R.id.textView3);
+
+                LocalDate fechaPrueba = LocalDate.now();
+                boolean leap = fechaPrueba.isLeapYear();
+                LocalDate fechaFutura = fechaPrueba.with(Month.MAY);
+
+                LocalDate fechaSelec = LocalDate.of(i, i1, i2);
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+                tView2.setText(fechaSelec.format(formatter));
+
+                LocalTime horaActual = LocalTime.now();
+
 
             }
         });
     }
 
+    private void openDialog() {
+
+        TimePickerDialog dialog = new TimePickerDialog(this.getContext(), R.style.DialogTheme, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int i, int i1) {
+
+                horaSelec = LocalTime.of(i, i1);
+
+                String horasMinutos = String.format("%02d:%02d", horaSelec.getHour(), horaSelec.getMinute());
+
+                tView.setText(horasMinutos);
+
+            }
+        }, LocalTime.now().plusHours(1).getHour(), 00, true);
+        dialog.show();
+    }
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar, container, false);
+    }
+
+    private static class MyOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+
+            if (v.getId() == R.id.btnTimePicker) {
+
+
+            }
+
+            if (customLayout.getVisibility() == View.VISIBLE) {
+                if (v.getId() == R.id.btnCancelar) {
+                    calendar.removeView(customLayout);
+                } else if (v.getId() == R.id.btnAceptar) {
+
+
+                    calendar.removeView(customLayout);
+                }
+            }
+
+        }
+
     }
 
 
