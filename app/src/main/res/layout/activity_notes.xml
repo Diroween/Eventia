@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="#FE9B1A">
+        android:background="#CC9933">
 
         <Button android:id="@+id/btn_exit"
             android:layout_width="wrap_content"

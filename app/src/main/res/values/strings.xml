@@ -31,6 +31,11 @@
     <string name="accountnotfound">La cuenta no está registrada</string>
     <string name="userregistered">Usuario registrado en la app</string>
     <string name="registererror">Error de registro</string>
+    <string name="friends">Amigos</string>
+    <string name="friendrequests">Peticiones de amistad</string>
+    <string name="accept">Aceptar</string>
+    <string name="reject">Denegar</string>
+
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

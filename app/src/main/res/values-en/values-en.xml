@@ -32,6 +32,10 @@
     <string name="accountnotfound">Account not found</string>
     <string name="userregistered">User registered</string>
     <string name="registererror">Register error</string>
+    <string name="friends">Friends</string>
+    <string name="friendrequests">Friend requests</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

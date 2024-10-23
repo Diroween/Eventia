@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Fragment friends creado para contener el registro de amistades de la app
@@ -23,6 +26,8 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    FloatingActionButton fbFriendRequests;
 
     public FriendsFragment()
     {
@@ -69,7 +74,18 @@ public class FriendsFragment extends Fragment {
     {
         super.onViewCreated(view, savedInstanceState);
 
+        fbFriendRequests = view.findViewById(R.id.fb_requests);
 
+        fbFriendRequests.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(view.getContext(), FriendRequestActivity.class);
+
+                startActivity(i);
+            }
+        });
     }
 
     @Override
