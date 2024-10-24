@@ -5,25 +5,23 @@
     android:orientation="horizontal"
     android:layout_marginTop="10dp">
 
-    <TextView
-        android:id="@+id/tv_name"
+    <TextView android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="10dp"
         android:fontFamily="@font/aclonica"
         android:textColor="@android:color/holo_blue_light"
         android:textSize="16sp"/>
 
-    <Button
-        android:id="@+id/btn_accept"
+    <Button android:id="@+id/btn_accept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/accept"
         android:background="@drawable/btn_save_bckgrnd"/>
 
-    <Button
-        android:id="@+id/btn_reject"
+    <Button android:id="@+id/btn_reject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/reject"

@@ -21,10 +21,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class FriendRequestActivity extends AppCompatActivity implements FriendRequestAdaptor.OnFriendRequestActionListener
+public class FriendRequestActivity extends AppCompatActivity implements FriendRequestAdapter.OnFriendRequestActionListener
 {
     RecyclerView rvFriends;
-    FriendRequestAdaptor friendRequestAdaptor;
+    FriendRequestAdapter friendRequestAdapter;
     ArrayList<FriendRequest> friendRequests;
     DatabaseReference databaseReference;
 
@@ -46,9 +46,9 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 
         friendRequests = new ArrayList<FriendRequest>();
 
-        friendRequestAdaptor = new FriendRequestAdaptor(friendRequests, this);
+        friendRequestAdapter = new FriendRequestAdapter(friendRequests, this);
 
-        rvFriends.setAdapter(friendRequestAdaptor);
+        rvFriends.setAdapter(friendRequestAdapter);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -65,7 +65,7 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                             FriendRequest request = dataSnapshot.getValue(FriendRequest.class);
                             friendRequests.add(request);
                         }
-                        friendRequestAdaptor.notifyDataSetChanged();
+                        friendRequestAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -119,7 +119,7 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                         if (friendRequests.get(i).getFrom().equals(targetUserId))
                         {
                             friendRequests.remove(i);
-                            friendRequestAdaptor.notifyItemRemoved(i);
+                            friendRequestAdapter.notifyItemRemoved(i);
                             break;
                         }
                     }

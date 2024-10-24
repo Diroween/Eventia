@@ -35,6 +35,9 @@
     <string name="friendrequests">Peticiones de amistad</string>
     <string name="accept">Aceptar</string>
     <string name="reject">Denegar</string>
+    <string name="search">Buscar</string>
+    <string name="sendrequest">Enviar petición</string>
+    <string name="findFriend">Encontrar amigos</string>
 
 
     <string-array name="array_config">

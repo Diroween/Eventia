@@ -5,6 +5,11 @@ public class Friend
     private String id;
     private String name;
 
+    public Friend()
+    {
+
+    }
+
     public Friend(String id, String name)
     {
         this.name = name;

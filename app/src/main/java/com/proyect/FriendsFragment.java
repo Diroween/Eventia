@@ -6,17 +6,30 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * Fragment friends creado para contener el registro de amistades de la app
  */
-public class FriendsFragment extends Fragment {
+public class FriendsFragment extends Fragment
+{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,8 +39,14 @@ public class FriendsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private RecyclerView rvFriends;
+    private FriendsAdapter friendsAdapter;
+    private ArrayList<Friend> friends;
+    private SwipeRefreshLayout srlFriends;
+    private DatabaseReference databaseReference;
 
     FloatingActionButton fbFriendRequests;
+    FloatingActionButton fbAddFriend;
 
     public FriendsFragment()
     {
@@ -74,6 +93,54 @@ public class FriendsFragment extends Fragment {
     {
         super.onViewCreated(view, savedInstanceState);
 
+        rvFriends = view.findViewById(R.id.rv_friends);
+
+        rvFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        friends = new ArrayList<Friend>();
+
+        friendsAdapter = new FriendsAdapter(friends);
+
+        rvFriends.setAdapter(friendsAdapter);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();;
+
+        databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("friends").addValueEventListener(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        friends.clear();
+                        for(DataSnapshot dataSnapshot: snapshot.getChildren())
+                        {
+                            Friend friend = dataSnapshot.getValue(Friend.class);
+
+                            friends.add(friend);
+                        }
+                        friendsAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Toast.makeText(view.getContext(), "No se han podido cargar amigos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        srlFriends = view.findViewById(R.id.srl_friends);
+
+        srlFriends.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                friendsAdapter.notifyDataSetChanged();
+
+                srlFriends.setRefreshing(false);
+            }
+        });
+
         fbFriendRequests = view.findViewById(R.id.fb_requests);
 
         fbFriendRequests.setOnClickListener(new View.OnClickListener()
@@ -86,6 +153,20 @@ public class FriendsFragment extends Fragment {
                 startActivity(i);
             }
         });
+
+        fbAddFriend = view.findViewById(R.id.fb_addFriends);
+
+        fbAddFriend.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(view.getContext(), FriendSearcherActivity.class);
+
+                startActivity(i);
+            }
+        });
+
     }
 
     @Override
@@ -95,4 +176,6 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
+
+
 }

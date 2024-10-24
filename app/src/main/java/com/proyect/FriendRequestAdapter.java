@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class FriendRequestAdaptor extends RecyclerView.Adapter<FriendsRequestViewHolder>
+public class FriendRequestAdapter extends RecyclerView.Adapter<FriendsRequestViewHolder>
 {
     private ArrayList<FriendRequest> friendRequests;
     private OnFriendRequestActionListener requestActionListener;
 
-    public FriendRequestAdaptor(ArrayList<FriendRequest> friendRequests,
+    public FriendRequestAdapter(ArrayList<FriendRequest> friendRequests,
                                 OnFriendRequestActionListener requestActionListener)
     {
         this.friendRequests = friendRequests;
