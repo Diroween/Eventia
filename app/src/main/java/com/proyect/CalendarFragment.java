@@ -37,6 +37,7 @@ public class CalendarFragment extends Fragment {
     public static CalendarView calendar;
     public static TextView tView;
     public static LocalTime horaSelec = LocalTime.of(0, 0);
+    public static LocalDate fechaSelec = LocalDate.now();
     public static String str;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -113,7 +114,8 @@ public class CalendarFragment extends Fragment {
                 boolean leap = fechaPrueba.isLeapYear();
                 LocalDate fechaFutura = fechaPrueba.with(Month.MAY);
 
-                LocalDate fechaSelec = LocalDate.of(i, i1, i2);
+                // Sumamos +1 para el valor mes
+                fechaSelec = LocalDate.of(i, i1+1, i2);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
