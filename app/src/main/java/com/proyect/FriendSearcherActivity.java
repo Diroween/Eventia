@@ -1,6 +1,7 @@
 package com.proyect;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,9 +34,9 @@ public class FriendSearcherActivity extends AppCompatActivity
     private Button btnSendRequest;
     private RecyclerView rvUsers;
     private FriendSearcherAdapter searcherAdapter;
-    private ArrayList<Friend> users;
+    private ArrayList<User> users;
     private DatabaseReference databaseReference;
-    private Friend selectedUser;
+    private User selectedUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,7 +59,7 @@ public class FriendSearcherActivity extends AppCompatActivity
 
         rvUsers.setLayoutManager(new LinearLayoutManager(this));
 
-        users = new ArrayList<Friend>();
+        users = new ArrayList<User>();
 
         searcherAdapter = new FriendSearcherAdapter(users, user ->
         {
@@ -75,24 +76,24 @@ public class FriendSearcherActivity extends AppCompatActivity
 
         btnSearch.setOnClickListener(v -> searchUsers(etUsername.getText().toString()));
 
-        /*
         btnSendRequest.setOnClickListener(v ->
         {
-
             if(selectedUser != null)
             {
                 sendFriendRequest(FirebaseAuth.getInstance().getUid(), selectedUser.getId());
             }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "No se ha elegido un usuario",
+                        Toast.LENGTH_SHORT).show();
+            }
         });
-        */
-
 
     }
 
     private void searchUsers(String username)
     {
-
-        databaseReference.child("users").orderByChild("displayName").equalTo(username)
+        databaseReference.child("users").orderByChild("name").equalTo(username)
                 .addListenerForSingleValueEvent(new ValueEventListener()
                 {
                     @Override
@@ -101,9 +102,20 @@ public class FriendSearcherActivity extends AppCompatActivity
                         users.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren())
                         {
-                            Friend user = dataSnapshot.getValue(Friend.class);
+                            User user = dataSnapshot.getValue(User.class);
 
-                            users.add(user);
+                            if(user!=null)
+                            {
+                                users.add(user);
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(), "No se han encontrado usuarios",
+                                        Toast.LENGTH_SHORT).show();
+
+                                Log.d("FriendSearcher", "User es null en el DataSnapshot: " + dataSnapshot);
+                            }
+
                         }
                         searcherAdapter.notifyDataSetChanged();
                     }
@@ -115,44 +127,75 @@ public class FriendSearcherActivity extends AppCompatActivity
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
     }
 
     private void sendFriendRequest(String currentUserId, String targetUserId)
     {
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(currentUserId).child("friends")
-                .child(currentUserId);
-
-        database.addListenerForSingleValueEvent(new ValueEventListener()
+        if(!currentUserId.equals(targetUserId))
         {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot)
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                    .child("users").child(currentUserId).child("friends")
+                    .child(targetUserId);
+
+            database.addListenerForSingleValueEvent(new ValueEventListener()
             {
-                if(snapshot.exists())
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot)
                 {
-                    Toast.makeText(getApplicationContext(), "Ya sois amigos", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    DatabaseReference dataref = FirebaseDatabase.getInstance().getReference()
-                            .child("users").child(targetUserId).child("friend_requests")
-                            .child(currentUserId);
-
-                    dataref.addListenerForSingleValueEvent(new ValueEventListener()
+                    if(snapshot.exists())
                     {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot)
-                        {
-                            if(snapshot.exists())
-                            {
-                                FriendRequest existingRequest = snapshot.getValue(FriendRequest.class);
+                        Toast.makeText(getApplicationContext(), "Ya sois amigos", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        DatabaseReference dataref = FirebaseDatabase.getInstance().getReference()
+                                .child("users").child(targetUserId).child("friend_requests")
+                                .child(currentUserId);
 
-                                if(existingRequest != null && existingRequest.getStatus()
-                                        .equals("pending"))
+                        dataref.addListenerForSingleValueEvent(new ValueEventListener()
+                        {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot)
+                            {
+                                if(snapshot.exists())
                                 {
-                                    Toast.makeText(getApplicationContext(),
-                                            "Ya has enviado una solicitud de amistad",
-                                            Toast.LENGTH_SHORT).show();
+                                    FriendRequest existingRequest = snapshot.getValue(FriendRequest.class);
+
+                                    if(existingRequest != null && existingRequest.getStatus()
+                                            .equals("pending"))
+                                    {
+                                        Toast.makeText(getApplicationContext(),
+                                                "Ya has enviado una solicitud de amistad",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        FriendRequest request = new FriendRequest(currentUserId,
+                                                FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
+                                                "pending");
+
+                                        dataref.setValue(request).addOnCompleteListener(new OnCompleteListener<Void>()
+                                        {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task)
+                                            {
+                                                if(task.isSuccessful())
+                                                {
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "Solicitud de amistad enviada",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "Error al enviar la solicitud",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
                                 else
                                 {
@@ -181,52 +224,32 @@ public class FriendSearcherActivity extends AppCompatActivity
                                     });
                                 }
                             }
-                            else
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error)
                             {
-                                FriendRequest request = new FriendRequest(currentUserId,
-                                        FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),
-                                        "pending");
-
-                                dataref.setValue(request).addOnCompleteListener(new OnCompleteListener<Void>()
-                                {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task)
-                                    {
-                                        if(task.isSuccessful())
-                                        {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "Solicitud de amistad enviada",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                        else
-                                        {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "Error al enviar la solicitud",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                                Toast.makeText(getApplicationContext(),
+                                        "Error al comprobar la solicitud existente",
+                                        Toast.LENGTH_SHORT).show();
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error)
-                        {
-                            Toast.makeText(getApplicationContext(),
-                                    "Error al comprobar la solicitud existente",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error)
-            {
-                Toast.makeText(getApplicationContext(),
-                        "Error al comprobar si ya sois amigos",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error)
+                {
+                    Toast.makeText(getApplicationContext(),
+                            "Error al comprobar si ya sois amigos",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "No puedes ser tu propio amigo",
+                    Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

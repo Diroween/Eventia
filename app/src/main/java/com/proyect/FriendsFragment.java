@@ -41,7 +41,7 @@ public class FriendsFragment extends Fragment
     private String mParam2;
     private RecyclerView rvFriends;
     private FriendsAdapter friendsAdapter;
-    private ArrayList<Friend> friends;
+    private ArrayList<User> friends;
     private SwipeRefreshLayout srlFriends;
     private DatabaseReference databaseReference;
 
@@ -97,7 +97,7 @@ public class FriendsFragment extends Fragment
 
         rvFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        friends = new ArrayList<Friend>();
+        friends = new ArrayList<User>();
 
         friendsAdapter = new FriendsAdapter(friends);
 
@@ -114,7 +114,7 @@ public class FriendsFragment extends Fragment
                         friends.clear();
                         for(DataSnapshot dataSnapshot: snapshot.getChildren())
                         {
-                            Friend friend = dataSnapshot.getValue(Friend.class);
+                            User friend = dataSnapshot.getValue(User.class);
 
                             friends.add(friend);
                         }
@@ -127,19 +127,6 @@ public class FriendsFragment extends Fragment
                         Toast.makeText(view.getContext(), "No se han podido cargar amigos", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        srlFriends = view.findViewById(R.id.srl_friends);
-
-        srlFriends.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-        {
-            @Override
-            public void onRefresh()
-            {
-                friendsAdapter.notifyDataSetChanged();
-
-                srlFriends.setRefreshing(false);
-            }
-        });
 
         fbFriendRequests = view.findViewById(R.id.fb_requests);
 

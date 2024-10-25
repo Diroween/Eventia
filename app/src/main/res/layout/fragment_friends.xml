@@ -18,24 +18,16 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="30sp"/>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/srl_friends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_friends"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_friends"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_margin="12dp"/>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_friends"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_margin="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent
+"       app:layout_constraintTop_toBottomOf="@id/tv_friends"
+        app:layout_constraintBottom_toTopOf="@id/fb_addFriends"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fb_addFriends"

@@ -11,10 +11,10 @@ import java.util.ArrayList;
 
 public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherViewHolder>
 {
-    private ArrayList<Friend> users;
+    private ArrayList<User> users;
     private OnUserClickListener clickListener;
 
-    public FriendSearcherAdapter(ArrayList<Friend> users, OnUserClickListener clickListener)
+    public FriendSearcherAdapter(ArrayList<User> users, OnUserClickListener clickListener)
     {
         this.users = users;
         this.clickListener = clickListener;
@@ -33,7 +33,7 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
     @Override
     public void onBindViewHolder(@NonNull FriendSearcherViewHolder holder, int position)
     {
-        Friend user = users.get(position);
+        User user = users.get(position);
 
         holder.tvName.setText(user.getName());
         holder.tvFriendId.setText(user.getId());
@@ -49,6 +49,6 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
 
     public interface OnUserClickListener
     {
-        void onUserClick(Friend user);
+        void onUserClick(User user);
     }
 }

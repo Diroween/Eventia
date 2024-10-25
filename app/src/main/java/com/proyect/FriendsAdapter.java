@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,10 @@ import java.util.ArrayList;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 {
-    private ArrayList<Friend> friends;
+    private ArrayList<User> friends;
+    private int selectedItem = RecyclerView.NO_POSITION;
 
-    public FriendsAdapter(ArrayList<Friend> friends)
+    public FriendsAdapter(ArrayList<User> friends)
     {
         this.friends = friends;
     }
@@ -30,9 +32,20 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     @Override
     public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position)
     {
-        Friend friend = friends.get(position);
+        User friend = friends.get(position);
 
         holder.tvName.setText(friend.getName());
+
+        holder.itemView.setBackgroundColor(selectedItem == holder.getBindingAdapterPosition() ? Color.LTGRAY : Color.TRANSPARENT);
+
+        holder.itemView.setOnClickListener(v ->
+        {
+            int previousSelectedPosition = selectedItem;
+            selectedItem = holder.getBindingAdapterPosition();
+            notifyItemChanged(previousSelectedPosition);
+            notifyItemChanged(selectedItem);
+        });
+
 
         //hay que implementar que un usuario tenga una imagen de perfil
         //tiene que ser un submenú dentro de su modificiación de usuario

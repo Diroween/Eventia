@@ -210,10 +210,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
      * Método para escribir un usuario en la base de datos, para que pueda tener amigos
      * */
 
-     private void writeNewUser (String userId, String displayName, String email)
+     private void writeNewUser (String userId, String name, String email)
     {
         //Creamos un usuario con los datos de nombre y email
-        User user = new User(displayName, email);
+        User user = new User(name, email, userId);
 
         //incluimos en la base datos, en el json de la base, los datos del nuevo usuario
         //le añadimos un escuchador para cuando se haya completado la tarea

@@ -21,6 +21,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Actividad que sirve para aceptar y rechazar peticiones de amistad
+ *
+ * *-Yosef-* Solo falta la forma de rechazar las peticiones, que no me da la vida ajajaja
+ * */
+
 public class FriendRequestActivity extends AppCompatActivity implements FriendRequestAdapter.OnFriendRequestActionListener
 {
     RecyclerView rvFriends;
@@ -103,14 +109,14 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                 {
                     String name = snapshot.child("name").getValue(String.class);
 
-                    Friend friend = new Friend(targetUserId, name);
+                    User friend = new User(targetUserId, name);
 
                     databaseReference.child("users").child(currentUserId)
                             .child("friends").child(targetUserId)
                             .setValue(friend);
                     databaseReference.child("users").child(targetUserId)
                             .child("friends").child(currentUserId)
-                            .setValue(new Friend(currentUserId, FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
+                            .setValue(new User(currentUserId, FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
 
                     database.removeValue();
 

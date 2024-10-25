@@ -8,7 +8,8 @@ package com.proyect;
 public class User
 {
     private String email;
-    private String displayName;
+    private String name;
+    private String id;
 
     /**
      * Constructor vacío de usuario
@@ -23,10 +24,17 @@ public class User
      * Constructor con argumentos de un usuario
      * */
 
-    public User(String displayName, String email)
+    public User(String name, String email, String id)
     {
         this.email = email;
-        this.displayName = displayName;
+        this.name = name;
+        this.id = id;
+    }
+
+    public User(String id, String name)
+    {
+        this.name = name;
+        this.id = id;
     }
 
     /**
@@ -41,11 +49,19 @@ public class User
         this.email = email;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
