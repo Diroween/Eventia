@@ -38,7 +38,11 @@
     <string name="search">Buscar</string>
     <string name="sendrequest">Enviar petición</string>
     <string name="findFriend">Encontrar amigos</string>
-
+    <string name="nodataload">No se han podido cargar datos</string>
+    <string name="friendaccepted">Amigo aceptado</string>
+    <string name="requestrejected">Petición de amistad rechazada</string>
+    <string name="accepterror">Error al aceptar amigo</string>
+    <string name="rejecterror">Error al rechazar la petición</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

@@ -39,6 +39,11 @@
     <string name="search">Search</string>
     <string name="sendrequest">Send request</string>
     <string name="findFriend">Find friends</string>
+    <string name="nodataload">Data can/´t be loaded</string>
+    <string name="friendaccepted">Friend accepted</string>
+    <string name="requestrejected">Friend request rejected</string>
+    <string name="accepterror">Friend acceptation error</string>
+    <string name="rejecterror">Request rejection error</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
