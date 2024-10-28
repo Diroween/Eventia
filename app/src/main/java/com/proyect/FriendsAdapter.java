@@ -10,15 +10,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que extiende RecyclerView Adapter con un viewholder personalizado
+ * */
+
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 {
+    /**
+     * Creamos dos variables de clase, el arraylist y la variable que guarda el valor del item
+     * seleccionado y que inicializamos con el valor sin posición
+     * */
+
     private ArrayList<User> friends;
     private int selectedItem = RecyclerView.NO_POSITION;
+
+    /**
+     * Constructor con argumento
+     * */
 
     public FriendsAdapter(ArrayList<User> friends)
     {
         this.friends = friends;
     }
+
+    /**
+     * Sobreescritura del método para poder cargar los items en el recyclerview
+     * */
 
     @NonNull
     @Override
@@ -28,6 +45,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 
         return new FriendsViewHolder(view);
     }
+
+    /**
+     * Sobreescritura del método para poder dar funcionalidad a los elementos que aparecen de cada
+     * item, así como para asignar un escuchador al pulsar en cada elemento
+     * */
 
     @Override
     public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position)
@@ -51,6 +73,9 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         //tiene que ser un submenú dentro de su modificiación de usuario
     }
 
+    /**
+     * método que devuelve la cantidad de amigos
+     * */
     @Override
     public int getItemCount()
     {

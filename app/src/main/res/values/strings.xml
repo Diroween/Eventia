@@ -43,6 +43,15 @@
     <string name="requestrejected">Petición de amistad rechazada</string>
     <string name="accepterror">Error al aceptar amigo</string>
     <string name="rejecterror">Error al rechazar la petición</string>
+    <string name="usernonselected">No se ha elegido un usuario</string>
+    <string name="usernotfound">No se han encontrado usuarios</string>
+    <string name="alreadyfriends">Ya sois amigos</string>
+    <string name="alreadysent">Ya has enviado una solicitud de amistad</string>
+    <string name="requestsent">Solicitud de amistad enviada</string>
+    <string name="requestsenderror">Error al enviar la solicitud</string>
+    <string name="requestcheckerror">Error al comprobar la solicitud existente</string>
+    <string name="alreadycheckerror">Error al comprobar si ya sois amigos</string>
+    <string name="ownfrienderror">No puedes ser tu propio amigo</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

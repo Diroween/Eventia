@@ -44,6 +44,15 @@
     <string name="requestrejected">Friend request rejected</string>
     <string name="accepterror">Friend acceptation error</string>
     <string name="rejecterror">Request rejection error</string>
+    <string name="usernonselected">You didn\'t select a user</string>
+    <string name="usernotfound">User not found</string>
+    <string name="alreadyfriends">You are already friends</string>
+    <string name="alreadysent">You have already sent a friend request</string>
+    <string name="requestsent">Friend request sent</string>
+    <string name="requestsenderror">Error sending the request</string>
+    <string name="requestcheckerror">Error checking the existing request</string>
+    <string name="alreadycheckerror">Error checking if you are already friends</string>
+    <string name="ownfrienderror">You can\'t be your own friend</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
