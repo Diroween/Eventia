@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -53,6 +54,9 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //inicializamos el recyclerview y le asignamos un manejador
         rvFriends = findViewById(R.id.rv_friends);

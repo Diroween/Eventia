@@ -52,6 +52,7 @@
     <string name="requestcheckerror">Error al comprobar la solicitud existente</string>
     <string name="alreadycheckerror">Error al comprobar si ya sois amigos</string>
     <string name="ownfrienderror">No puedes ser tu propio amigo</string>
+    <string name="couldnotload">No se han podido cargar amigos</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

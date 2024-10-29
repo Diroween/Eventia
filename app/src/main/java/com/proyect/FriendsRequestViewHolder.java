@@ -24,6 +24,7 @@ public class FriendsRequestViewHolder extends RecyclerView.ViewHolder
     /**
      * Constructor que llamamos a la superclase y asignamos cada variable a cada botón
      * */
+
     public FriendsRequestViewHolder(@NonNull View itemView)
     {
         super(itemView);

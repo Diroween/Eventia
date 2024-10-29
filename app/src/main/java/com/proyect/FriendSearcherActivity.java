@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,6 +67,9 @@ public class FriendSearcherActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Inicializamos las variables con los elementos del xml
         etUsername = findViewById(R.id.et_username);

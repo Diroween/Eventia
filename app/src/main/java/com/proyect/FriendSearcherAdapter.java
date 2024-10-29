@@ -9,16 +9,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que extiende RecyclerView Adapter con un ViewHolder personalizado
+ * */
+
 public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherViewHolder>
 {
+    /**
+     * Creamos las variables de clase
+     * Un arraylist para contener los usuarios que tengan cierto username
+     * un escuchador de eventos para dar funcinalidad a los botones
+     */
+
     private ArrayList<User> users;
     private OnUserClickListener clickListener;
+
+    /**
+     * Contructor con argumentos
+     * */
 
     public FriendSearcherAdapter(ArrayList<User> users, OnUserClickListener clickListener)
     {
         this.users = users;
         this.clickListener = clickListener;
     }
+
+    /**
+     * Método sobreescrito para cargar la vista de los items en el contendor de vistas
+     * */
 
     @NonNull
     @Override
@@ -29,6 +47,11 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
 
         return new FriendSearcherViewHolder(view);
     }
+
+    /**
+     * Método sobreescrito para asignar valores a los elementos gráficos
+     * también asignamos el escuchador para dar funcionalidad a los botones
+     * */
 
     @Override
     public void onBindViewHolder(@NonNull FriendSearcherViewHolder holder, int position)
@@ -41,11 +64,21 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
         holder.itemView.setOnClickListener(v -> clickListener.onUserClick(user));
     }
 
+    /**
+     * Método que devuelve todos los usuarios cargados en el arraylist
+     * */
+
     @Override
     public int getItemCount()
     {
         return users.size();
     }
+
+    /**
+     * Interfaz que contiene el método onUserClick para dar funcionalidad a los botones
+     * *-Yosef-* esto lo explico también en FriendSearcherActivity, es similar a hacer
+     * la de View.OnClickListener
+     * */
 
     public interface OnUserClickListener
     {

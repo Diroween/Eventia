@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,37 +30,50 @@ import java.util.ArrayList;
 public class FriendsFragment extends Fragment
 {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    /**
+     * Variables param creadas por el propio fragment para su funcionamiento correcto
+     * */
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    /**
+     * Variables de clase para dar funcionalidad a todos los elementos
+     * Un Recyclerview para mostrar los amigos
+     * Un adaptador personalizado para dar funciones y mostrar los elementos de la lista
+     * Un Arraylist de usuarios que son los amigos que tiene un usuario en la app
+     * Una referencia a la base de datos para poder recoger los datos y cargar en el Arraylist
+     * */
+
     private RecyclerView rvFriends;
     private FriendsAdapter friendsAdapter;
     private ArrayList<User> friends;
-    private SwipeRefreshLayout srlFriends;
     private DatabaseReference databaseReference;
+
+    /**
+     * Dos botones:
+     * uno para abrir las peticiones de amistad
+     * otro para abrir la forma de aceptarlos
+     * */
 
     FloatingActionButton fbFriendRequests;
     FloatingActionButton fbAddFriend;
 
+    /**
+     * Constructor sin argumentos necesario para el funcionamiento del fragment
+     * */
+
     public FriendsFragment()
     {
-        // Required empty public constructor
+        //Constructor vacío necesario
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FriendsFragment.
+     * Constructor con argumentos para poder crear instancias del fragment
      */
-    // TODO: Rename and change types and number of parameters
+
     public static FriendsFragment newInstance(String param1, String param2)
     {
         FriendsFragment fragment = new FriendsFragment();
@@ -71,6 +83,10 @@ public class FriendsFragment extends Fragment
         fragment.setArguments(args);
         return fragment;
     }
+
+    /**
+     * Método onCreate usado para crear el fragment
+     * */
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -86,6 +102,7 @@ public class FriendsFragment extends Fragment
 
     /**
      * Método necesario para el correcto funcionamiento del fragment
+     * En él describimos el comportamiento que deben seguir los elementos
      * */
 
     @Override
@@ -93,43 +110,71 @@ public class FriendsFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
+        //Inicializamos el Recyclerview y le asignamos un manejador de layout
         rvFriends = view.findViewById(R.id.rv_friends);
 
         rvFriends.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        //inicializamos el arraylist y lo pasamos a la inicialización del adaptador
         friends = new ArrayList<User>();
 
         friendsAdapter = new FriendsAdapter(friends);
 
+        //asignamos el adaptador Recyclerview
         rvFriends.setAdapter(friendsAdapter);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();;
+        //Cogemos la referencia de nuestra base de datos
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("friends").addValueEventListener(new ValueEventListener()
+        //Buscamos en la referencia los amigos que tiene el usuario que está actualmente con
+        //la sesión iniciada y le pasamos un escuchador para poder recoger los datos
+        databaseReference.child("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("friends")
+                .addValueEventListener(new ValueEventListener()
                 {
+                    /**
+                     * Método para poder tratar los datos de la referencia
+                     * */
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
+                        //vaciamos el Arraylist
                         friends.clear();
+
+                        //En el bucle:
+                        //recorremos los datos cogiendo cada unos de los hijos
+                        //del snapshot, los cuales serán cada uno de los amigos
+                        //y los añadimos al Arraylist
                         for(DataSnapshot dataSnapshot: snapshot.getChildren())
                         {
                             User friend = dataSnapshot.getValue(User.class);
 
                             friends.add(friend);
                         }
+
+                        //notificamos al adaptador que los datos han cambiado
                         friendsAdapter.notifyDataSetChanged();
                     }
+
+                    /**
+                     * Método para gestionar errores en la base de datos
+                     * */
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error)
                     {
-                        Toast.makeText(view.getContext(), "No se han podido cargar amigos", Toast.LENGTH_SHORT).show();
+                        //Mostramos un toast mostrando un mensaje de error
+                        Toast.makeText(view.getContext(),
+                                R.string.couldnotload, Toast.LENGTH_SHORT).show();
                     }
                 });
 
+        //Asignamos el botón de las peticiones
         fbFriendRequests = view.findViewById(R.id.fb_requests);
 
+        //Le setteamos un escuchador de click para que cargue la actividad
+        //FriendRequest para aceptar o rechazar las solicitudes de amistad
         fbFriendRequests.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -141,8 +186,11 @@ public class FriendsFragment extends Fragment
             }
         });
 
+        //Asignamos el botón de las peticiones
         fbAddFriend = view.findViewById(R.id.fb_addFriends);
 
+        //Le setteamos un escuchador de click para que cargue la actividad
+        //FriendSearcherActivity para que pueda mandar peticiones de amistad
         fbAddFriend.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -156,11 +204,14 @@ public class FriendsFragment extends Fragment
 
     }
 
+    /**
+     * Método necesario para poder inflar el fragment
+     * */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 

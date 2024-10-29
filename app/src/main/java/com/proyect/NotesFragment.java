@@ -15,7 +15,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -222,8 +221,9 @@ public class NotesFragment extends Fragment {
      *
      * @param noteName El nombre de la nota a borrar.
      * @param sp instancia de sharedpreferences pasada para borrar de ella la nota.
-     *
-     * *--Yosef--* hay que hacer un menú contextual para poder borrar las notas
+     * //
+     * *--Yosef--* hay que hacer un swipe para eliminar las notas en este fragment
+     * lo he estado bien y lo creo realizable con pocos cambios
      * */
 
     public void deleteNote(SharedPreferences sp, String noteName)
