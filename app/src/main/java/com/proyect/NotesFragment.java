@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,47 +25,48 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotesFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment friends creado para contener las notas del usuario
  */
-public class NotesFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class NotesFragment extends Fragment
+{
+
+    /**
+     * Variables param creadas por el propio fragment para su funcionamiento correcto
+     * */
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    //Creamos las variables de clase necesarias:
-    //el botón flotante para añadir nuevas notas
-    FloatingActionButton fabAddNote;
-    //El listview donde se verán las notas
-    RecyclerView lvNotes;
+    /**
+     * Creamos las variables de clase necesarias:
+     * el botón flotante para añadir nuevas notas
+     * El Recyclerview donde se verán las notas
+     * El contenedor para actualizar las notas
+     * Un adaptador y un arraylist para dar forma
+     */
 
-    //El contenedor para actualizar las notas
+    FloatingActionButton fabAddNote;
+    RecyclerView rvNotes;
     private SwipeRefreshLayout srlNotes;
-    //Un adaptador y un arraylist para dar forma al listview
     NotesAdapter adapter;
     ArrayList<Note> arrayNotes;
 
+    /**
+     * Constructor sin argumentos necesario para el funcionamiento del fragment
+     * */
+
     public NotesFragment()
     {
-        // Required empty public constructor
+        //Constructor vacío necesario
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NotesFragment.
+     * Constructor con argumentos para poder crear instancias del fragment
      */
-    // TODO: Rename and change types and number of parameters
+
     public static NotesFragment newInstance(String param1, String param2) {
         NotesFragment fragment = new NotesFragment();
         Bundle args = new Bundle();
@@ -74,6 +76,10 @@ public class NotesFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Método onCreate usado para crear el fragment
+     * */
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +88,10 @@ public class NotesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+    /**
+     * Método necesario para poder inflar el fragment
+     * */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,14 +130,14 @@ public class NotesFragment extends Fragment {
         arrayNotes = getNotes(sharedNotes);
 
         //inicializamos el recylerview y el swiperefresh indicando que son los del layout
-        lvNotes = view.findViewById(R.id.lv_notes);
+        rvNotes = view.findViewById(R.id.rv_notes);
         srlNotes = view.findViewById(R.id.srl_notes);
 
         //inicializamos el adaptador y le pasamos como argumento el array de nombres y el contexto
         adapter = new NotesAdapter(getContext(), arrayNotes);
 
-        lvNotes.setLayoutManager(new LinearLayoutManager(getContext()));
-        lvNotes.setAdapter(adapter);
+        rvNotes.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvNotes.setAdapter(adapter);
 
         //le ponemos funcionalidad al pulsar en cada nota
         //*-Yosef-* ya solo queda que las notas se borren
@@ -182,6 +192,48 @@ public class NotesFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        //Creamos un ayudante para poder dar movimiento al elemento del recyclerview
+        //y le pasamos una llamada simple en la que le indicamos que da igual que
+        //se swipee a la derecha o a la izquierda
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT)
+        {
+            /**
+             * Método para mover por pantalla el elemento
+             * No lo vamos a hacer, por lo que retornamos false
+             * */
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target)
+            {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction)
+            {
+                //Obtenemos la posición del elemento
+                int position = viewHolder.getBindingAdapterPosition();
+
+                //Obtenemos la nota que está asociada a esa posición el el arraylist
+                Note note = arrayNotes.get(position);
+
+                //Eliminamos la nota del usuario
+                deleteNote(sharedNotes, note.getNoteName());
+
+                //Eliminamos al nota del arraylist
+                arrayNotes.remove(position);
+
+                //Notificamos los cambios al adaptador en esa posición
+                adapter.notifyItemRemoved(position);
+
+            }
+        });
+
+        //Asociamos al Recyclerview nuesto ayudante
+        touchHelper.attachToRecyclerView(rvNotes);
 
         //le indicamos al adaptador que cuando se cree el fragment se actualice
         adapter.notifyDataSetChanged();

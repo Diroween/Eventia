@@ -27,6 +27,7 @@ import java.util.ArrayList;
 /**
  * Fragment friends creado para contener el registro de amistades de la app
  */
+
 public class FriendsFragment extends Fragment
 {
 

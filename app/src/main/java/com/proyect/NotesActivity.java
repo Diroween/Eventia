@@ -33,6 +33,7 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
      * //
      * *-Yosef-* igual debería implementar que se saliese de la nota directamente al dar en guardar
      * así sería más rapido de crear y destruir notas que es lo que el profe quería ¿Que os parece?
+     * lo voy a dejar implementado, lo probais y me decis que os parece esta funcionalidad
      * //
      * Dos edittext en los que pondremos título y cuerpo a la nota
      * Variables String para contener el nombre de la nota que se pasa desde otras activities
@@ -112,6 +113,9 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 
             //mostramos un Toast de feedback
             Toast.makeText(view.getContext(), getString(R.string.savednote), Toast.LENGTH_SHORT).show();
+
+            //Cerramos al activity al guardar la nota para que vuelva
+            finish();
         }
 
         //Si es el de salir se cierra la actividad
