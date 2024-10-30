@@ -18,9 +18,21 @@
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="?attr/colorPrimary"
+        android:background="#ffeca1"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageView
+            android:id="@+id/iv_user_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/baseline_tag_faces_128"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout android:id="@+id/ll_fragments_main"
         android:layout_width="match_parent"

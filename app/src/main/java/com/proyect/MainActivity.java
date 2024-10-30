@@ -2,15 +2,15 @@ package com.proyect;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,7 +21,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseApp;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -32,19 +34,28 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
-    //Declaramos cuatro variables de imagen que funcionarán como botones
+    /**
+     * Creamos las variables de clase necesarias
+     * //
+     * Un imageview para la imagen del usuario
+     * Declaramos cuatro variables de imagen que funcionarán como botones
+     * para moverse por los fragments
+     * //
+     * hacemos un arraylist para today
+     * *-Yosef-* Creo que esto abrá que borrarlo a futuro, ya que es un método rudimentario
+     * y poco eficaz para poder implmentar las cosas de hoy, habrá que hacer otro RecyclerView
+     * //
+     * Y el manejador de fragments
+     */
+    ImageView ivUserImage;
 
     ImageView ivCalendar;
     ImageView ivToday;
     ImageView ivNotes;
     ImageView ivFriends;
 
-    //hacemos un arraylist para today
-    //*-Yosef-* Creo que esto abrá que borrarlo a futuro, ya que es un método rudimentario
-    //y poco eficaz para poder implmentar las cosas de hoy, abrá que hacer otro RecyclerView
     ArrayList<String> arrayToday;
 
-    //El manejador de fragments
     FragmentManager fragmentManager;
 
     @Override
@@ -70,6 +81,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Le indicamos a la activity que use la toolbar que hemos creado
         setSupportActionBar(toolbar);
 
+        //Asignamos el
+        ivUserImage = findViewById(R.id.iv_user_image);
+
+        //Cogemos la imagen del usuario, en caso de que la tenga
+        Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+
+        //Si la tiene
+        if(imageUri != null)
+        {
+            //Cargamos la imagen
+            Glide.with(this).load(imageUri.toString())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(ivUserImage);
+        }
+
+        //Si no la tiene
+        else
+        {
+            //Cargamos directamente el placeholder
+            Glide.with(this).load(R.drawable.baseline_tag_faces_128)
+                    .into(ivUserImage);
+        }
+
+        //Asignamos un escuchador para el click
+        //El escuchador nos abre el portal de configuración del usuario
+        ivUserImage.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
+
         //Inicializamos los imageview que funcionarán como botones
         ivCalendar = findViewById(R.id.btn_events);
         ivToday = findViewById(R.id.btn_today);
@@ -77,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivFriends = findViewById(R.id.btn_friends);
 
         //les ponemos como recurso una imagen
-        //(yosef) he cargado más en el proyecto pero no he tenidotiempo para cambiar el tamaño a todas
-        //lo haré el proximo que pueda dedicarle tiempo
         ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
         ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
         ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
@@ -123,9 +164,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //El calendarfragment, se cierra la actividad
                 if (currentFragment instanceof CalendarFragment)
                 {
-                    // Se cierra la actividad si ya estás en el fragmento principal
-                    finishAffinity();
+                    //*-Yosef-* lo cambio para que no lo cierre
+                    //Que no haga nada, que no cierre la app para que tengan que logearse de nuevo
+                    //y que no tengamos problemas con las notificaciones al salirse del usuario
+                    //y todas esas cosas
+                    //finishAffinity();
                 }
+
                 //Sino lo que pasa es que se cambia al actividad principal
                 else
                 {
@@ -209,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTransaction.commit();
     }
 
-    /*
+    /**
      * Realizamos un override de los métodos necesarios para crear el menú
      */
 
@@ -217,38 +262,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu)
     {
         //le decimos al menú que la crearse y use el layout de la carpeta menu
-
-        MenuInflater menuInflater = getMenuInflater();
-
-        menuInflater.inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
 
         return true;
     }
 
-    /*
+    /**
      * Este método sirve para darle funcionalidad a los item del menú
+     * *-yosef-* no creo que la vayamos a usar pero bueno, ahí está por si acaso
      */
 
-    /*--(Yosef): podemos incluir otros botones como exportar eventos,
-     *formato imprimible y cosas así--*/
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
-        //Declaramos un intent para iniciar otra activity al pulsar el item de menú
-        Intent i;
-
-        if(item.getItemId() == R.id.itemConfig)
-        {
-            //Inicializamos el intent e iniciamos la activity
-            i = new Intent(getApplicationContext(), Settings.class);
-
-            startActivity(i);
-
-            //--OJO A LA MAIN NO LE PONGAIS EL MÉTODO finish()
-        }
-
-        return true;
+        return false;
     }
 
     /**

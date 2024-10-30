@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -40,8 +42,7 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
      * o fragments así como el contenedor de las notas.
      * El noteStore es para que cada contenedor aun siendo local sea exclusivo para cada usuario
      * */
-    Button btnExit;
-    Button btnSave;
+    ImageView btnSave;
     EditText etTitle;
     EditText etBody;
 
@@ -67,9 +68,14 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        //Creamos una toolbar para el main de la aplicación
+        Toolbar toolbar = (Toolbar)findViewById(R.id.tb_notes);
+
+        //Le indicamos a la activity que use la toolbar que hemos creado
+        setSupportActionBar(toolbar);
+
         //Se inicializan las variables asignandolas a sus elementos visuales
         btnSave = findViewById(R.id.btn_save);
-        btnExit = findViewById(R.id.btn_exit);
         etTitle = findViewById(R.id.et_note_title);
         etBody = findViewById(R.id.et_note_body);
 
@@ -92,7 +98,6 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 
         //Le ponemos un escuchador de click a cada uno de los botones
         btnSave.setOnClickListener(this);
-        btnExit.setOnClickListener(this);
     }
 
     /**
@@ -102,8 +107,7 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view)
     {
-        //Si el botón pulsado es guardar
-        if(view.getId() == R.id.btn_save)
+        if(!etTitle.getText().toString().isEmpty())
         {
             //cogemos el contenedor de las sharedprefences
             SharedPreferences sharedNotes = view.getContext().getSharedPreferences(noteStore, Context.MODE_PRIVATE);
@@ -118,10 +122,23 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
             finish();
         }
 
-        //Si es el de salir se cierra la actividad
         else
         {
-            finish();
+            Toast.makeText(view.getContext(), getString(R.string.savenoteerror), Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    /**
+     * Realizamos un override de los métodos necesarios para crear el menú
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        //le decimos al menú que la crearse y use el layout de la carpeta menu
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
     }
 }

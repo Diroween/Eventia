@@ -2,11 +2,13 @@ package com.proyect;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -57,6 +59,12 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        //Creamos una toolbar para el main de la aplicación
+        Toolbar toolbar = (Toolbar)findViewById(R.id.tb_friend_req);
+
+        //Le indicamos a la activity que use la toolbar que hemos creado
+        setSupportActionBar(toolbar);
 
         //inicializamos el recyclerview y le asignamos un manejador
         rvFriends = findViewById(R.id.rv_friends);
@@ -289,6 +297,19 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                         , Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Realizamos un override de los métodos necesarios para crear el menú
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        //le decimos al menú que la crearse y use el layout de la carpeta menu
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        return true;
     }
 
 }

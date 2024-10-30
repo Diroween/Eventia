@@ -10,14 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:textColor="#228F00"
+        android:textColor="#010101"
         android:textSize="25sp"/>
 
     <TextView android:id="@+id/tv_note_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:textColor="#5C0276"
+        android:textColor="#404040"
         android:textSize="18sp"/>
 
     <LinearLayout

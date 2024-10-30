@@ -20,7 +20,7 @@
         android:layout_gravity="center"
         android:layout_marginHorizontal="10dp"
         android:fontFamily="@font/aclonica"
-        android:textColor="@android:color/holo_blue_light"
-        android:textSize="28sp"/>
+        android:textColor="#FF6201"
+        android:textSize="18sp"/>
 
 </LinearLayout>

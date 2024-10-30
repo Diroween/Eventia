@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -229,6 +230,8 @@ public class NotesFragment extends Fragment
                 //Notificamos los cambios al adaptador en esa posición
                 adapter.notifyItemRemoved(position);
 
+                //motificamos que se ha borrado la nota
+                Toast.makeText(view.getContext(), R.string.deletednote, Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -25,6 +25,7 @@
     <string name="title">Título</string>
     <string name="note">Nota</string>
     <string name="savednote">Nota guardada</string>
+    <string name="savenoteerror">La nota debe tener un título para guardarse</string>
     <string name="deletednote">Nota eliminada</string>
     <string name="emaildoesntmatch">El email no coincide con el formato example@example.com</string>
     <string name="accountnotcreated">La cuenta no se ha podido crear, revise los datos introducidos</string>
@@ -53,6 +54,8 @@
     <string name="alreadycheckerror">Error al comprobar si ya sois amigos</string>
     <string name="ownfrienderror">No puedes ser tu propio amigo</string>
     <string name="couldnotload">No se han podido cargar amigos</string>
+    <string name="changeimage">Cambiar imagen de perfil</string>
+    <string name="permissiondenied">Permiso denegado</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>
