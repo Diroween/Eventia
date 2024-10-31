@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -17,6 +19,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Actividad para crear y modificar notas rápidas de manera local para cada usuario
@@ -31,7 +37,11 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 {
     /**
      * Creamos las variables de clase que necesitaremos
-     * Botones para salvar la nota y para salir de ella
+     * //
+     * Un imageview para la imagen del usuario
+     * un textview para mostrar el nombre del usuario
+     * //
+     * Botones para salvar la nota
      * //
      * *-Yosef-* igual debería implementar que se saliese de la nota directamente al dar en guardar
      * así sería más rapido de crear y destruir notas que es lo que el profe quería ¿Que os parece?
@@ -42,6 +52,10 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
      * o fragments así como el contenedor de las notas.
      * El noteStore es para que cada contenedor aun siendo local sea exclusivo para cada usuario
      * */
+
+    ImageView ivUserImage;
+    TextView tvDisplayname;
+
     ImageView btnSave;
     EditText etTitle;
     EditText etBody;
@@ -73,6 +87,52 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
 
         //Le indicamos a la activity que use la toolbar que hemos creado
         setSupportActionBar(toolbar);
+
+        //Asignamos textview al elemento gráfico
+        tvDisplayname = findViewById(R.id.tv_displayname);
+
+        //le decimos que su texto debe ser el nombre de usuario de la app
+        tvDisplayname.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        //Asignamos el contenedor de imagen para el usuario
+        ivUserImage = findViewById(R.id.iv_user_image);
+
+        //Cogemos la imagen del usuario, en caso de que la tenga
+        Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+
+        //Si la tiene
+        if(imageUri != null)
+        {
+            //Cargamos la imagen
+            Glide.with(this).load(imageUri.toString())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(ivUserImage);
+        }
+
+        //Si no la tiene
+        else
+        {
+            //Cargamos directamente el placeholder
+            Glide.with(this).load(R.drawable.baseline_tag_faces_128)
+                    .into(ivUserImage);
+        }
+
+        //Asignamos un escuchador para el click
+        //El escuchador nos abre el portal de configuración del usuario
+        ivUserImage.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
+
+        //Le asignamos la misma función al textview para que pulse donde pulse
+        //el usuario le abra los settings
+        tvDisplayname.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
 
         //Se inicializan las variables asignandolas a sus elementos visuales
         btnSave = findViewById(R.id.btn_save);

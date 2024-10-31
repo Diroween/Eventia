@@ -28,6 +28,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -56,6 +58,7 @@ public class UserSettings extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        //metodos necesarios para que se muesten los elementos por pantalla correctamente
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_user_settings);
@@ -68,6 +71,7 @@ public class UserSettings extends AppCompatActivity
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        //Asignamos las variables a sus elementos gráficos
         ivUserImage = findViewById(R.id.iv_user_image);
         tvUserId = findViewById(R.id.tv_user_id);
         tvUserName = findViewById(R.id.tv_user_name);
@@ -95,12 +99,12 @@ public class UserSettings extends AppCompatActivity
                     .into(ivUserImage);
         }
 
+        //Asignamos los valores de texto correspondientes al usuario activo
         tvUserId.setText(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
         tvUserName.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-
         tvUserEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
+        //Le ponemos un escuchador al botón de cambiar imagen para que pueda saltar cuando se pulsa
         tvTxtbtnChangeImage.setOnClickListener(v ->
         {
             requestPermissions();
@@ -118,57 +122,70 @@ public class UserSettings extends AppCompatActivity
         });
     }
 
+    /**
+     *  Creamos un objeto como final para gestionar la subida de una imagen
+     * */
+
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult
             (new ActivityResultContracts.StartActivityForResult(), result ->
             {
+                //Si se tienen permisos en la app para subir imágenes
                 if(result.getResultCode() == RESULT_OK && result.getData() != null)
                 {
+                    //Se recoge la uri de la imagen, se pone en el imageview y se sube a la bdd
                     userImageUri = result.getData().getData();
                     ivUserImage.setImageURI(userImageUri);
                     uploadImage();
                 }
             });
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    openFileChooser();
-                } else {
-                    Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
-                }
-            });
+    /**
+     * Método para comprobar si se tienen los permisos para cargar y subir imágenes
+     * En caso de que no, se le piden al usuario explicitamente
+     * */
 
     private void requestPermissions()
     {
+        //Para Android 13 y versiones superiores
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         {
-            // Para Android 13 y versiones superiores
+            //Si no se tiene permisos, se piden
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED)
             {
                 ActivityCompat.requestPermissions(this, new String[]
                         {Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_CODE);
             }
+
+            //Si se tienen, se abre el seleccionador de ficheros
             else
             {
                 openFileChooser();
             }
         }
+
+        //Para versiones anteriores a Android 13
         else
         {
-            // Para versiones anteriores
+            //Si no se tiene permisos, se piden
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
             {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
             }
+
+            //Si se tienen, se abre el seleccionador de ficheros
             else
             {
                 openFileChooser();
             }
         }
     }
+
+    /**
+     * Sobreescritura del método para comprobar los resultados de los permisos requeridos
+     * */
 
     @Override
     public void onRequestPermissionsResult(int requestCode
@@ -176,12 +193,17 @@ public class UserSettings extends AppCompatActivity
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        //Si el código de permiso coincide con el requerido
         if(requestCode == REQUEST_CODE)
         {
+            //Si se ha decidido dar permisos de lectura
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             {
+                //Se abre el selector de imágenes
                 openFileChooser();
             }
+
+            //Si no se manda un Toast indicando que no se han concedido
             else
             {
                 Toast.makeText(this, R.string.permissiondenied, Toast.LENGTH_SHORT).show();
@@ -189,25 +211,43 @@ public class UserSettings extends AppCompatActivity
         }
     }
 
+    /**
+     * Método para abrir el selector de imágenes
+     * */
+
     private void openFileChooser()
     {
+        //Creamos un intent
         Intent intent = new Intent();
 
+        //Le setteamos el tipo de selector que queremos que sea
         intent.setType("image/*");
 
+        //Le setteamos que sea un selector
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
+        //le decimos al lanzador que lance el intent
         pickImageLauncher.launch(intent);
     }
 
+    /**
+     * Método para poder subir una imagen a la base de datos
+     * */
+
     private void uploadImage()
     {
+        //Si la uri de la imagen no es nula
         if(userImageUri != null)
         {
+            //Se abre una referencia a la base de datos y en la carpeta de usuarios
+            //con el id del usuario se guarda su foto de perfil
             StorageReference fileStorageReference = FirebaseStorage.getInstance().getReference
                     ("users/" + FirebaseAuth.getInstance().getCurrentUser().getUid()
                     + "/profile.jpg");
 
+            //Le incluimos un escuchador de eventos para que cuando se complete la tarea
+            //de subir la imagen se cambie en la base de FirebaseAuth y mande un Toast informativo
+            //si falla se manda un Toast indicándolo también
             fileStorageReference.putFile(userImageUri).addOnSuccessListener(taskSnapshot ->
             {
                fileStorageReference.getDownloadUrl().addOnSuccessListener(uri ->
@@ -215,40 +255,68 @@ public class UserSettings extends AppCompatActivity
                   updateProfile(uri.toString());
                });
 
-               Toast.makeText(this, "Se ha subido el fichero satisfactoriamente",
+               Toast.makeText(this, R.string.uploadsuccess,
                        Toast.LENGTH_SHORT).show();
 
             }).addOnFailureListener(e ->
             {
-                Toast.makeText(this, "La subida ha fallado: " + e.getMessage(),
+                Toast.makeText(this, R.string.uploadfailed + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
             });
         }
+
+        //Si no se ha seleccionado una imagen se indica con un Toast
         else
         {
-            Toast.makeText(this, "No se ha seleccionado imagen",
+            Toast.makeText(this, R.string.imagenotselected,
                     Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Método para poder actualizar la base de datos de usuarios con la imagen de usuario
+     * Se actualiza tnato la FirebaseAuth como la FirebaseDatabase
+     *
+     * @param imageUri La dirección de la imagen
+     * */
+
     private void updateProfile(String imageUri)
     {
+        //Cogemos el usuario actual de la base de datos
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        //Hacemos una petición de cambio para su foto de perfil
         UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                 .setPhotoUri(Uri.parse(imageUri)).build();
 
+        //Si el usuario seleccionado no es nulo
         if(user != null)
         {
+            //Se lanza la petición de actualizar su perfil con la petición creada
+            //y se le asigna un escuchador para cuando se complete la tarea
             user.updateProfile(profileUpdate).addOnCompleteListener(task ->
             {
+                //Si la tarea se completa satisfactoriamente
                if(task.isSuccessful())
                {
-                   Toast.makeText(this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                   //cogemos la referencia de nuestra base de datos
+                   DatabaseReference databaseReference = FirebaseDatabase
+                           .getInstance().getReference();
+
+                   //Le añadimos al usuario el hijo imageUrl con la url de la imágen
+                   databaseReference.child("users").child(user.getUid())
+                           .child("imageUrl").setValue(imageUri);
+
+                   //Mandamos un Toast indicándolo
+                   Toast.makeText(this, R.string.updatedprofile, Toast.LENGTH_SHORT).show();
+
                }
+
+               //Si no se puede lo que se hace es indicarlo en un Toast
                else
                {
-                   Toast.makeText(this, "No se ha podido actualizar", Toast.LENGTH_SHORT).show();
+                   Toast.makeText(this, R.string.updateprofileerror,
+                           Toast.LENGTH_SHORT).show();
                }
             });
         }

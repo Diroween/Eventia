@@ -143,19 +143,41 @@ public class FriendsFragment extends Fragment
                         //vaciamos el Arraylist
                         friends.clear();
 
-                        //En el bucle:
-                        //recorremos los datos cogiendo cada unos de los hijos
-                        //del snapshot, los cuales serán cada uno de los amigos
-                        //y los añadimos al Arraylist
                         for(DataSnapshot dataSnapshot: snapshot.getChildren())
                         {
-                            User friend = dataSnapshot.getValue(User.class);
+                            //En el bucle:
+                            //recorremos los datos cogiendo cada unos de los hijos
+                            //del snapshot, los cuales serán cada uno de los amigos
+                            //y los añadimos al Arraylist
+                            String friendUid = dataSnapshot.getKey();
 
-                            friends.add(friend);
+                            databaseReference.child("users").child(friendUid)
+                                    .addListenerForSingleValueEvent(new ValueEventListener()
+                                    {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                                        {
+                                            User friend = dataSnapshot.getValue(User.class);
+
+                                            //Si tiene una foto el usuario la recoge para mostrarla
+                                            if(friend != null && snapshot.hasChild("imageUrl"))
+                                            {
+                                                friend.setImageUrl(snapshot.child("imageUrl")
+                                                        .getValue(String.class));
+                                            }
+                                            friends.add(friend);
+
+                                            //notificamos al adaptador que los datos han cambiado
+                                            friendsAdapter.notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error)
+                                        {
+
+                                        }
+                                    });
                         }
-
-                        //notificamos al adaptador que los datos han cambiado
-                        friendsAdapter.notifyDataSetChanged();
                     }
 
                     /**

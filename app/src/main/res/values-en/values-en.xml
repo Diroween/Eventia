@@ -57,6 +57,12 @@
     <string name="couldnotload">Friends couldn\'t be loaded</string>
     <string name="changeimage">Change profile photo</string>
     <string name="permissiondenied">Permission denied</string>
+    <string name="userid">User id</string>
+    <string name="uploadsuccess">The file has been successfully uploaded</string>
+    <string name="uploadfailed">The upload failed: </string>
+    <string name="imagenotselected">Image not selected</string>
+    <string name="updatedprofile">Profile updated</string>
+    <string name="updateprofileerror">Unable to update profile</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

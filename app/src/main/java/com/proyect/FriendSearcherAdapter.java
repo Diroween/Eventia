@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+
 import java.util.ArrayList;
 
 /**
@@ -60,6 +63,23 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
 
         holder.tvName.setText(user.getName());
         holder.tvFriendId.setText(user.getId());
+
+        //Si el usuario tiene una imagen la muestra, sino sale un placeholder sustitutivo
+        if(user.getImageUrl() != null)
+        {
+            Glide.with(holder.itemView.getContext())
+                    .load(user.getImageUrl())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(holder.ivUser);
+        }
+        else
+        {
+            Glide.with(holder.itemView.getContext())
+                    .load(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(holder.ivUser);
+        }
 
         holder.itemView.setOnClickListener(v -> clickListener.onUserClick(user));
     }

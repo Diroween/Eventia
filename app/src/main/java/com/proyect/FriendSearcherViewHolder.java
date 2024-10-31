@@ -1,6 +1,7 @@
 package com.proyect;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,12 +16,11 @@ public class FriendSearcherViewHolder extends RecyclerView.ViewHolder
     /**
      * Creamos tantas variables de texto como elementos vamos a tratar en la lista
      * El nombre de usuario y su id para diferenciarlo de otros con el mismo username
-     * //
-     * *-Yosef-* Cuando los usuarios ya tengan imágenes se cargarán y modificaré esta clase
-     * de momento les dejo una imagen genérica
+     * La foto de un usuario para diferenciarlo más facil de los demás
      * */
     TextView tvName;
     TextView tvFriendId;
+    ImageView ivUser;
 
     /**
      * Constructor con argumentos donde asignamos cada variable a su elemento visual
@@ -32,5 +32,6 @@ public class FriendSearcherViewHolder extends RecyclerView.ViewHolder
 
         tvName = itemView.findViewById(R.id.tv_name);
         tvFriendId = itemView.findViewById(R.id.tv_friendId);
+        ivUser = itemView.findViewById(R.id.iv_user);
     }
 }

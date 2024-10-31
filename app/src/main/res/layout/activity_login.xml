@@ -12,7 +12,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="25dp"
-        android:src="@drawable/calendario"
+        android:src="@drawable/logo_eventia"
         android:contentDescription="@string/app_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,6 +91,7 @@
         android:layout_marginEnd="25dp"
         android:background="@drawable/btn_login_bckgrnd"
         android:text="@string/login"
+        android:fontFamily="@font/gabriela"
         android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="@color/white"
@@ -113,6 +114,7 @@
         <TextView android:id="@+id/tv_signup_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/gabriela"
             android:text="@string/signupText"/>
 
         <TextView android:id="@+id/tv_signup_txtBtn"
@@ -121,6 +123,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:textColor="#FF6201"
+            android:fontFamily="@font/gabriela"
             android:text="@string/signup"/>
 
     </LinearLayout>

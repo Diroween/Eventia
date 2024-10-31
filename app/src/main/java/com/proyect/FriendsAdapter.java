@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+
 import java.util.ArrayList;
 
 /**
@@ -58,7 +61,27 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 
         holder.tvName.setText(friend.getName());
 
-        holder.itemView.setBackgroundColor(selectedItem == holder.getBindingAdapterPosition() ? Color.LTGRAY : Color.TRANSPARENT);
+        //Si el usuario tiene una imagen la muestra, sino sale un placeholder sustitutivo
+        if(friend.getImageUrl() != null)
+        {
+            Glide.with(holder.itemView.getContext())
+                    .load(friend.getImageUrl())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(holder.ivUser);
+        }
+        else
+        {
+            Glide.with(holder.itemView.getContext())
+                    .load(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(holder.ivUser);
+        }
+
+        //Hcemos que al pulsar en un amigo este se destaque en otro color
+        //y cuando ese amigo deja de ser el foco se deje de destacar
+        holder.itemView.setBackgroundColor(selectedItem == holder.getBindingAdapterPosition()
+                ? Color.rgb(255,248,181) : Color.TRANSPARENT);
 
         holder.itemView.setOnClickListener(v ->
         {
@@ -68,8 +91,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
             notifyItemChanged(selectedItem);
         });
 
-
-        //hay que implementar que un usuario tenga una imagen de perfil
         //tiene que ser un submenú dentro de su modificiación de usuario
     }
 

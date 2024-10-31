@@ -10,6 +10,7 @@ public class User
     private String email;
     private String name;
     private String id;
+    private String imageUrl;
 
     /**
      * Constructor vacío de usuario
@@ -17,12 +18,20 @@ public class User
 
     public User()
     {
-        //constructor vacío
+        //constructor vacío necesario para la serialización
     }
 
     /**
-     * Constructor con argumentos de un usuario
+     * Constructores con argumentos de un usuario
      * */
+
+    public User(String email, String name, String id, String imageUrl)
+    {
+        this.email = email;
+        this.name = name;
+        this.id = id;
+        this.imageUrl = imageUrl;
+    }
 
     public User(String name, String email, String id)
     {
@@ -63,5 +72,15 @@ public class User
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getImageUrl()
+    {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl)
+    {
+        this.imageUrl = imageUrl;
     }
 }

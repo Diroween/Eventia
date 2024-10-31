@@ -56,6 +56,12 @@
     <string name="couldnotload">No se han podido cargar amigos</string>
     <string name="changeimage">Cambiar imagen de perfil</string>
     <string name="permissiondenied">Permiso denegado</string>
+    <string name="userid">Id de usuario</string>
+    <string name="uploadsuccess">Se ha subido el fichero satisfactoriamente</string>
+    <string name="uploadfailed">La subida ha fallado: </string>
+    <string name="imagenotselected">No se ha seleccionado imagen</string>
+    <string name="updatedprofile">Perfil actualizado</string>
+    <string name="updateprofileerror">No se ha podido actualizar el perfil</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

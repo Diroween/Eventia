@@ -4,28 +4,31 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp">
+    android:background="@drawable/notes_border"
+    android:layout_marginTop="10dp"
+    android:layout_marginHorizontal="10dp">
 
     <TextView android:id="@+id/tv_note_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:textColor="#010101"
+        android:layout_marginTop="10dp"
+        android:textColor="#000000"
+        android:fontFamily="@font/aclonica"
         android:textSize="25sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/brown"
+        android:layout_marginTop="5dp"/>
 
     <TextView android:id="@+id/tv_note_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:textColor="#404040"
+        android:layout_marginVertical="10dp"
+        android:fontFamily="@font/aclonica"
         android:textSize="18sp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginHorizontal="10dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="10dp"/>
-
 
 </LinearLayout>

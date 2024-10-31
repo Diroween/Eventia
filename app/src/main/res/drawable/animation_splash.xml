@@ -10,6 +10,6 @@
     <item android:drawable="@drawable/splash0_1" android:duration="120"/>
     <item android:drawable="@drawable/splash0_2" android:duration="120"/>
     <item android:drawable="@drawable/splash0_3" android:duration="120"/>
-    <item android:drawable="@drawable/logo_eventia" android:duration="1000"/>
+    <item android:drawable="@drawable/splash_final" android:duration="1000"/>
 
 </animation-list>

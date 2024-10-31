@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Creamos las variables de clase necesarias
      * //
      * Un imageview para la imagen del usuario
+     * un textview para mostrar el nombre del usuario
+     * //
      * Declaramos cuatro variables de imagen que funcionarán como botones
      * para moverse por los fragments
      * //
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Y el manejador de fragments
      */
     ImageView ivUserImage;
+    TextView tvDisplayname;
 
     ImageView ivCalendar;
     ImageView ivToday;
@@ -81,7 +85,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Le indicamos a la activity que use la toolbar que hemos creado
         setSupportActionBar(toolbar);
 
-        //Asignamos el
+        //Asignamos textview al elemento gráfico
+        tvDisplayname = findViewById(R.id.tv_displayname);
+
+        //le decimos que su texto debe ser el nombre de usuario de la app
+        tvDisplayname.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        //Asignamos el contenedor de imagen para el usuario
         ivUserImage = findViewById(R.id.iv_user_image);
 
         //Cogemos la imagen del usuario, en caso de que la tenga
@@ -108,6 +118,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Asignamos un escuchador para el click
         //El escuchador nos abre el portal de configuración del usuario
         ivUserImage.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
+
+        //Le asignamos la misma función al textview para que pulse donde pulse
+        //el usuario le abra los settings
+        tvDisplayname.setOnClickListener(v ->
         {
             Intent intent = new Intent(this, UserSettings.class);
             startActivity(intent);

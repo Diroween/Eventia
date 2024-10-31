@@ -1,8 +1,12 @@
 package com.proyect;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -15,6 +19,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,11 +38,18 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 {
     /**
      * Creamos las variables de clase necesarias
+     * //
+     * Un imageview para la imagen del usuario
+     * un textview para mostrar el nombre del usuario
+     * //
      * El reciclerview donde se cargarán las peticiones
      * El adaptador del recyclerview
      * El arraylist que le pasamos al adaptador
      * El databasereference para poder grabar y eliminar los datos en la bdd
      * */
+
+    ImageView ivUserImage;
+    TextView tvDisplayname;
 
     RecyclerView rvFriends;
     FriendRequestAdapter friendRequestAdapter;
@@ -65,6 +78,52 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 
         //Le indicamos a la activity que use la toolbar que hemos creado
         setSupportActionBar(toolbar);
+
+        //Asignamos textview al elemento gráfico
+        tvDisplayname = findViewById(R.id.tv_displayname);
+
+        //le decimos que su texto debe ser el nombre de usuario de la app
+        tvDisplayname.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        //Asignamos el contenedor de imagen para el usuario
+        ivUserImage = findViewById(R.id.iv_user_image);
+
+        //Cogemos la imagen del usuario, en caso de que la tenga
+        Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+
+        //Si la tiene
+        if(imageUri != null)
+        {
+            //Cargamos la imagen
+            Glide.with(this).load(imageUri.toString())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(ivUserImage);
+        }
+
+        //Si no la tiene
+        else
+        {
+            //Cargamos directamente el placeholder
+            Glide.with(this).load(R.drawable.baseline_tag_faces_128)
+                    .into(ivUserImage);
+        }
+
+        //Asignamos un escuchador para el click
+        //El escuchador nos abre el portal de configuración del usuario
+        ivUserImage.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
+
+        //Le asignamos la misma función al textview para que pulse donde pulse
+        //el usuario le abra los settings
+        tvDisplayname.setOnClickListener(v ->
+        {
+            Intent intent = new Intent(this, UserSettings.class);
+            startActivity(intent);
+        });
 
         //inicializamos el recyclerview y le asignamos un manejador
         rvFriends = findViewById(R.id.rv_friends);
