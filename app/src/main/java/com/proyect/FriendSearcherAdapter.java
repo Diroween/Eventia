@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,12 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
      * Creamos las variables de clase
      * Un arraylist para contener los usuarios que tengan cierto username
      * un escuchador de eventos para dar funcinalidad a los botones
+     * una varible para saber que item se está seleccionando
      */
 
     private ArrayList<User> users;
     private OnUserClickListener clickListener;
+    private int selectedItem = RecyclerView.NO_POSITION;
 
     /**
      * Contructor con argumentos
@@ -81,7 +84,21 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
                     .into(holder.ivUser);
         }
 
-        holder.itemView.setOnClickListener(v -> clickListener.onUserClick(user));
+        //Hacemos que al pulsar en un amigo este se destaque en otro color
+        //y cuando ese amigo deja de ser el foco se deje de destacar
+        holder.itemView.setBackgroundColor(selectedItem == holder.getBindingAdapterPosition()
+                ? Color.rgb(255,248,181) : Color.TRANSPARENT);
+
+        holder.itemView.setOnClickListener(v ->
+        {
+            int previousSelectedPosition = selectedItem;
+            selectedItem = holder.getBindingAdapterPosition();
+            notifyItemChanged(previousSelectedPosition);
+            notifyItemChanged(selectedItem);
+
+            //también asignamos el escuchador
+            clickListener.onUserClick(user);
+        });
     }
 
     /**

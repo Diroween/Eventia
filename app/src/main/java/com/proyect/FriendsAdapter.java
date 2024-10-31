@@ -90,8 +90,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
             notifyItemChanged(previousSelectedPosition);
             notifyItemChanged(selectedItem);
         });
-
-        //tiene que ser un submenú dentro de su modificiación de usuario
     }
 
     /**

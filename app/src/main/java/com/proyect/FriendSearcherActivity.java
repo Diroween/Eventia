@@ -158,8 +158,6 @@ public class FriendSearcherActivity extends AppCompatActivity
         {
             selectedUser = user;
             btnSendRequest.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(), "Usuario seleccionado: "
-                    + user.getName(), Toast.LENGTH_SHORT).show();
 
         });
 
@@ -233,6 +231,12 @@ public class FriendSearcherActivity extends AppCompatActivity
 
                                     users.add(user);
                                 }
+
+                                else if (user != null)
+                                {
+                                    users.add(user);
+                                }
+
                                 //si no es así nos ponemos un log
                                 else
                                 {
