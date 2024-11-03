@@ -11,6 +11,7 @@ import android.widget.Toast;
 import android.util.Patterns;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -85,6 +86,27 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         //Le damos la funcionalidad al botón de registro
         btnSignup.setOnClickListener(this);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
+            /**
+             * Le damos funcionalidad al botón de volver atrás
+             * En este caso queremos que cuando se de atrás se cargue el login
+             * */
+
+            @Override
+            public void handleOnBackPressed()
+            {
+                //Creamos un intent de la actividad login
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+
+                //iniciamos la actividad
+                startActivity(i);
+
+                //finalizamos la actividad de registro de usuarios
+                finish();
+            }
+        });
     }
 
     /**
