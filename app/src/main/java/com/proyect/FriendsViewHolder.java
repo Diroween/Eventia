@@ -15,10 +15,8 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder
 {
     /**
      * Creamos tantas variables de clase como elementos queremos dar funcionalidad
-     * //
-     * *-Yosef-* Cuando los usuarios tengan una foto se cargará también, me momento solo pongo
-     * una genérica
-     * */
+     */
+
     TextView tvName;
     ImageView ivUser;
 

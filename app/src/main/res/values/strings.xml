@@ -62,6 +62,9 @@
     <string name="imagenotselected">No se ha seleccionado imagen</string>
     <string name="updatedprofile">Perfil actualizado</string>
     <string name="updateprofileerror">No se ha podido actualizar el perfil</string>
+    <string name="logout">Cerrar\nsesión</string>
+    <string name="viewevents">Mirar eventos</string>
+    <string name="deletefriend">Eliminar amigo</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

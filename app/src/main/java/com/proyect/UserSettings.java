@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class UserSettings extends AppCompatActivity
      * La imagen del usuario
      * Su id, nombre y email
      * el textview que funcionará como botón
+     * un imageview para hacer logout
      * */
 
     ImageView ivUserImage;
@@ -47,6 +49,7 @@ public class UserSettings extends AppCompatActivity
     TextView tvUserName;
     TextView tvUserEmail;
     TextView tvTxtbtnChangeImage;
+    ImageView ivLogout;
 
     /**
      * Las variables que necesitamos para poder subir la foto y cargarla
@@ -76,7 +79,36 @@ public class UserSettings extends AppCompatActivity
         tvUserId = findViewById(R.id.tv_user_id);
         tvUserName = findViewById(R.id.tv_user_name);
         tvUserEmail = findViewById(R.id.tv_user_email);
-        tvTxtbtnChangeImage = findViewById(R.id.tv_txtbtn_change_image);
+        tvTxtbtnChangeImage = findViewById(R.id.tv_txtbtn_view_events);
+        ivLogout = findViewById(R.id.iv_delete);
+
+        //le asignamos la función de logout al botón
+        ivLogout.setOnClickListener(new View.OnClickListener()
+        {
+            /**
+             * Sobreescribimos el método de click para poder hace logut
+             * */
+
+            @Override
+            public void onClick(View view)
+            {
+                //Cogemos la instacia de firebase
+                FirebaseAuth.getInstance().signOut();
+
+                //Creamos un intent de la login activity
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+
+                //Le decimos al intent que queremos que se nos abra en una nueva tarea
+                //limpiamos las tareas que hayan abierta para que no podamos volver a ellas
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                //Iniciamos la actividad
+                startActivity(intent);
+
+                //Cerramos la actividad actual
+                finish();
+            }
+        });
 
         //Cogemos la imagen del usuario, en caso de que la tenga
         Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();

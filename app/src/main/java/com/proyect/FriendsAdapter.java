@@ -1,5 +1,6 @@
 package com.proyect;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,6 +81,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 
         //Hcemos que al pulsar en un amigo este se destaque en otro color
         //y cuando ese amigo deja de ser el foco se deje de destacar
+        //también ponemos código para poder abrir el detalle de cada amigo
         holder.itemView.setBackgroundColor(selectedItem == holder.getBindingAdapterPosition()
                 ? Color.rgb(255,248,181) : Color.TRANSPARENT);
 
@@ -89,6 +91,19 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
             selectedItem = holder.getBindingAdapterPosition();
             notifyItemChanged(previousSelectedPosition);
             notifyItemChanged(selectedItem);
+
+            //Hacemos un intent para que se pueda abrir la actividad
+            //para ver a un amigo
+            Intent intent = new Intent(holder.itemView.getContext(), FriendViewerActivity.class);
+
+            //Ponemos como extras todos los datos que vamos a mostrar de cada amigo
+            //que coinciden con los registrados de un amigo en la bdd
+            intent.putExtra("friendId", friend.getId());
+            intent.putExtra("friendName", friend.getId());
+            intent.putExtra("friendImageUrl", friend.getImageUrl());
+
+            //Se inicia la actividad que muestra cada amigo
+            holder.itemView.getContext().startActivity(intent);
         });
     }
 
