@@ -1,17 +1,33 @@
 package com.proyect;
 
+/**
+ * Clase Event que representa un event en la aplicación
+ * */
+
 public class Event
 {
+    /**
+     * Creamos los atributos que definen a la clase Event
+     * */
+
     private String id;
     private String name;
     private String date;
     private String place;
     private String image;
 
+    /**
+     * Cremos un constructor vacío para poder realizar la serialización de los datos
+     * */
+
     public Event()
     {
         //Constructor vacío necesario para la serialización de los datos
     }
+
+    /**
+     * Creamos un constructor con argumentos, tantos como atributos tiene
+     * */
 
     public Event(String id, String name, String date, String place, String image)
     {
@@ -21,6 +37,10 @@ public class Event
         this.place = place;
         this.image = image;
     }
+
+    /**
+     * Métodos getter and setter
+     * */
 
     public String getId()
     {

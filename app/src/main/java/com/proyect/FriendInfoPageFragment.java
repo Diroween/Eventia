@@ -1,6 +1,5 @@
 package com.proyect;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,29 +13,29 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FriendInfoPageFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment FriendInfoPageFragment que muestra los datos de un amigo
  */
-public class FriendInfoPageFragment extends Fragment {
+public class FriendInfoPageFragment extends Fragment
+{
+    /**
+     * Variables creadas por la clase fragment para su correcto funcionamiento
+     * */
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     /**
      * Creamos tantas variables como datos tenemos que mostrar
-     * además de los botones de texto que vamos a usar
+     * además de la imagen de usuario
+     * y el botón de imagen que vamos a usar para eliminar usuarios
      * */
 
     ImageView ivDelete;
@@ -44,20 +43,21 @@ public class FriendInfoPageFragment extends Fragment {
     TextView tvFriendId;
     TextView tvFriendName;
 
-    public FriendInfoPageFragment() {
-        // Required empty public constructor
+    /**
+     * Constructor vacío necesario para el funcionamiento del fragment
+     * */
+
+    public FriendInfoPageFragment()
+    {
+        //Constructor vacío necesario
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FriendInfoPageFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FriendInfoPageFragment newInstance(String param1, String param2) {
+     * Método para poder crear instancias del fragmento
+     * */
+
+    public static FriendInfoPageFragment newInstance(String param1, String param2)
+    {
         FriendInfoPageFragment fragment = new FriendInfoPageFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -66,8 +66,13 @@ public class FriendInfoPageFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Método onCreate necesario
+     * */
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -75,25 +80,33 @@ public class FriendInfoPageFragment extends Fragment {
         }
     }
 
+    /**
+     * Método para realizar la lógica del fragment cuando se crea la vista
+     * */
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+                             Bundle savedInstanceState)
+    {
+        //Creamos una vista que infle el layout
         View view = inflater.inflate(R.layout.fragment_friend_info_page, container, false);
 
+        //Asignamos todas las variables a los elementos en pantalla
         ivDelete = view.findViewById(R.id.iv_delete);
         ivFriendImage = view.findViewById(R.id.iv_user_image);
         tvFriendId = view.findViewById(R.id.tv_user_id);
         tvFriendName = view.findViewById(R.id.tv_user_name);
 
+        //Contenemos en tres strings los datos del amigo que se nos pasan desde friends fragment
         String friendImage = getActivity().getIntent().getStringExtra("friendImageUrl");
         String friendId = getActivity().getIntent().getStringExtra("friendId");
         String friendName = getActivity().getIntent().getStringExtra("friendName");
 
+        //Setteamos el texto de cada textview
         tvFriendId.setText(friendId);
         tvFriendName.setText(friendName);
 
-
+        //Si el usuario tiene imagen se carga, sino se carga una imagen genérica
         if(friendImage != null)
         {
             Glide.with(this)
@@ -110,14 +123,23 @@ public class FriendInfoPageFragment extends Fragment {
                     .into(ivFriendImage);
         }
 
+        //Le setteamos un escuchador de click al icono de borrar amigo
         ivDelete.setOnClickListener(v ->
         {
-            new AlertDialog.Builder(getContext()).setTitle("Eliminar amigo")
-                    .setMessage("¿Estás seguro de que quieres eliminar este amigo?")
-                    .setPositiveButton(android.R.string.yes, (dialog, which) ->
+            //Creamos un snackbar para que salga un mensaje pequeño
+            //para confirmar el borrado de amigo
+            //Le ponemos una frase, el texto que funciona como botón y su función de borrado
+            Snackbar.make(requireActivity().findViewById(android.R.id.content),
+                    R.string.deletefriendquestion,Snackbar.LENGTH_LONG)
+                    .setAction(R.string.delete, var ->
                     {
-                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                        //Cogemos la referencia a la base de datos
+                        DatabaseReference databaseReference = FirebaseDatabase
+                                .getInstance().getReference();
 
+                        //si el usuario tiene un amigo y ese amigo
+                        //también le tiene al primero como amigo
+                        //se elimina el amigo en los dos usuarios
                         databaseReference.child("users")
                                 .child(FirebaseAuth.getInstance().getUid())
                                 .child("friends").child(friendId).removeValue()
@@ -125,24 +147,41 @@ public class FriendInfoPageFragment extends Fragment {
                                 {
                                     if(task.isSuccessful())
                                     {
-                                        Toast.makeText(getContext(), "Amigo eliminado",
-                                                Toast.LENGTH_SHORT).show();
-                                        getActivity().finish();
+                                        databaseReference.child("users")
+                                                .child(friendId)
+                                                .child("friends")
+                                                .child(FirebaseAuth.getInstance().getUid())
+                                                .removeValue().addOnCompleteListener(job ->
+                                                {
+                                                    if(job.isSuccessful())
+                                                    {
+                                                        Toast.makeText(getContext(),
+                                                                R.string.frienddeleted,
+                                                                Toast.LENGTH_SHORT).show();
+                                                        getActivity().finish();
+                                                    }
+                                                    //Si no se ha podido borrar se manda un toast
+                                                    //informando del error
+                                                    else
+                                                    {
+                                                        Toast.makeText(getContext(),
+                                                                R.string.frienddeletederror,
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                     }
+                                    //Si no se ha podido borrar se manda un toast
+                                    //informando del error
                                     else
                                     {
-                                        Toast.makeText(getContext(), "Error al borrar amigo",
+                                        Toast.makeText(getContext(), R.string.frienddeletederror,
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 });
-
-                    })
-                    .setNegativeButton(android.R.string.no, null)
-                    .setIcon(R.drawable.ic_alert_caution)
-                    .show();
+                    }).show();
 
         });
-
+        //retornamos la vista carga con las funcionalidades
         return view;
     }
 }

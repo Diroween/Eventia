@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Eventia</string>
     <string name="config">Configuración</string>
-    <string name="btn_events">Eventos</string>
-    <string name="btn_notes">Notas</string>
+    <string name="events">Eventos</string>
+    <string name="notes">Notas</string>
     <string name="greetings_today">Hoy es </string>
-    <string name="delete_opt">Borrar nota</string>
+    <string name="deletenote">Borrar nota</string>
     <string name="reminder_opt">Recordatorio</string>
     <string name="textInputLayout">Título del recordatorio</string>
     <string name="textView">Notificar cada</string>
@@ -65,6 +65,11 @@
     <string name="logout">Cerrar\nsesión</string>
     <string name="viewevents">Mirar eventos</string>
     <string name="deletefriend">Eliminar amigo</string>
+    <string name="deletefriendquestion">¿Estás seguro de que quieres eliminar este amigo?</string>
+    <string name="frienddeleted">Amigo elminado</string>
+    <string name="frienddeletederror">Error al eliminar amigo</string>
+    <string name="delete">Borrar</string>
+    <string name="eventloaderror">Error al cargar los eventos</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

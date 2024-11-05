@@ -17,6 +17,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 public class FriendViewerActivity extends AppCompatActivity
 {
+    /**
+     * Creamos las variables de clase:
+     * un tab layout para indicar cada página
+     * un viewpager para poder usar la paginación
+     * un adaptador para darle funcionalidad al viewpager
+     * */
 
     TabLayout tabLayout;
     ViewPager2 viewPager;
@@ -35,23 +41,28 @@ public class FriendViewerActivity extends AppCompatActivity
             return insets;
         });
 
+        //Asignamos los elementos de pantalla a las variables
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
 
+        //inicializamos el adaptador
         viewerAdapter = new FriendsViewerPageAdapter(this);
 
+        //Setteamos el adapter al viewpager
         viewPager.setAdapter(viewerAdapter);
 
+        //Creamos un mediador de tabs para asignar un nombre a cada pestaña
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) ->
         {
             if(position == 0)
             {
-                tab.setText("Usuario");
+                tab.setText(R.string.username);
             }
             else
             {
-                tab.setText("Eventos");
+                tab.setText(R.string.events);
             }
+
         }).attach();
 
     }
