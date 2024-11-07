@@ -15,6 +15,7 @@ public class Event
     private String date;
     private String place;
     private String image;
+    private String hour;
 
     /**
      * Cremos un constructor vacío para poder realizar la serialización de los datos
@@ -27,6 +28,19 @@ public class Event
 
     /**
      * Creamos un constructor con argumentos, tantos como atributos tiene
+     * */
+
+    public Event(String id, String name, String date, String place, String image, String hour) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+        this.place = place;
+        this.image = image;
+        this.hour = hour;
+    }
+
+    /**
+     * Creamos un constructor con argumentos, sin la hora
      * */
 
     public Event(String id, String name, String date, String place, String image)
@@ -90,5 +104,15 @@ public class Event
     public void setImage(String image)
     {
         this.image = image;
+    }
+
+    public String getHour()
+    {
+        return hour;
+    }
+
+    public void setHour(String hour)
+    {
+        this.hour = hour;
     }
 }

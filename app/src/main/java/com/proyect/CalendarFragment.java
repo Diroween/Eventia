@@ -1,7 +1,6 @@
 package com.proyect;
 
-import static android.view.View.inflate;
-
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,11 +10,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
-import android.widget.Toast;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import com.applandeo.materialcalendarview.CalendarDay;
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener;
+
+
+import java.util.ArrayList;
+import java.util.Calendar;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +36,7 @@ public class CalendarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    //Creamos un CalendarView
-    public CalendarView calendar;
+    public CalendarView calendarView;
 
 
     public CalendarFragment() {
@@ -66,47 +68,75 @@ public class CalendarFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
     }
 
-    /*
-    * Creamos este método para poder usar los widgets correctamente
+    /**
+    * *-Yosef-* Comento esta parte, aunque quedaría hacer la lista inferior
+     * donde aparecerían los próximos eventos
     * */
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
-        //inicializamos el calendario
-        calendar = (CalendarView)view.findViewById(R.id.cv_calendar);
+        //Inicializamos el calendario
+        calendarView = (CalendarView) view.findViewById(R.id.cv_calendar);
+
+        //Inicializamos el arraylist de calendardays con el que se pondrán los iconos
+        //*-Yosef-* más adelante se tienen que coger los días, cargarlos como calendar days
+        //y esos calendar days ponerlos en el array para que muestre iconitos los días de evento
+        ArrayList<CalendarDay> events = new ArrayList<>();
+
+        //Hacemos una instancia de la clase Calendar de Java
+        Calendar calendar = Calendar.getInstance();
+
+        //Añadimos un día de prueba para que salga un iconito
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        //hacemos un calendar day con el día que hemos creado
+        CalendarDay calendarDay = new CalendarDay(calendar);
+
+        //le ponemos un icono
+        calendarDay.setImageResource(R.drawable.ic_event_list);
+
+        //lo añadimos al arraylist
+        events.add(calendarDay);
+
+        //le pasamos a la vista el array de días de evento
+        calendarView.setCalendarDays(events);
 
         //Le setteamos un manejador de eventos para cuando pulsamos en alguna fecha
-        calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
+        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
         {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2)
+            public void onClick(@NonNull CalendarDay calendarDay)
             {
-                //Cogemos la fecha que han pulsado, como es un long con TimeUnit
-                //cambiamos segundos a milisegundos, que es el formato que tiende Date
-                Date date = new Date(TimeUnit.SECONDS.toMillis(calendarView.getDate()));
+                //instancia de Calendar de Java basada en el día que se pulsa
+                Calendar calendar = calendarDay.getCalendar();
 
-                //*--Comentario Yosef--*(hago un toast para ir probando)
-                //Toast.makeText(view.getContext(), date.toString(), Toast.LENGTH_SHORT).show();
+                //Cogemos los datos de ese día
+                String year = String.valueOf(calendar.get(Calendar.YEAR));
+                String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+                String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
 
-                //*--(Vlad): Prueba del layout de configuración de eventos--*
-                //*--(Yosef): He creado el layout al que haces referencia para poder lanzar la app =)
+                //los juntamos en un string formateado
+                String date = year + "-" + month + "-" + day;
 
-                View customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker,calendar, false);
+                //Creamos un intent para pasar a la actividad de crear eventos
+                Intent intent = new Intent(calendarView.getContext(), EventCreationActivity.class);
 
-                calendar.addView(customLayout);
+                //Pasamos el día seleccionado a la siguiente activity
+                intent.putExtra("date", date);
 
+                //iniciamos el intent
+                startActivity(intent);
             }
         });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar, container, false);

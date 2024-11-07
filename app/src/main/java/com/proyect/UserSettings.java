@@ -166,7 +166,11 @@ public class UserSettings extends AppCompatActivity
                 {
                     //Se recoge la uri de la imagen, se pone en el imageview y se sube a la bdd
                     userImageUri = result.getData().getData();
-                    ivUserImage.setImageURI(userImageUri);
+                    Glide.with(this).load(userImageUri)
+                            .placeholder(R.drawable.ic_event_list)
+                            .transform(new CircleCrop())
+                            .into(ivUserImage);
+                    uploadImage();
                     uploadImage();
                 }
             });

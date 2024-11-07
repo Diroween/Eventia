@@ -70,6 +70,17 @@
     <string name="frienddeletederror">Error al eliminar amigo</string>
     <string name="delete">Borrar</string>
     <string name="eventloaderror">Error al cargar los eventos</string>
+    <string name="newevent">Nuevo Evento</string>
+    <string name="nextevents">Próximos Eventos</string>
+    <string name="eventname">Nombre del evento</string>
+    <string name="eventdate">Fecha del evento</string>
+    <string name="eventplace">Lugar del evento</string>
+    <string name="eventimage">Imagen del evento</string>
+    <string name="eventhour">Hora del evento</string>
+    <string name="createevent">Crear evento</string>
+    <string name="completefields">Complete todos los campos para crear el evento</string>
+    <string name="eventcreated">Evento creado y usuario registrado</string>
+    <string name="createeventerror">Error al crear evento</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>
@@ -90,6 +101,33 @@
         <item>meses</item>
         <item>años</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="material_calendar_monday">Lun</string>
+    <string name="material_calendar_tuesday">Mar</string>
+    <string name="material_calendar_wednesday">Mie</string>
+    <string name="material_calendar_thursday">Jue</string>
+    <string name="material_calendar_friday">Vie</string>
+    <string name="material_calendar_saturday">Sab</string>
+    <string name="material_calendar_sunday">Dom</string>
+
+    <array name="material_calendar_months_array">
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
+    </array>
+
+    <string name="material_calendar_today_button">Hoy</string>
+    <string name="material_calendar_positive_button">OK</string>
+    <string name="material_calendar_negative_button">Cancelar</string>
 </resources>
