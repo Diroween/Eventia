@@ -3,12 +3,18 @@ package com.proyect;
 import static com.proyect.Constants.TO;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,27 +26,30 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.proyect.utils.ReminderWorker;
 
+import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;             // Permite almacenar fechas en formato yyyy-mm-dd
+import java.time.LocalDateTime;
 import java.time.LocalTime;             // Permite almacenar horas en formato hh:mm:ss:nn
 import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Body;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CalendarFragment extends Fragment {
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static View customLayout;
@@ -59,20 +68,13 @@ public class CalendarFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static Context sContext;
+
 
     public CalendarFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static CalendarFragment newInstance(String param1, String param2) {
         CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
@@ -115,16 +117,14 @@ public class CalendarFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //Inicializamos el calendario
+
         calendar = view.findViewById(R.id.cv_calendar);
 
-        //Le setteamos un manejador de eventos para cuando pulsamos en alguna fecha
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
 
-                //Al cambiar de fecha mostramos el menú event_type_picker.xml
                 customLayout = LayoutInflater.from(getActivity()).inflate(R.layout.event_type_picker, calendar, false);
                 calendar.addView(customLayout);
 
@@ -148,6 +148,7 @@ public class CalendarFragment extends Fragment {
 
                 TextView tView2 = view.findViewById(R.id.tvFecha);
 
+
                 LocalDate fechaPrueba = LocalDate.now();
                 boolean leap = fechaPrueba.isLeapYear();
                 LocalDate fechaFutura = fechaPrueba.with(Month.MAY);
@@ -160,6 +161,10 @@ public class CalendarFragment extends Fragment {
                 tView2.setText(fechaSelec.format(formatter));
 
                 LocalTime horaActual = LocalTime.now();
+
+
+
+                Toast.makeText(calendar.getContext(), "" + ZonedDateTime.now().toString(), Toast.LENGTH_LONG).show();
 
 
             }
@@ -177,6 +182,8 @@ public class CalendarFragment extends Fragment {
                 String horasMinutos = String.format("%02d:%02d", horaSelec.getHour(), horaSelec.getMinute());
 
                 tvHora.setText(horasMinutos);
+
+
 
             }
         }, LocalTime.now().plusHours(1).getHour(), 00, true);
@@ -209,6 +216,17 @@ public class CalendarFragment extends Fragment {
                     title = etTitulo.getText().toString();
                     message = tvFecha.getText().toString() + " " + tvHora.getText().toString();
 
+                    LocalDateTime ahora = LocalDateTime.now();
+                    LocalDateTime ldt = LocalDateTime.of(fechaSelec, horaSelec);
+
+                    ZonedDateTime now = ZonedDateTime.now();
+                    ZoneOffset offset = now.getOffset();
+
+                    createWorkRequest(etTitulo.getText().toString(), ldt.toEpochSecond(offset) - ahora.toEpochSecond(offset));
+
+                    Toast.makeText(calendar.getContext(), "" + ZonedDateTime.now().toString() , Toast.LENGTH_LONG).show();
+
+
                     notificarEvento();
 
                     calendar.removeView(customLayout);
@@ -217,6 +235,21 @@ public class CalendarFragment extends Fragment {
 
         }
 
+    }
+
+    public static void init(Context context) {
+        sContext = context.getApplicationContext();
+    }
+    public static void createWorkRequest(String message, long timeDelayInSeconds) {
+        OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(ReminderWorker.class)
+                .setInitialDelay(timeDelayInSeconds, TimeUnit.SECONDS)
+                .setInputData(new Data.Builder()
+                        .putString("title", "Reminder")
+                        .putString("message", message)
+                        .build())
+                .build();
+
+        WorkManager.getInstance(sContext).enqueue(myWorkRequest);
     }
 
 

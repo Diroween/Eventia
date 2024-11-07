@@ -35,14 +35,16 @@
 
         <service
             android:name=".MyFirebaseMessagingService"
-            android:exported="true"
+            android:exported="false"
             android:enabled="true"
+            android:directBootAware="true"
             android:permission="com.google.android.c2dm.permission.Receive">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.Receive" />
             </intent-filter>
         </service>
+
 
     </application>
 
