@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import androidx.core.graphics.Insets;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_main);
 
         setSupportActionBar(toolbar);
@@ -71,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivNotes.setOnClickListener(this);
 
         arrayToday = new ArrayList<String>();
+
+
 
         WorkManager workManager = WorkManager.getInstance(this);
 
@@ -130,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTransaction.replace(R.id.ll_fragments_main, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
+
     }
 
     @Override

@@ -5,40 +5,35 @@
     android:layout_width="360dp"
     android:layout_height="320dp"
     android:layout_gravity="center"
+    android:layout_margin="3dp"
     android:background="@color/white"
     android:clickable="true"
-    android:elevation="5dp" >
+    android:elevation="5dp">
 
     <EditText
         android:id="@+id/etTitulo"
         android:layout_width="240dp"
         android:layout_height="50dp"
         android:autofillHints="name"
-        android:ems="10"
         android:hint="@string/textInputLayout"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.150
-" />
+        app:layout_constraintVertical_bias="0.12" />
 
-    <EditText
-        android:id="@+id/editTextNumber"
-        android:layout_width="60dp"
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="120dp"
         android:layout_height="50dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/editTextNumber"
-        android:inputType="number"
-        android:textAlignment="center"
+        android:entries="@array/spinnerItems_2"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/spinner2"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/editTextNumber"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.662" />
+        app:layout_constraintVertical_bias="0.666" />
 
     <TextView
         android:id="@+id/textView"
@@ -54,90 +49,86 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.662" />
+        app:layout_constraintVertical_bias="0.666" />
 
-    <Spinner
-        android:id="@+id/spinner2"
-        android:layout_width="120dp"
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="60dp"
         android:layout_height="50dp"
-        android:entries="@array/spinnerItems_2"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/editTextNumber"
+        android:inputType="number"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/spinner2"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/editTextNumber"
+        app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.659" />
+        app:layout_constraintVertical_bias="0.666" />
 
     <Button
         android:id="@+id/btnCancelar"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginBottom="16dp"
         android:text="CANCELAR"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnAceptar"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.938"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.941" />
 
     <Button
         android:id="@+id/btnAceptar"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="129dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="16dp"
         android:text="ACEPTAR"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnCancelar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.941" />
 
     <Button
         android:id="@+id/btnTimePicker"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="5dp"
         android:text="HORA"
-        app:layout_constraintBottom_toTopOf="@+id/spinner2"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvHora"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="81dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="6dp"
-        android:hint="00:00"
-        android:text="00:00"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumber"
-        app:layout_constraintEnd_toStartOf="@+id/btnTimePicker"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTitulo" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvHora"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" />
 
     <TextView
         android:id="@+id/tvFecha"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="6dp"
         android:hint="Fecha"
         android:text="Fecha"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvHora"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTitulo" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.417" />
+
+    <TextView
+        android:id="@+id/tvHora"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:hint="00:00"
+        android:text="00:00"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnTimePicker"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvFecha"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.417" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
