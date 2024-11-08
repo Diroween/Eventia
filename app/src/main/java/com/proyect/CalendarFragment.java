@@ -4,55 +4,83 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.CalendarDay;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Clase para poder visualizar un calendario, realizar nuevos eventos
+ * y ver cuando se tendrán los próximos eventos
  */
-public class CalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment
+{
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    /**
+     * Variables necesarias para crear el fragment
+     * */
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    /**
+     * Creamos tantas variables de clase como elementos vayamos a tratar
+     * Un calendarview personalizado
+     * Una referencia a la base de datos
+     * Una arraylist de días de calendario personalizables
+     * Un adaptador para el recyclerview
+     * una lista para los siguientes eventos
+     * Un arraylist para contener los futuros eventos
+     * */
+
     public CalendarView calendarView;
+    private DatabaseReference databaseReference;
+    private ArrayList<CalendarDay> calendarDays;
+    private CalendarFragmentAdapter calendarAdapter;
+    private RecyclerView rvCalendar;
+    private ArrayList<Event> nextEvents;
 
+    /**
+     * Constructor vacío necesario para poder crear el fragment
+     * */
 
-    public CalendarFragment() {
-        // Required empty public constructor
+    public CalendarFragment()
+    {
+
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CalendarFragment.
+     * Método para crear nuevas instancias de CalendarFragment
      */
-    // TODO: Rename and change types and number of parameters
-    public static CalendarFragment newInstance(String param1, String param2) {
+
+    public static CalendarFragment newInstance(String param1, String param2)
+    {
         CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -60,6 +88,10 @@ public class CalendarFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    /**
+     * Método para poder crear el fragment
+     * */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,38 +103,44 @@ public class CalendarFragment extends Fragment {
     }
 
     /**
-    * *-Yosef-* Comento esta parte, aunque quedaría hacer la lista inferior
-     * donde aparecerían los próximos eventos
+    * Método para dar funcionalidad a los elementos que hay en pantalla
+     * y poder cargar el layout del fragment
     * */
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState)
     {
-        //Inicializamos el calendario
+        //hacemos una vista que es la que cargará nuestro layout
+        View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+
+        //Inicializamos el calendario personalizado
         calendarView = (CalendarView) view.findViewById(R.id.cv_calendar);
 
+        //Inicializamos la referencia a la bdd
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        //Inicializamos la lista donde aparecerán los proximos eventos
+        rvCalendar = view.findViewById(R.id.rv_calendar);
+
+        //Le ponemos un gestor de layouts a la lista
+        rvCalendar.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //inicializamos el array de próximos eventos
+        nextEvents = new ArrayList<Event>();
+
+        //inicializamos el adaptador con un contexto y el array de próximos eventos
+        calendarAdapter = new CalendarFragmentAdapter(view.getContext(), nextEvents);
+
+        //Le setteamos el adaptador a lista
+        rvCalendar.setAdapter(calendarAdapter);
+
         //Inicializamos el arraylist de calendardays con el que se pondrán los iconos
-        //*-Yosef-* más adelante se tienen que coger los días, cargarlos como calendar days
-        //y esos calendar days ponerlos en el array para que muestre iconitos los días de evento
-        ArrayList<CalendarDay> events = new ArrayList<>();
+        calendarDays = new ArrayList<>();
 
-        //Hacemos una instancia de la clase Calendar de Java
-        Calendar calendar = Calendar.getInstance();
-
-        //Añadimos un día de prueba para que salga un iconito
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-
-        //hacemos un calendar day con el día que hemos creado
-        CalendarDay calendarDay = new CalendarDay(calendar);
-
-        //le ponemos un icono
-        calendarDay.setImageResource(R.drawable.ic_event_list);
-
-        //lo añadimos al arraylist
-        events.add(calendarDay);
-
-        //le pasamos a la vista el array de días de evento
-        calendarView.setCalendarDays(events);
+        //Llamamos al método que cargará todos los eventos del usuario en los arraylists
+        //tanto para el calendario como para la lista
+        loadUserEvents();
 
         //Le setteamos un manejador de eventos para cuando pulsamos en alguna fecha
         calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
@@ -131,15 +169,101 @@ public class CalendarFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
+    /**
+     *  Método para poder cargar los eventos en el calendario y en la lista
+     * */
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false);
+    public void loadUserEvents()
+    {
+        //Recogemos los datos del usuario de Firebase que ha iniciado sesión
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
+        //y le ponemos un escuchador para que encuentre coincidencias
+        databaseReference.child("events")
+                .addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        //Vaciamos la arraylist por si hubiera alguno todavía
+                        nextEvents.clear();
+
+                        //Dentro del bucle:
+                        //Creamos un evento para cada coincidencia de la base de datos
+                        //Si el usuario está registrado en ese evento
+                        //se pasa a tratar los datos del evento
+                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
+                            Event event = dataSnapshot.getValue(Event.class);
+
+                            if(event != null && dataSnapshot.child("registeredUsers")
+                                    .hasChild(user.getUid()))
+                            {
+                                try
+                                {
+                                    //Se recoge la fecha del evento
+                                    Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
+                                            .parse(event.getDate());
+
+                                    //Se coge una instancia de Calendar de Java
+                                    Calendar calendar = Calendar.getInstance();
+
+                                    //Le decimos que se settee en el día del evento
+                                    calendar.setTime(eventDate);
+
+                                    //hacemos una nueva referencia que representa el día actual
+                                    Calendar today = Calendar.getInstance();
+
+                                    //Si el día del evento es posterior al día de hoy
+                                    //Se carga en futuros eventos
+                                    if(calendar.after(today))
+                                    {
+                                        nextEvents.add(event);
+                                    }
+
+                                    //Se hace un nuevo CalendarDay personalizado
+                                    //del día del evento
+                                    CalendarDay calendarDay = new CalendarDay(calendar);
+
+                                    //Le ponemos una etiquetita para representar que ese día
+                                    //hay un evento
+                                    calendarDay.setImageResource(R.drawable.ic_event_list);
+
+                                    //Añadimos el día al calendario
+                                    //Esto lo hace con todos los días, representando así todos los
+                                    //días pasados donde también tuvo evento el usuario
+                                    calendarDays.add(calendarDay);
+                                }
+
+                                //Si no se consigue parsear bien la fecha se recoge una excepción
+                                catch (ParseException e)
+                                {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+
+                        //añadimos al calendario todos los dias personalizados
+                        calendarView.setCalendarDays(calendarDays);
+
+                        //Le decimos al adaptador que la lista ha cambiado sus datos
+                        calendarAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Toast.makeText(getContext(), R.string.loadeventserror,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
     }
 
 

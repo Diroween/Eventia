@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 
 import java.util.ArrayList;
 
@@ -40,7 +41,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListViewHolder>
     @Override
     public EventListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_list_item,
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event_list_fragment,
                 parent, false);
 
         return new EventListViewHolder(view);
@@ -64,10 +65,12 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListViewHolder>
 
         //Si tiene una imagen asignada el evento se carga en el imageview
         //En caso contrario se carga un placeholder
-        if(!event.getImage().isEmpty())
+        if(event.getImage() != null)
         {
             Glide.with(holder.itemView.getContext())
                     .load(event.getImage())
+                    .fitCenter()
+                    .transform(new CircleCrop())
                     .placeholder(R.drawable.ic_event_list)
                     .into(holder.ivEventImage);
         }
