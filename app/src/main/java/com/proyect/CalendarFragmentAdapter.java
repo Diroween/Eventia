@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Adaptador personalizado de Recyclerview para poder
@@ -82,15 +83,29 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
             //Le decimos que se settee como el día del evento
             calendar.setTime(date);
 
-            //Formateamos la fecha para que salga con un estilo vistoso y no robótico
-            //más parecido a los carteles de eventos
-            String formattedDate = String.format("%02d de %s de %d a las %s en %s"
-                    ,calendar.get(Calendar.DAY_OF_MONTH)
-                    ,monthsArray[calendar.get(Calendar.MONTH)]
-                    ,calendar.get(Calendar.YEAR)
-                    ,event.getHour()
-                    ,event.getPlace());
+            String formattedDate;
 
+            //Formateamos la fecha dependiendo de si está el dispositivo en ingles o en español
+            //más parecido a los carteles de eventos
+            if(Locale.getDefault().getLanguage().equals(new Locale("es").getLanguage()))
+            {
+                formattedDate = String.format("%02d de %s de %d a las %s en %s"
+                        ,calendar.get(Calendar.DAY_OF_MONTH)
+                        ,monthsArray[calendar.get(Calendar.MONTH)]
+                        ,calendar.get(Calendar.YEAR)
+                        ,event.getHour()
+                        ,event.getPlace());
+            }
+
+            else
+            {
+                formattedDate = String.format("%02d %s %d at %s in %s"
+                        ,calendar.get(Calendar.DAY_OF_MONTH)
+                        ,monthsArray[calendar.get(Calendar.MONTH)]
+                        ,calendar.get(Calendar.YEAR)
+                        ,event.getHour()
+                        ,event.getPlace());
+            }
             //le ponemos como texto al evento el string que hemos formateado
             holder.tvEventData.setText(formattedDate);
         }

@@ -184,7 +184,7 @@ public class CalendarFragment extends Fragment
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
-        databaseReference.child("events")
+        databaseReference.child("events").orderByChild("date")
                 .addListenerForSingleValueEvent(new ValueEventListener()
                 {
                     @Override

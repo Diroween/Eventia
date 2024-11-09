@@ -16,6 +16,8 @@
     <string name="login">Iniciar sesión</string>
     <string name="signup">Registrarse</string>
     <string name="signupText">¿No tienes cuenta?</string>
+    <string name="rememberme">Recuerdame</string>
+    <string name="remembered">Recordado</string>
     <string name="noregistered">Usuario no registrado, por favor, registrese</string>
     <string name="registered">Usuario ya registrado, por favor, introduzca un Usuario distinto</string>
     <string name="loginNoText">Por favor, introduzca Usuario y Contraseña</string>
@@ -29,7 +31,7 @@
     <string name="deletednote">Nota eliminada</string>
     <string name="emaildoesntmatch">El email no coincide con el formato example@example.com</string>
     <string name="accountnotcreated">La cuenta no se ha podido crear, revise los datos introducidos</string>
-    <string name="accountnotfound">La cuenta no está registrada</string>
+    <string name="accountnotfound">La cuenta no se ha encontrado.\nPor favor, revise correo y contraseña</string>
     <string name="userregistered">Usuario registrado en la app</string>
     <string name="registererror">Error de registro</string>
     <string name="friends">Amigos</string>

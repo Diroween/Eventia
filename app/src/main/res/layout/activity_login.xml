@@ -100,6 +100,21 @@
         app:layout_constraintTop_toBottomOf="@id/et_password"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+    <ToggleButton
+        android:id="@+id/tgb_rememberme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/et_password"
+        app:layout_constraintStart_toStartOf="@id/et_password"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/gabriela"
+        android:textStyle="bold"
+        android:paddingHorizontal="15dp"
+        android:textOn="@string/remembered"
+        android:textOff="@string/rememberme"
+        android:textColor="@color/black"
+        android:background="@drawable/rememberme_bckgrnd_selector"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

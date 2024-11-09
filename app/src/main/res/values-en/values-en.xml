@@ -17,6 +17,8 @@
     <string name="login">Log in</string>
     <string name="signup">Sign up</string>
     <string name="signupText">Don\'t have an account?</string>
+    <string name="rememberme">Remember me</string>
+    <string name="remembered">Remembered</string>
     <string name="registered">User registered, please, enter another Username</string>
     <string name="noregistered">Username not registered, please, Sign In</string>
     <string name="loginNoText">Please, enter Username and Password</string>
@@ -30,7 +32,7 @@
     <string name="deletednote">Nota deleted</string>
     <string name="emaildoesntmatch">Email does not match with format example@example.com</string>
     <string name="accountnotcreated">The account could not be created, please, check email and password</string>
-    <string name="accountnotfound">Account not found</string>
+    <string name="accountnotfound">Account not found.\nPlease, check email and password</string>
     <string name="userregistered">User registered</string>
     <string name="registererror">Register error</string>
     <string name="friends">Friends</string>

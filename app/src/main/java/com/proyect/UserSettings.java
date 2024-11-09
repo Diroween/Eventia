@@ -2,6 +2,7 @@ package com.proyect;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -101,6 +102,13 @@ public class UserSettings extends AppCompatActivity
                 //Le decimos al intent que queremos que se nos abra en una nueva tarea
                 //limpiamos las tareas que hayan abierta para que no podamos volver a ellas
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                //Cogemos las sharedpreferences de inicio automático de sesión
+                SharedPreferences sharedPreferences =
+                        getSharedPreferences("login", MODE_PRIVATE);
+
+                //borramos todos los datos guardados del usuario para el inicio automático
+                sharedPreferences.edit().clear().apply();
 
                 //Iniciamos la actividad
                 startActivity(intent);

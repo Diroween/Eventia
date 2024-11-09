@@ -1,6 +1,7 @@
 package com.proyect;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,10 +21,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Actividad para que un usuario pueda logearse en la app
@@ -38,18 +38,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth firebaseAuth;
 
     /**
-     * Variables de clase que son los campos de texto que se deben introducir, el botón de inicio
-     * y el textview que funcionará como un botón
+     * Variables de clase que son los campos de texto que se deben introducir, el botón de inicio,
+     * el textview que funcionará como un botón y un toggle button para recordar al usuario
      * */
 
     EditText etEmail;
     EditText etPassword;
     Button btnLogin;
     TextView tvSignUpTxtBtn;
+    ToggleButton tgbRememberme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        //Métodos necesarios para mostrar correctamente los elementos en pantalla
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
@@ -61,9 +63,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return insets;
         });
 
-        //iniciamos la base de datos
-        FirebaseApp.initializeApp(this);
-
         //Hacemos instancia de la base de datos de autenticación
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -74,11 +73,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etEmail = (EditText)findViewById(R.id.et_email);
         etPassword = (EditText)findViewById(R.id.et_password);
         btnLogin = (Button)findViewById(R.id.btn_login);
+        tgbRememberme = findViewById(R.id.tgb_rememberme);
         tvSignUpTxtBtn = (TextView)findViewById(R.id.tv_signup_txtBtn);
 
         //Le damos la funcionalidad al botón de inicio y al textview
         btnLogin.setOnClickListener(this);
         tvSignUpTxtBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -161,6 +162,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             //coger al usuario en este método, ya que no hacemos nada con él
                             //FirebaseUser user = firebaseAuth.getCurrentUser();
 
+                            //Si el botón de recuerdame está pulsado
+                            if(tgbRememberme.isChecked())
+                            {
+                                //creamos un contenedor de preferencias
+                                SharedPreferences sharedPreferences =
+                                        getSharedPreferences("login", MODE_PRIVATE);
+
+                                //Creamos un editor
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                                //Guardamos los datos del usuario y un valor
+                                //para volver a iniciar sesión
+                                editor.putString("email", email);
+                                editor.putString("password", password);
+                                editor.putBoolean("rememberme", true);
+
+                                //Aplicamos los cambios
+                                editor.apply();
+                            }
+
                             //Creamos un intent de la actividad principal y cerramos esta
                             //y el registro en caso de que estuviese abierta
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -179,5 +200,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
+
+
 
 }
