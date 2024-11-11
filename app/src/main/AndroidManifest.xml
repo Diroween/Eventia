@@ -20,6 +20,15 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".EventRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EventInviterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EventViewerActivity"
+            android:exported="false" />
+        <activity
             android:name=".EventCreationActivity"
             android:exported="false" />
         <activity

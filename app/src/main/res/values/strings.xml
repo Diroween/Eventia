@@ -84,6 +84,9 @@
     <string name="eventcreated">Evento creado y usuario registrado</string>
     <string name="createeventerror">Error al crear evento</string>
     <string name="loadeventserror">Error al cargar eventos</string>
+    <string name="invitefriends">Invitar amigos</string>
+    <string name="invite">Invitar</string>
+    <string name="eventrequests">Invitaciones a eventos</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

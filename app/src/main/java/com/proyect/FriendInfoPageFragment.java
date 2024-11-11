@@ -2,6 +2,7 @@ package com.proyect;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,8 +16,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Fragment FriendInfoPageFragment que muestra los datos de un amigo
@@ -42,6 +46,9 @@ public class FriendInfoPageFragment extends Fragment
     ImageView ivFriendImage;
     TextView tvFriendId;
     TextView tvFriendName;
+    TextView tvDelete;
+
+    private DatabaseReference databaseReference;
 
     /**
      * Constructor vacío necesario para el funcionamiento del fragment
@@ -91,11 +98,14 @@ public class FriendInfoPageFragment extends Fragment
         //Creamos una vista que infle el layout
         View view = inflater.inflate(R.layout.fragment_friend_info_page, container, false);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
         //Asignamos todas las variables a los elementos en pantalla
         ivDelete = view.findViewById(R.id.iv_delete);
         ivFriendImage = view.findViewById(R.id.iv_user_image);
         tvFriendId = view.findViewById(R.id.tv_user_id);
         tvFriendName = view.findViewById(R.id.tv_user_name);
+        tvDelete = view.findViewById(R.id.tv_delete);
 
         //Contenemos en tres strings los datos del amigo que se nos pasan desde friends fragment
         String friendImage = getActivity().getIntent().getStringExtra("friendImageUrl");
@@ -123,6 +133,38 @@ public class FriendInfoPageFragment extends Fragment
                     .into(ivFriendImage);
         }
 
+        //Si vamos a consultarnos a nosotros mismo
+        //quitamos el botón y el texto de elminar amigo
+        if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(friendId))
+        {
+            ivDelete.setVisibility(View.INVISIBLE);
+            tvDelete.setVisibility(View.INVISIBLE);
+        }
+
+        //Si no se tiene como amigo a un usuario,
+        //también quitamos el botón y el tecto de eliminar amigo
+        //aunque puede ver al usuario y sus eventos en lso que coinciden
+        databaseReference.child("users")
+                .child(FirebaseAuth.getInstance().getUid())
+                .child("friends").addValueEventListener(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        if(!snapshot.hasChild(friendId))
+                        {
+                            ivDelete.setVisibility(View.INVISIBLE);
+                            tvDelete.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+
+                    }
+                });
+
         //Le setteamos un escuchador de click al icono de borrar amigo
         ivDelete.setOnClickListener(v ->
         {
@@ -133,10 +175,6 @@ public class FriendInfoPageFragment extends Fragment
                     R.string.deletefriendquestion,Snackbar.LENGTH_LONG)
                     .setAction(R.string.delete, var ->
                     {
-                        //Cogemos la referencia a la base de datos
-                        DatabaseReference databaseReference = FirebaseDatabase
-                                .getInstance().getReference();
-
                         //si el usuario tiene un amigo y ese amigo
                         //también le tiene al primero como amigo
                         //se elimina el amigo en los dos usuarios

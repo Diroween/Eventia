@@ -1,6 +1,7 @@
 package com.proyect;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
     private ArrayList <Event> eventList;
     private Context context;
     private String[] monthsArray;
+    private String formattedDate;
 
     /**
      * Constructor con argumentos
@@ -69,6 +71,8 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
         //Ponemos el nombre del evento
         holder.tvEventName.setText(event.getName());
 
+        Intent intent = new Intent(context, EventViewerActivity.class);
+
         try
         {
             //Creamos un formato para transformar la fecha guardad en String en fecha
@@ -82,8 +86,6 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
 
             //Le decimos que se settee como el día del evento
             calendar.setTime(date);
-
-            String formattedDate;
 
             //Formateamos la fecha dependiendo de si está el dispositivo en ingles o en español
             //más parecido a los carteles de eventos
@@ -108,6 +110,15 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
             }
             //le ponemos como texto al evento el string que hemos formateado
             holder.tvEventData.setText(formattedDate);
+
+            intent.putExtra("event_id", event.getId());
+            intent.putExtra("event_name", event.getName());
+            intent.putExtra("event_data", formattedDate);
+
+            if(event.getImage() != null)
+            {
+                intent.putExtra("event_image", event.getImage());
+            }
         }
 
         //Si no se puede parsear se recoge una excepción
@@ -126,6 +137,11 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
                     .placeholder(R.drawable.ic_event_list)
                     .into(holder.ivEventImage);
         }
+
+        holder.itemView.setOnClickListener(l ->
+        {
+            context.startActivity(intent);
+        });
     }
 
     /**
