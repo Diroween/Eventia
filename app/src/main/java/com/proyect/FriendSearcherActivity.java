@@ -158,7 +158,6 @@ public class FriendSearcherActivity extends AppCompatActivity
         {
             selectedUser = user;
             btnSendRequest.setVisibility(View.VISIBLE);
-
         });
 
         //setteamos el adaptador al recyclerview
