@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Eventia" parent="Base.Theme.Eventia" />
+
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="colorAccent">#46A58F</item>
+    </style>
+
 </resources>

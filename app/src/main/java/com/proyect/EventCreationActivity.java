@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -37,6 +38,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -138,7 +141,7 @@ public class EventCreationActivity extends AppCompatActivity
                 //Creamos un objeto timepickerdialog con el contexto
                 //y le ponemos un escuchador de eventos
                 TimePickerDialog timePickerDialog = new TimePickerDialog(
-                        EventCreationActivity.this,
+                        EventCreationActivity.this, R.style.DialogTheme,
                         new TimePickerDialog.OnTimeSetListener()
                 {
                     /**
@@ -148,15 +151,15 @@ public class EventCreationActivity extends AppCompatActivity
                     public void onTimeSet(TimePicker timePicker, int i, int i1)
                     {
                         //le seleccionamos un formato para la hora y minutos
-                        String hour = i + ":" + String.format("%02d", i1);
+                        String hour = String.format("%02d:%02d", i, i1);
 
                         //ponemos la hora en el textview
                         tvEventHour.setText(hour);
                     }
 
                 } //Indicamos que queremos que sea una hora en formato 24 horas
-                , calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
+                , calendar.getInstance().get(Calendar.HOUR),
+                        calendar.getInstance().get(Calendar.MINUTE),
                         true);
 
                 //Poppeamos el timepicker
