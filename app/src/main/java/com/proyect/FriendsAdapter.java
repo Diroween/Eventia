@@ -99,7 +99,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
             //Ponemos como extras todos los datos que vamos a mostrar de cada amigo
             //que coinciden con los registrados de un amigo en la bdd
             intent.putExtra("friendId", friend.getId());
-            intent.putExtra("friendName", friend.getId());
+            intent.putExtra("friendName", friend.getName());
             intent.putExtra("friendImageUrl", friend.getImageUrl());
 
             //Se inicia la actividad que muestra cada amigo

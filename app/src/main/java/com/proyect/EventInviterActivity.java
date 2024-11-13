@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -189,6 +190,16 @@ public class EventInviterActivity extends AppCompatActivity
                                 R.string.nodataload, Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
+
+            @Override
+            public void handleOnBackPressed()
+            {
+                finish();
+            }
+        });
 
     }
 }

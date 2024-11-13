@@ -114,7 +114,7 @@ public class UserSettings extends AppCompatActivity
                 startActivity(intent);
 
                 //Cerramos la actividad actual
-                finish();
+                finishAffinity();
             }
         });
 

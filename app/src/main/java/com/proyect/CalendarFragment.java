@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.applandeo.materialcalendarview.CalendarDay;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -65,6 +66,7 @@ public class CalendarFragment extends Fragment
     private CalendarFragmentAdapter calendarAdapter;
     private RecyclerView rvCalendar;
     private ArrayList<Event> nextEvents;
+    FloatingActionButton fbEventRequests;
 
     /**
      * Constructor vacío necesario para poder crear el fragment
@@ -137,6 +139,15 @@ public class CalendarFragment extends Fragment
 
         //Inicializamos el arraylist de calendardays con el que se pondrán los iconos
         calendarDays = new ArrayList<>();
+
+        fbEventRequests = view.findViewById(R.id.fb_requests);
+
+        fbEventRequests.setOnClickListener(l ->
+        {
+            Intent intentRequests = new Intent(view.getContext(), EventRequestsActivity.class);
+
+            startActivity(intentRequests);
+        });
 
         //Llamamos al método que cargará todos los eventos del usuario en los arraylists
         //tanto para el calendario como para la lista

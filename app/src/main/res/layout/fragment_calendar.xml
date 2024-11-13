@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#fffae6"
     tools:context=".CalendarFragment">
 
     <com.applandeo.materialcalendarview.CalendarView
@@ -29,6 +30,7 @@
         app:layout_constraintTop_toBottomOf="@id/cv_calendar"
         android:layout_marginTop="10dp"
         android:text="@string/nextevents"
+        android:textStyle="bold"
         android:fontFamily="@font/gabriela"
         android:textSize="20sp"/>
 
@@ -40,5 +42,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fb_requests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/cv_calendar"
+        app:layout_constraintBottom_toTopOf="@id/rv_calendar"
+        app:layout_constraintStart_toEndOf="@id/tv_next_events"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@color/brown"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/baseline_playlist_add_24"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -179,19 +179,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Fragment currentFragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
 
                 //Si el fragment cargado es una instacia del fragment principal
-                //El calendarfragment, se cierra la actividad
-                if (currentFragment instanceof CalendarFragment)
-                {
-                    //*-Yosef-* lo cambio para que no lo cierre
-                    //Que no haga nada, que no cierre la app para que tengan que logearse de nuevo
-                    //y que no tengamos problemas con las notificaciones al salirse del usuario
-                    //y todas esas cosas
-                    //finishAffinity();
-                }
+                //El calendarfragment, se vuelve a cargar para actualizarse
+                //sino se carga el calendario apra mostrar los eventos
 
-                //Sino lo que pasa es que se cambia al actividad principal
-                else
-                {
                     ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
                     ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
                     ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
@@ -200,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.replace(R.id.ll_fragments_main, new CalendarFragment());
                     transaction.commit();
-                }
+                //}
             }
         });
     }

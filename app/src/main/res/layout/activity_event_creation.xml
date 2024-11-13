@@ -16,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginVertical="15dp"
         android:text="@string/newevent"
+        android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
         android:textSize="30sp"/>
 
@@ -78,7 +79,7 @@
         android:text="@string/eventplace"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <EditText android:id="@+id/et_event_place"
         android:layout_width="wrap_content"
@@ -86,7 +87,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_event_place"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_event_date"
+        app:layout_constraintBottom_toTopOf="@id/tv_event_date_title"
         android:background="#EFBF45"
         android:paddingVertical="5dp"
         android:paddingHorizontal="15dp"
@@ -114,7 +115,7 @@
         android:text="@string/eventdate"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <TextView android:id="@+id/tv_event_date"
         android:layout_width="wrap_content"
@@ -147,7 +148,7 @@
         android:text="@string/eventhour"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
     <TextView android:id="@+id/tv_event_hour"
         android:layout_width="wrap_content"

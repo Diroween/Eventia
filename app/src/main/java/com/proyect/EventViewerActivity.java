@@ -2,11 +2,12 @@ package com.proyect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -37,7 +38,6 @@ public class EventViewerActivity extends AppCompatActivity
     ImageView ivEventImage;
 
     FloatingActionButton fbAddFriends;
-    FloatingActionButton fbEventRequests;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -57,7 +57,6 @@ public class EventViewerActivity extends AppCompatActivity
         ivEventImage = findViewById(R.id.iv_event_image);
 
         fbAddFriends = findViewById(R.id.fb_addFriends);
-        fbEventRequests = findViewById(R.id.fb_requests);
 
         Intent intent = getIntent();
 
@@ -97,11 +96,14 @@ public class EventViewerActivity extends AppCompatActivity
             startActivity(intentInvite);
         });
 
-        fbEventRequests.setOnClickListener(l ->
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
         {
-            Intent intentRequests = new Intent(this, EventRequestsActivity.class);
 
-            startActivity(intentRequests);
+            @Override
+            public void handleOnBackPressed()
+            {
+                finish();
+            }
         });
 
         reference.child("events").child(eventId).child("registeredUsers")
@@ -134,9 +136,7 @@ public class EventViewerActivity extends AppCompatActivity
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error)
                                         {
-                                            Toast.makeText(EventViewerActivity.this,
-                                                    "Error al cargar usuario"
-                                                    , Toast.LENGTH_SHORT).show();
+                                            Log.println(Log.INFO, "Info", error.getMessage());
                                         }
                                     });
                         }
@@ -145,9 +145,7 @@ public class EventViewerActivity extends AppCompatActivity
                     @Override
                     public void onCancelled(@NonNull DatabaseError error)
                     {
-                        Toast.makeText(EventViewerActivity.this,
-                                "Error al cargar usuarios registrados"
-                                , Toast.LENGTH_SHORT).show();
+                        Log.println(Log.INFO, "Info", error.getMessage());
                     }
                 });
     }
