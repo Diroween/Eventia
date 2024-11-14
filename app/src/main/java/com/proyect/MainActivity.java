@@ -175,12 +175,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Cogemos el manejador de eventos
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
-                //cogemos el fragment que esté cargado en ese momento
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
-
                 //Si el fragment cargado es una instacia del fragment principal
                 //El calendarfragment, se vuelve a cargar para actualizarse
-                //sino se carga el calendario apra mostrar los eventos
+                //sino se carga el calendario para mostrar los eventos
 
                     ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
                     ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
@@ -190,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.replace(R.id.ll_fragments_main, new CalendarFragment());
                     transaction.commit();
-                //}
             }
         });
     }

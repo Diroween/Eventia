@@ -6,6 +6,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * ViewHolder personalizado para el EventRequestAdapter
+ * */
+
 public class EventRequestViewHolder extends RecyclerView.ViewHolder
 {
     TextView tvEventName;

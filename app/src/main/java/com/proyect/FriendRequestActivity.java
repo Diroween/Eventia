@@ -180,8 +180,8 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                     public void onCancelled(@NonNull DatabaseError error)
                     {
                         //Un mensaje de error
-                        Toast.makeText(getApplicationContext(), R.string.nodataload,
-                                Toast.LENGTH_SHORT).show();
+                        /*Toast.makeText(getApplicationContext(), R.string.nodataload,
+                                Toast.LENGTH_SHORT).show();*/
                     }
                 });
     }

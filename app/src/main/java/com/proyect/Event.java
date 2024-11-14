@@ -1,7 +1,7 @@
 package com.proyect;
 
 /**
- * Clase Event que representa un event en la aplicación
+ * Clase Event que representa un evento en la aplicación
  * */
 
 public class Event

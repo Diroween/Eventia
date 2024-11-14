@@ -2,12 +2,12 @@ package com.proyect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -25,19 +25,36 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * Clase para poder invitar amigos a los eventos creados
+ * */
+
 public class EventInviterActivity extends AppCompatActivity
 {
+    /**
+     * Creamos tantas variables de clase como necesitamos:
+     * Un adaptador para la lista de amigos
+     * Una lista recyclerview
+     * Un arraylist de usuarios
+     * Una referencia a la base de datos
+     * El usuario que se selecciona de la lista
+     * El botón para invitar a los amigos
+     * */
+
     FriendInviterAdapter friendsAdapter;
     RecyclerView rvFriends;
     ArrayList<User> friends;
     DatabaseReference databaseReference;
     User selectedFriend;
-
     Button btnInvite;
+
+    String eventId;
+    String eventName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        //Métodos necesarios para mostrar correctamente los elementos por pantalla
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_inviter);
@@ -48,115 +65,66 @@ public class EventInviterActivity extends AppCompatActivity
             return insets;
         });
 
+        //Recogemos el nombre del evento y su id
         Intent intent = getIntent();
 
-        String eventId = intent.getStringExtra("event_id");
-        String eventName = intent.getStringExtra("event_name");
+        eventId = intent.getStringExtra("event_id");
+        eventName = intent.getStringExtra("event_name");
 
+        //Inicializamos los elementos en pantalla y el resto de variables
         rvFriends = findViewById(R.id.rv_friends);
         btnInvite = findViewById(R.id.btn_invite_friend);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        friends = new ArrayList<User>();
 
         rvFriends.setLayoutManager(new LinearLayoutManager(this));
 
-        friends = new ArrayList<User>();
-
+        //Indicamos el usuario seleccionado en el escuchador
         friendsAdapter = new FriendInviterAdapter(friends, friend->
         {
             selectedFriend = friend;
         });
 
+        //Asignamos el adaptardor a la lista
         rvFriends.setAdapter(friendsAdapter);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        btnInvite.setOnClickListener(new View.OnClickListener() {
+        //Damos funcionalidad al botón de invitar
+        btnInvite.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view)
             {
-                DatabaseReference userEventRequestsRef = databaseReference.child("users")
-                        .child(selectedFriend.getId()).child("eventsRequests");
-
-                DatabaseReference eventRegisteredUsersRef = databaseReference.child("events")
-                        .child(eventId).child("registeredUsers");
-
-                //Verificamos si el usuario ya ha sido invitado al evento
-                userEventRequestsRef.addListenerForSingleValueEvent(new ValueEventListener()
-                {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot)
-                    {
-                        if (snapshot.hasChild(eventId))
-                        {
-                            Toast.makeText(EventInviterActivity.this
-                                    , "Este amigo ya ha sido invitado al evento"
-                                    , Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            //Verificamos si el usuario ya está registrado en el evento
-                            eventRegisteredUsersRef.addListenerForSingleValueEvent(new ValueEventListener()
-                            {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot)
-                                {
-                                    if (snapshot.hasChild(selectedFriend.getId()))
-                                    {
-                                        Toast.makeText(EventInviterActivity.this
-                                                , "El usuario ya está registrado en el evento"
-                                                , Toast.LENGTH_SHORT).show();
-                                    }
-                                    else
-                                    {
-                                        //Añadimos una petición del evento
-                                        userEventRequestsRef.child(eventId)
-                                                .setValue("pending").addOnCompleteListener(task ->
-                                                {
-                                            if (task.isSuccessful())
-                                            {
-                                                Toast.makeText(EventInviterActivity.this
-                                                        , "Enviada petición de registro al evento: "
-                                                                + eventName, Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                Toast.makeText(EventInviterActivity.this
-                                                        , "No se pudo enviar la petición"
-                                                        , Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error)
-                                {
-                                    Toast.makeText(EventInviterActivity.this
-                                            , R.string.eventloaderror, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error)
-                    {
-                        Toast.makeText(EventInviterActivity.this
-                                , R.string.loadeventserror, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                inviteFriend();
             }
         });
 
+        loadFriends();
+    }
+
+    /**
+     * Método para cargar los usuarios en la lista
+     * */
+
+    private void loadFriends()
+    {
+        //Cogemos la referencia de los amigos del usuario activo
         databaseReference.child("users").child(FirebaseAuth.getInstance().getUid())
                 .child("friends").addListenerForSingleValueEvent(new ValueEventListener()
                 {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
+                        //Vaciamos el arraylist
                         friends.clear();
 
+                        //En el bucle:
+                        //Cogemos cada amigo
+                        //si existe lo buscamos en la lista de usuario y cargamos sus datos
+                        //se notifica que los datos del adaptador han cambiado
+                        //Si no se pueden cargar se guarda un mensaje en log
                         for (DataSnapshot dataSnapshot : snapshot.getChildren())
                         {
+                            //Cogemos cada amigos
                             String friendId = dataSnapshot.getKey();
 
                             databaseReference.child("users").child(friendId)
@@ -173,33 +141,122 @@ public class EventInviterActivity extends AppCompatActivity
                                             }
                                         }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error)
-                                {
-                                    Toast.makeText(EventInviterActivity.this,
-                                            R.string.nodataload, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error)
+                                        {
+                                            Log.e("INFO"
+                                                    , "No se han podido cargar los datos");
+                                        }
+                                    });
                         }
                     }
+
+                    /**
+                     * Si no se pueden cargar se guarda un mensaje en log
+                     * */
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error)
                     {
-                        Toast.makeText(EventInviterActivity.this,
-                                R.string.nodataload, Toast.LENGTH_SHORT).show();
+                        Log.e("INFO"
+                                , "No se han podido cargar los datos");
                     }
                 });
+    }
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+    /**
+     * Método para poder cargar a los amigos en la lista
+     * */
+
+    private void inviteFriend()
+    {
+        //Cogemos la referencia de donde está
+        //el usuario en la base de datos y sus peticiones de evento
+        //y donde el evento y sus usuarios registrados
+        DatabaseReference userEventRequestsRef = databaseReference.child("users")
+                .child(selectedFriend.getId()).child("eventsRequests");
+
+        DatabaseReference eventRegisteredUsersRef = databaseReference
+                .child("events").child(eventId).child("registeredUsers");
+
+        //Primero, verificamos si el usuario ya ha sido invitado al evento
+        userEventRequestsRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
-
             @Override
-            public void handleOnBackPressed()
+            public void onDataChange(@NonNull DataSnapshot snapshot)
             {
-                finish();
+                //Si ya ha sido invitado se muestra un mensaje
+                if (snapshot.hasChild(eventId))
+                {
+                    Toast.makeText(EventInviterActivity.this
+                            , R.string.alreadyinvited
+                            , Toast.LENGTH_SHORT).show();
+                }
+
+                //sino verificamos si el usuario ya está registrado en el evento
+                else
+                {
+                    eventRegisteredUsersRef.addListenerForSingleValueEvent(new ValueEventListener()
+                    {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                        {
+                            //Si está registrado se muestra un mensaje
+                            if (snapshot.hasChild(selectedFriend.getId()))
+                            {
+                                Toast.makeText(EventInviterActivity.this
+                                        , R.string.alreadyregistered
+                                        , Toast.LENGTH_SHORT).show();
+                            }
+
+                            //Si no añadimos una petición del evento
+                            else
+                            {
+                                userEventRequestsRef.child(eventId)
+                                        .setValue("pending").addOnCompleteListener(task ->
+                                        {
+                                    if (task.isSuccessful())
+                                    {
+                                        //Si se completa el proceso se manda un mensaje
+                                        Toast.makeText(EventInviterActivity.this
+                                                , getResources()
+                                                        .getText(R.string.eventrequestsent)
+                                                        + eventName, Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+
+                                    //sino se registra un error
+                                    else
+                                    {
+                                        Log.e("INFO"
+                                                , "No se puedo enviar la petición");
+                                    }
+                                });
+                            }
+                        }
+
+                        /**
+                         * Si no se puede registrar el evento guardamos el error
+                         * */
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error)
+                        {
+                            Log.e("INFO"
+                                    , "Error al cargar el evento");
+                        }
+                    });
+                }
+            }
+
+            /**
+             * Si no se puede registrar el evento guardamos el error
+             * */
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("INFO"
+                        , "Error al cargar el evento");
             }
         });
-
     }
 }

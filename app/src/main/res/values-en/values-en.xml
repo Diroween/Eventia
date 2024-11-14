@@ -88,6 +88,12 @@
     <string name="invitefriends">Invite friends</string>
     <string name="invite">Invite</string>
     <string name="eventrequests">Event requests</string>
+    <string name="eventsignup">You have joined the event</string>
+    <string name="eventdeclined">Event request declined</string>
+    <string name="alreadyinvited">This friend has already been invited to the event</string>
+    <string name="alreadyregistered">The user is already registered for the event</string>
+    <string name="eventrequestsent">Event request sent: </string>
+
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
