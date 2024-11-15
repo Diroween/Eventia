@@ -92,7 +92,10 @@
     <string name="alreadyinvited">Este amigo ya ha sido invitado al evento</string>
     <string name="alreadyregistered">El usuario ya está registrado en el evento</string>
     <string name="eventrequestsent">Enviada petición del evento: </string>
-
+    <string name="registereddelete">Has salido del evento</string>
+    <string name="registereddeleteerror">No has podido salir del evento</string>
+    <string name="eventdeleted">Evento eliminado</string>
+    <string name="eventdeletederror">Error al eliminar el evento</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

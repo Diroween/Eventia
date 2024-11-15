@@ -93,7 +93,10 @@
     <string name="alreadyinvited">This friend has already been invited to the event</string>
     <string name="alreadyregistered">The user is already registered for the event</string>
     <string name="eventrequestsent">Event request sent: </string>
-
+    <string name="registereddelete">You have left the event</string>
+    <string name="registereddeleteerror">You have not been able to leave the event</string>
+    <string name="eventdeleted">Event deleted</string>
+    <string name="eventdeletederror">Event deleted error</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

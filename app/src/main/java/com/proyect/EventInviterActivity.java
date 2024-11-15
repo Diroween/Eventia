@@ -220,7 +220,7 @@ public class EventInviterActivity extends AppCompatActivity
                                         //Si se completa el proceso se manda un mensaje
                                         Toast.makeText(EventInviterActivity.this
                                                 , getResources()
-                                                        .getText(R.string.eventrequestsent)
+                                                        .getText(R.string.eventrequestsent) + " "
                                                         + eventName, Toast.LENGTH_SHORT)
                                                 .show();
                                     }

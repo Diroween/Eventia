@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,6 +54,8 @@ public class EventViewerActivity extends AppCompatActivity
     ImageView ivEventImage;
 
     FloatingActionButton fbAddFriends;
+    FloatingActionButton fbEditEvent;
+    FloatingActionButton fbDeleteEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -73,6 +77,8 @@ public class EventViewerActivity extends AppCompatActivity
         ivEventImage = findViewById(R.id.iv_event_image);
 
         fbAddFriends = findViewById(R.id.fb_addFriends);
+        fbEditEvent = findViewById(R.id.fb_edit_event);
+        fbDeleteEvent = findViewById(R.id.fb_delete_event);
 
         //Recogemos los datos del evento que pasamos desde el adaptador de calendarFragment
         Intent intent = getIntent();
@@ -114,6 +120,13 @@ public class EventViewerActivity extends AppCompatActivity
             intentInvite.putExtra("event_name", eventName);
 
             startActivity(intentInvite);
+        });
+
+        //Eliminamos al usuario del evento
+        //Si es el último registrado se elimina el evento
+        fbDeleteEvent.setOnClickListener(l ->
+        {
+            removeUserFromEvent(eventId);
         });
 
         //Cargamos los usuarios registrado en el evento
@@ -183,5 +196,88 @@ public class EventViewerActivity extends AppCompatActivity
                         Log.println(Log.INFO, "Info", error.getMessage());
                     }
                 });
+    }
+
+    private void removeUserFromEvent(String eventId)
+    {
+        //Cogemos el id del usuario
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //Cogemos la referencia del usuario en los usuarios registrados al evento
+        DatabaseReference eventRegistered = reference.child("events").child(eventId)
+                .child("registeredUsers").child(userId);
+
+        //Eliminamos al usuario
+        eventRegistered.removeValue().addOnCompleteListener(task -> 
+        {
+            if(task.isSuccessful())
+            {
+                Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
+
+                //Checkeamos si hay usuarios registrados, si no los hay se elimina
+                noRegisteredUsersDelete(eventId);
+
+                //cerramos la vista del evento
+                finish();
+            }
+
+            //Si no se ha podido se manda un Toast
+            else
+            {
+                Toast.makeText(this, R.string.registereddeleteerror,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Método para verificar si quedan usuarios registrados
+     * y eliminar el evento si no hay usuario registrados a él
+     */
+
+    private void noRegisteredUsersDelete(String eventId)
+    {
+        //cogemos una referencia a los usuarios registrados al evento
+        DatabaseReference registeredUsersRef = reference.child("events").child(eventId)
+                .child("registeredUsers");
+
+        registeredUsersRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                if (!snapshot.exists() || snapshot.getChildrenCount() == 0)
+                {
+                    //Si no quedan usuarios registrados, eliminamos el evento
+                    reference.child("events").child(eventId).removeValue()
+                            .addOnCompleteListener(task ->
+                            {
+                                if (task.isSuccessful())
+                                {
+                                    Toast.makeText(EventViewerActivity.this,
+                                            R.string.eventdeleted,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(EventViewerActivity.this,
+                                            R.string.eventdeletederror,
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+
+            /**
+             * Si no se puede borrar el evento se guarda un log
+             * */
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("Error",
+                        "Error al verificar usuarios registrados en el evento",
+                        error.toException());
+            }
+        });
     }
 }

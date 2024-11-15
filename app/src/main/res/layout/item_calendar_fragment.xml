@@ -21,6 +21,7 @@
         app:layout_constraintStart_toEndOf="@id/iv_event_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="10dp"
         android:textAlignment="center"
         android:textSize="22sp"
         android:textColor="@color/black"
