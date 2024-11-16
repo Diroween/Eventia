@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fffae6"
-    tools:context=".TodayFragment">
+    tools:context=".today.TodayFragment">
 
     <!--Añadimos un linearlayour donde contener nuestros elementos-->
 

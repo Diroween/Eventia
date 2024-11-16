@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fffae6"
-    tools:context=".FriendSearcherActivity">
+    tools:context=".friend.FriendSearcherActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_friend_search"

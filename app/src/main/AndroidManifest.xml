@@ -20,37 +20,40 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".EventRequestsActivity"
+            android:name=".event.EventEditorActivity"
             android:exported="false" />
         <activity
-            android:name=".EventInviterActivity"
+            android:name=".event.EventRequestsActivity"
             android:exported="false" />
         <activity
-            android:name=".EventViewerActivity"
+            android:name=".event.EventInviterActivity"
             android:exported="false" />
         <activity
-            android:name=".EventCreationActivity"
+            android:name=".event.EventViewerActivity"
             android:exported="false" />
         <activity
-            android:name=".FriendViewerActivity"
+            android:name=".event.EventCreationActivity"
             android:exported="false" />
         <activity
-            android:name=".FriendSearcherActivity"
+            android:name=".friend.FriendViewerActivity"
             android:exported="false" />
         <activity
-            android:name=".FriendRequestActivity"
+            android:name=".friend.FriendSearcherActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupActivity"
+            android:name=".friend.FriendRequestActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".authentication.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".NotesActivity"
+            android:name=".authentication.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".UserSettings"
+            android:name=".note.NotesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.UserSettings"
             android:exported="false" />
         <activity
             android:name=".Splash"

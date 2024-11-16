@@ -10,7 +10,7 @@
     android:background="#fffae6"
     android:layout_margin="0dp"
     android:padding="16dp"
-    tools:context=".EventViewerActivity">
+    tools:context=".event.EventViewerActivity">
 
     <ImageView android:id="@+id/iv_event_image"
         android:layout_width="0dp"

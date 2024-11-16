@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#fffae6"
-    tools:context=".FriendsFragment">
+    tools:context=".friend.FriendsFragment">
 
     <TextView android:id="@+id/tv_friends"
         android:layout_width="wrap_content"

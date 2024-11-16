@@ -25,6 +25,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.firebase.auth.FirebaseAuth;
+import com.proyect.calendar.CalendarFragment;
+import com.proyect.friend.FriendsFragment;
+import com.proyect.note.NotesFragment;
+import com.proyect.today.TodayFragment;
+import com.proyect.user.UserSettings;
 
 import java.util.ArrayList;
 
