@@ -117,6 +117,9 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
             intent.putExtra("event_id", event.getId());
             intent.putExtra("event_name", event.getName());
             intent.putExtra("event_data", formattedDate);
+            intent.putExtra("event_date", event.getDate());
+            intent.putExtra("event_place", event.getPlace());
+            intent.putExtra("event_hour", event.getHour());
 
             if(event.getImage() != null)
             {
