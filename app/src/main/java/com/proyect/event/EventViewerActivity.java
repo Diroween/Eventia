@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -219,27 +220,33 @@ public class EventViewerActivity extends AppCompatActivity
         DatabaseReference eventRegistered = reference.child("events").child(eventId)
                 .child("registeredUsers").child(userId);
 
-        //Eliminamos al usuario
-        eventRegistered.removeValue().addOnCompleteListener(task -> 
-        {
-            if(task.isSuccessful())
-            {
-                Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
+        //Se pregunta al usuario si de verdad quieres salir de un evento
+        //Si es afirmativo se procede al borrado
+        Snackbar.make(findViewById(android.R.id.content),
+                R.string.leaveeventquestion,Snackbar.LENGTH_LONG)
+                .setAction(R.string.leave, var ->
+                {
 
-                //Checkeamos si hay usuarios registrados, si no los hay se elimina
-                noRegisteredUsersDelete(eventId);
+                    //Eliminamos al usuario
+                    eventRegistered.removeValue().addOnCompleteListener(task ->
+                    {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
 
-                //cerramos la vista del evento
-                finish();
-            }
+                            //Checkeamos si hay usuarios registrados, si no los hay se elimina
+                            noRegisteredUsersDelete(eventId);
 
-            //Si no se ha podido se manda un Toast
-            else
-            {
-                Toast.makeText(this, R.string.registereddeleteerror,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+                            //cerramos la vista del evento
+                            finish();
+                        }
+
+                        //Si no se ha podido se manda un Toast
+                        else {
+                            Toast.makeText(this, R.string.registereddeleteerror,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }).show();
     }
 
     /**

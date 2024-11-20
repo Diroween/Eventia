@@ -94,6 +94,8 @@
     <string name="alreadyregistered">The user is already registered for the event</string>
     <string name="eventrequestsent">Event request sent: </string>
     <string name="registereddelete">You have left the event</string>
+    <string name="leaveeventquestion">Are you sure you want to leave of this event?</string>
+    <string name="leave">Leave</string>
     <string name="registereddeleteerror">You have not been able to leave the event</string>
     <string name="eventdeleted">Event deleted</string>
     <string name="eventdeletederror">Event deleted error</string>
