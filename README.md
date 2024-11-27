@@ -14,7 +14,7 @@ Eventia es una aplicación móvil diseñada para la gestión de eventos, desarro
 - **Entorno de desarrollo**: Android Studio
 - **Base de datos**: Firebase
 - **Control de versiones**: Git
-- 
+
 
 ## <span>Instalación</span>
 
@@ -100,4 +100,4 @@ Puede contactar con nosotros a través de nuestro correo de estudiante personal:
 
 
 > [!IMPORTANT]
-> Esta es una aplicación con motivo del Fin de Grado, está sujeta a cambios y tiene un carácter y forma académico, no apta para su comercialización.
+> Esta es una aplicación con motivo del Trabajo de Fin de Grado (TFG) y está sujeta a cambios constantes. Esta aplicación tiene un carácter y una forma académicas, no apta es para su comercialización.
