@@ -84,5 +84,5 @@ Eventia es una aplicación móvil diseñada para la gestión de eventos, desarro
 
 ## Con todo esto, solo faltaría disfrutar de los eventos con tus amigos
 
-##¡ADELANTE! ¡Pruébala y disfruta del parque de atracciones, un picnic al aire libre o de una cita con la persona que más te gusta!
+### ¡ADELANTE! ¡Pruébala y disfruta del parque de atracciones, un picnic al aire libre o de una cita con la persona que más te gusta!
 
