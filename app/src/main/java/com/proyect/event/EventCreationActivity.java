@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.proyect.MainActivity;
 import com.proyect.R;
 
 import java.text.ParseException;
@@ -425,17 +424,6 @@ public class EventCreationActivity extends AppCompatActivity
                                         Toast.makeText(this,
                                                 R.string.eventcreated,
                                                 Toast.LENGTH_SHORT).show();
-
-                                        //Tras crear un nuevo evento se incia de nuevo el main
-                                        //para que se actualicen todos los eventos
-                                        Intent intent = new Intent(this
-                                                , MainActivity.class);
-
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                                        getApplicationContext().startActivity(intent);
-
-                                        finishAffinity();
                                     }
                                     //Si no, se indica con un toast
                                     else
