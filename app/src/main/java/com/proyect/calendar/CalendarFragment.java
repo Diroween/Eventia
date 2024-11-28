@@ -1,5 +1,6 @@
 package com.proyect.calendar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -291,13 +292,13 @@ public class CalendarFragment extends Fragment {
 
                                     if (calendar.after(today)) {
                                         nextEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_current));
+                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_current, null));
                                         calendarDay.setLabelColor(R.color.black);
                                     }
 
                                     if (calendar.before(today)) {
                                         pastEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_past_event));
+                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_past_event, null));
                                         calendarDay.setLabelColor(R.color.black);
                                     }
 
@@ -367,7 +368,7 @@ public class CalendarFragment extends Fragment {
             CalendarDay calendarDay = new CalendarDay(calendar);
 
 
-            calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_exit_bckgrnd));
+            calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_exit_bckgrnd, null));
             calendarDay.setLabelColor(R.color.orange);
 
             calendarDays.add(calendarDay);
@@ -381,33 +382,37 @@ public class CalendarFragment extends Fragment {
         calendarAdapter.notifyDataSetChanged();
     }
 
+    @SuppressLint("StringFormatInvalid")
     public void programarNotificacion(Event event, long delay) {
+
+        String mensaje = getResources().getString(R.string.eventoNotificacionMensaje, event.getPlace());
+
         if (delay > 0) {
             //notificamos al momento
             createWorkRequest(event.getId(),
-                    "Tu evento \"" + event.getName() + "\" tendrá lugar el " + event.getDate() + " a las " + event.getHour(),
-                    "Ubicación: " + event.getPlace(),
+                    getResources().getString(R.string.eventoNotificacionTituloNow, event.getName()),
+                    mensaje,
                     delay);
 
             if (delay > 3600) {
                 //notificamos una hora antes
                 createWorkRequest(event.getId() + "_3600",
-                        "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de una hora!",
-                        "Ubicación: " + event.getPlace(),
+                        getResources().getString(R.string.eventoNotificacionTitulo1h, event.getName()),
+                        mensaje,
                         delay - 3600);
 
                 if (delay > 86400) {
                     //notificamos un día antes
                     createWorkRequest(event.getId() + "_86400",
-                            "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 24h!",
-                            "Ubicación: " + event.getPlace(),
+                            getResources().getString(R.string.eventoNotificacionTitulo24h, event.getName()),
+                            mensaje,
                             delay - 86400);
 
                     if (delay > 604800) {
                         //notificamos una semana antes
                         createWorkRequest(event.getId() + "_604800",
-                                "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 7 días!",
-                                "Ubicación: " + event.getPlace(),
+                                getResources().getString(R.string.eventoNotificacionTitulo7d, event.getName()),
+                                mensaje,
                                 delay - 604800);
                     }
                 }

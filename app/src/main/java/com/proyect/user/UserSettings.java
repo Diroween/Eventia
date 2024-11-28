@@ -37,7 +37,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.proyect.authentication.LoginActivity;
 import com.proyect.R;
-import com.proyect.calendar.events.PastEventsFragment;
 import com.proyect.event.PreviousEventsActivity;
 
 public class UserSettings extends AppCompatActivity
