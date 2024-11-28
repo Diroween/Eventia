@@ -77,8 +77,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-        <activity android:name=".event.EventLogActivity"
-            android:exported="false"/>
 
         <meta-data
             android:name="preloaded_fonts"
