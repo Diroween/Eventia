@@ -1,7 +1,9 @@
 package com.proyect;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,18 +11,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -28,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.proyect.calendar.CalendarFragment;
 import com.proyect.friend.FriendsFragment;
 import com.proyect.note.NotesFragment;
+import com.proyect.notification.NotificationSettingsActivity;
 import com.proyect.today.TodayFragment;
 import com.proyect.user.UserSettings;
 
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * //
      * Y el manejador de fragments
      */
+    private static final int REQUEST_CODE = 100;
     ImageView ivUserImage;
     TextView tvDisplayname;
 
@@ -83,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        requestNotificationPermission();
 
         //Creamos una toolbar para el main de la aplicación
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_main);
@@ -295,5 +303,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy()
     {
         super.onDestroy();
+    }
+
+    private void requestNotificationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+                showRationaleDialog();
+            } else {
+                // Request permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void showRationaleDialog() {
+        Intent intent = new Intent(this, NotificationSettingsActivity.class);
+        startActivity(intent);
     }
 }

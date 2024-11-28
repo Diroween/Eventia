@@ -96,6 +96,10 @@
     <string name="registereddeleteerror">No has podido salir del evento</string>
     <string name="eventdeleted">Evento eliminado</string>
     <string name="eventdeletederror">Error al eliminar el evento</string>
+    <string name="pastevents">Eventos previos</string>
+    <string name="notificationPermissionsLack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
+    <string name="botonAbrirConfiguracion">Ir a configuración</string>
+    <string name="botonSaltar">Saltar por ahora</string>
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

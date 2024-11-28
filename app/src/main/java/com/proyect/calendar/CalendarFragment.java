@@ -3,27 +3,24 @@ package com.proyect.calendar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.applandeo.materialcalendarview.CalendarDay;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,19 +28,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventCreationActivity;
-import com.proyect.event.EventLogActivity;
+import com.proyect.event.EventOnCurrentDayActivity;
 import com.proyect.event.EventRequestsActivity;
-import com.proyect.R;
 import com.proyect.notification.ReminderWorker;
-
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -77,21 +74,15 @@ public class CalendarFragment extends Fragment {
 
     public CalendarView calendarView;
     FloatingActionButton fbEventRequests;
-
-    FloatingActionButton fbEventLog;
     private String mParam1;
     private String mParam2;
     private DatabaseReference databaseReference;
     private ArrayList<CalendarDay> calendarDays;
     private CalendarFragmentAdapter calendarAdapter;
-    private CalendarFragmentAdapter calendarAdapterPast;
     private RecyclerView rvCalendar;
-    private RecyclerView rvCalendar2;
     private ArrayList<Event> nextEvents;
     private ArrayList<Event> pastEvents;
-
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private ArrayList<String> currentEvents;
 
 
     /**
@@ -118,17 +109,16 @@ public class CalendarFragment extends Fragment {
     /**
      * Método para lanzar el trabajo en segundo plano
      */
-
     public static void createWorkRequest(String workName, String titulo, String message, long timeDelayInSeconds) {
         OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(ReminderWorker.class)
                 .setInitialDelay(timeDelayInSeconds, TimeUnit.SECONDS)
                 .setInputData(new Data.Builder().putString("title", titulo).putString("message", message).build())
                 .build();
 
-        // Es posible pasar una List<OneTimeWorkRequest> directamente con el segundo método de .enqueueUniqueWork();
+        //empleamos ExistingWorkPolicy.REPLACE para sobreescribir trabajos previos en caso de haberse editado la hora del evento
         WorkManager.getInstance(context).enqueueUniqueWork(
                 workName,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 myWorkRequest
         );
     }
@@ -168,23 +158,22 @@ public class CalendarFragment extends Fragment {
 
         pastEvents = new ArrayList<Event>();
 
+        currentEvents = new ArrayList<String>();
+
         //inicializamos el adaptador con un contexto y el array de próximos eventos
         calendarAdapter = new CalendarFragmentAdapter(view.getContext(), nextEvents);
 
-        calendarAdapterPast = new CalendarFragmentAdapter(view.getContext(), pastEvents);
+        rvCalendar = view.findViewById(R.id.rv_calendar);
+
+        //Le ponemos un gestor de layouts a la lista
+        rvCalendar.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        rvCalendar.setAdapter(calendarAdapter);
 
         //Inicializamos el arraylist de calendardays con el que se pondrán los iconos
         calendarDays = new ArrayList<>();
 
         fbEventRequests = view.findViewById(R.id.fb_requests);
-
-        fbEventLog = view.findViewById(R.id.fb_event_log);
-
-        fbEventLog.setOnClickListener(l -> {
-            Intent intentLog = new Intent(view.getContext(), EventLogActivity.class);
-
-            startActivity(intentLog);
-        });
 
         fbEventRequests.setOnClickListener(l ->
         {
@@ -193,35 +182,45 @@ public class CalendarFragment extends Fragment {
             startActivity(intentRequests);
         });
 
-        //Llamamos al método que cargará todos los eventos del usuario en los arraylists
-        //tanto para el calendario como para la lista
+
         loadUserEvents();
 
-        //Le setteamos un manejador de eventos para cuando pulsamos en alguna fecha
+
         calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener() {
             @Override
             public void onClick(@NonNull CalendarDay calendarDay) {
-                //instancia de Calendar de Java basada en el día que se pulsa
+
                 Calendar calendar = calendarDay.getCalendar();
 
-                //Cogemos los datos de ese día
-                String year = String.valueOf(calendar.get(Calendar.YEAR));
-                String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
-                String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+                LocalDate fechaSelec = calendarDay.getCalendar().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate fechaActual = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                //los juntamos en un string formateado
-                String date = year + "-" + month + "-" + day;
+                if (currentEvents.contains(fechaSelec.toString())) {
+                    Intent intent = new Intent(calendarView.getContext(), EventOnCurrentDayActivity.class);
+                    intent.putExtra("date", fechaSelec.toString());
+                    startActivity(intent);
+                } else {
 
-                //Creamos un intent para pasar a la actividad de crear eventos
-                Intent intent = new Intent(calendarView.getContext(), EventCreationActivity.class);
+                    //Cogemos los datos de ese día
+                    String year = String.valueOf(calendar.get(Calendar.YEAR));
+                    String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
+                    String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
 
-                //Pasamos el día seleccionado a la siguiente activity
-                intent.putExtra("date", date);
+                    //los juntamos en un string formateado
+                    String date = year + "-" + month + "-" + day;
 
-                //iniciamos el intent
-                startActivity(intent);
+                    //Creamos un intent para pasar a la actividad de crear eventos
+                    Intent intent = new Intent(calendarView.getContext(), EventCreationActivity.class);
+
+                    //Pasamos el día seleccionado a la siguiente activity
+                    intent.putExtra("date", date);
+
+                    //iniciamos el intent
+                    startActivity(intent);
+                }
             }
         });
+
 
         return view;
     }
@@ -233,6 +232,11 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            setCalendarDays();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         loadUserEvents();
     }
 
@@ -253,6 +257,7 @@ public class CalendarFragment extends Fragment {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         nextEvents.clear();
                         pastEvents.clear();
+                        currentEvents.clear();
 
                         //Dentro del bucle:
                         //Creamos un evento para cada coincidencia de la base de datos
@@ -279,24 +284,26 @@ public class CalendarFragment extends Fragment {
 
                                     //Si el día del evento es posterior al día de hoy
                                     //Se carga en futuros eventos
+
+                                    currentEvents.add(event.getDate());
+
+                                    CalendarDay calendarDay = new CalendarDay(calendar);
+
                                     if (calendar.after(today)) {
                                         nextEvents.add(event);
+                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_current));
+                                        calendarDay.setLabelColor(R.color.black);
                                     }
 
                                     if (calendar.before(today)) {
                                         pastEvents.add(event);
+                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_past_event));
+                                        calendarDay.setLabelColor(R.color.black);
                                     }
 
                                     //Se hace un nuevo CalendarDay personalizado
                                     //del día del evento
-                                    CalendarDay calendarDay = new CalendarDay(calendar);
 
-                                    //Le ponemos una etiquetita para representar que ese día hay un evento
-
-                                    //calendarDay.setImageResource(R.drawable.ic_event_list);
-                                    //calendarDay.setBackgroundResource(R.drawable.baseline_delete_outline_24);
-                                    calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_exit_bckgrnd));
-                                    calendarDay.setLabelColor(R.color.orange);
 
                                     //Añadimos el día al calendario
                                     //Esto lo hace con todos los días, representando así todos los
@@ -319,46 +326,7 @@ public class CalendarFragment extends Fragment {
 
                                     long delaySegundos = fechaHoraEvento.toEpochSecond(offset) - fechaHoraActual.toEpochSecond(offset);
 
-                                    if (delaySegundos > 0) {
-                                        createWorkRequest(event.getId(),
-                                                "Tu evento \"" + event.getName() + "\" tendrá lugar el " + event.getDate() + " a las " + event.getHour(),
-                                                "Ubicación: " + event.getPlace(),
-                                                delaySegundos);
-
-
-                                        //Toast.makeText(getContext(), ""+ delaySegundos, Toast.LENGTH_LONG).show();
-
-                                        if (delaySegundos > 3600) {
-                                            //delaySegundos = delaySegundos - 3600;
-                                            createWorkRequest(event.getId() + "_3600",
-                                                    "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de una hora!",
-                                                    "Ubicación: " + event.getPlace(),
-                                                    delaySegundos - 3600);
-
-                                            Log.d("TIME_RECORDER", String.valueOf(delaySegundos));
-
-                                            if (delaySegundos > 86400) {
-                                                //delaySegundos = delaySegundos - 86400;
-                                                createWorkRequest(event.getId() + "_86400",
-                                                        "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 24h!",
-                                                        "Ubicación: " + event.getPlace(),
-                                                        delaySegundos - 86400);
-
-                                                Log.d("TIME_RECORDER", String.valueOf(delaySegundos));
-
-                                                if (delaySegundos > 604800) {
-                                                    //delaySegundos = delaySegundos - 604800;
-                                                    createWorkRequest(event.getId() + "_604800",
-                                                            "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 7 días!",
-                                                            "Ubicación: " + event.getPlace(),
-                                                            delaySegundos - 604800);
-
-                                                    Log.d("TIME_RECORDER", String.valueOf(delaySegundos));
-
-                                                }
-                                            }
-                                        }
-                                    }
+                                    programarNotificacion(event, delaySegundos);
                                 }
 
                                 //Si no se consigue parsear bien la fecha se recoge una excepción
@@ -383,6 +351,68 @@ public class CalendarFragment extends Fragment {
                 });
 
 
+    }
+
+    public void setCalendarDays() throws ParseException {
+
+        ArrayList<Event> events = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        for (Event event : events) {
+            Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
+                    .parse(event.getDate());
+
+            calendar.setTime(eventDate);
+
+            CalendarDay calendarDay = new CalendarDay(calendar);
+
+
+            calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_exit_bckgrnd));
+            calendarDay.setLabelColor(R.color.orange);
+
+            calendarDays.add(calendarDay);
+        }
+
+
+        //añadimos al calendario todos los dias personalizados
+        calendarView.setCalendarDays(calendarDays);
+
+        //Le decimos al adaptador que la lista ha cambiado sus datos
+        calendarAdapter.notifyDataSetChanged();
+    }
+
+    public void programarNotificacion(Event event, long delay) {
+        if (delay > 0) {
+            //notificamos al momento
+            createWorkRequest(event.getId(),
+                    "Tu evento \"" + event.getName() + "\" tendrá lugar el " + event.getDate() + " a las " + event.getHour(),
+                    "Ubicación: " + event.getPlace(),
+                    delay);
+
+            if (delay > 3600) {
+                //notificamos una hora antes
+                createWorkRequest(event.getId() + "_3600",
+                        "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de una hora!",
+                        "Ubicación: " + event.getPlace(),
+                        delay - 3600);
+
+                if (delay > 86400) {
+                    //notificamos un día antes
+                    createWorkRequest(event.getId() + "_86400",
+                            "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 24h!",
+                            "Ubicación: " + event.getPlace(),
+                            delay - 86400);
+
+                    if (delay > 604800) {
+                        //notificamos una semana antes
+                        createWorkRequest(event.getId() + "_604800",
+                                "Tu evento \"" + event.getName() + "\" tendrá lugar dentro de 7 días!",
+                                "Ubicación: " + event.getPlace(),
+                                delay - 604800);
+                    }
+                }
+            }
+        }
     }
 
 

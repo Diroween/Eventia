@@ -41,4 +41,6 @@ public class EventListViewHolder extends RecyclerView.ViewHolder
         tvEventPlace = itemView.findViewById(R.id.tv_event_place);
         ivEventImage = itemView.findViewById(R.id.iv_event_image);
     }
+
+
 }

@@ -97,6 +97,10 @@
     <string name="registereddeleteerror">You have not been able to leave the event</string>
     <string name="eventdeleted">Event deleted</string>
     <string name="eventdeletederror">Event deleted error</string>
+    <string name="pastevents">Previous events</string>
+    <string name="notificationPermissionsLack">Eventia is not allowed to send notifications on your device, making some features unavailable.</string>
+    <string name="botonAbrirConfiguracion">Go to settings</string>
+    <string name="botonSaltar">Skip for now</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>

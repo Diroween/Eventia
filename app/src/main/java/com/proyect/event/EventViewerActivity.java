@@ -92,10 +92,11 @@ public class EventViewerActivity extends AppCompatActivity
         String eventImage = intent.getStringExtra("event_image");
         String eventPlace = intent.getStringExtra("event_place");
         String eventHour = intent.getStringExtra("event_hour");
+        String eventData = intent.getStringExtra("event_data");
 
         //Asignamos lso datos recogidos
         tvEventName.setText(eventName);
-        tvEventData.setText(eventDate);
+        tvEventData.setText(eventData);
 
         Glide.with(this)
                 .load(eventImage)

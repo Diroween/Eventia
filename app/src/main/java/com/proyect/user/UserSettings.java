@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.proyect.authentication.LoginActivity;
 import com.proyect.R;
+import com.proyect.calendar.events.PastEventsFragment;
+import com.proyect.event.PreviousEventsActivity;
 
 public class UserSettings extends AppCompatActivity
 {
@@ -53,6 +56,7 @@ public class UserSettings extends AppCompatActivity
     TextView tvUserEmail;
     TextView tvTxtbtnChangeImage;
     ImageView ivLogout;
+    Button btnPreviousEvents;
 
     /**
      * Las variables que necesitamos para poder subir la foto y cargarla
@@ -84,6 +88,15 @@ public class UserSettings extends AppCompatActivity
         tvUserEmail = findViewById(R.id.tv_user_email);
         tvTxtbtnChangeImage = findViewById(R.id.tv_txtbtn_view_events);
         ivLogout = findViewById(R.id.iv_delete);
+        btnPreviousEvents = findViewById(R.id.btn_EventosPrevios);
+
+        btnPreviousEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PreviousEventsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //le asignamos la función de logout al botón
         ivLogout.setOnClickListener(new View.OnClickListener()

@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:targetApi="31">
+        <activity
+            android:name=".notification.NotificationSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".event.PreviousEventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".event.EventOnCurrentDayActivity"
+            android:exported="false" />
         <activity
             android:name=".event.EventEditorActivity"
             android:exported="false" />
