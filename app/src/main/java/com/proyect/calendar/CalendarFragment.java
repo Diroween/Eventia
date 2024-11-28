@@ -83,7 +83,7 @@ public class CalendarFragment extends Fragment {
     private RecyclerView rvCalendar;
     private ArrayList<Event> nextEvents;
     private ArrayList<Event> pastEvents;
-    private ArrayList<String> currentEvents;
+    private ArrayList<String> allEvents;
 
 
     /**
@@ -159,7 +159,7 @@ public class CalendarFragment extends Fragment {
 
         pastEvents = new ArrayList<Event>();
 
-        currentEvents = new ArrayList<String>();
+        allEvents = new ArrayList<String>();
 
         //inicializamos el adaptador con un contexto y el array de próximos eventos
         calendarAdapter = new CalendarFragmentAdapter(view.getContext(), nextEvents);
@@ -196,7 +196,7 @@ public class CalendarFragment extends Fragment {
                 LocalDate fechaSelec = calendarDay.getCalendar().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate fechaActual = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                if (currentEvents.contains(fechaSelec.toString())) {
+                if (allEvents.contains(fechaSelec.toString())) {
                     Intent intent = new Intent(calendarView.getContext(), EventOnCurrentDayActivity.class);
                     intent.putExtra("date", fechaSelec.toString());
                     startActivity(intent);
@@ -258,7 +258,7 @@ public class CalendarFragment extends Fragment {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         nextEvents.clear();
                         pastEvents.clear();
-                        currentEvents.clear();
+                        allEvents.clear();
 
                         //Dentro del bucle:
                         //Creamos un evento para cada coincidencia de la base de datos
@@ -270,9 +270,14 @@ public class CalendarFragment extends Fragment {
                             if (event != null && dataSnapshot.child("registeredUsers")
                                     .hasChild(user.getUid())) {
                                 try {
+                                    //Añadimos todos los eventos en un array para poder dar funcionalidad mas adelante a listener del calendario y manejar los eventos
+                                    allEvents.add(event.getDate());
+
+                                    //Establecemos un formato fecha/hora
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+
                                     //Se recoge la fecha del evento
-                                    Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
-                                            .parse(event.getDate());
+                                    Date eventDate = simpleDateFormat.parse(event.getDate() + " " + event.getHour());
 
                                     //Se coge una instancia de Calendar de Java
                                     Calendar calendar = Calendar.getInstance();
@@ -283,13 +288,12 @@ public class CalendarFragment extends Fragment {
                                     //hacemos una nueva referencia que representa el día actual
                                     Calendar today = Calendar.getInstance();
 
-                                    //Si el día del evento es posterior al día de hoy
-                                    //Se carga en futuros eventos
-
-                                    currentEvents.add(event.getDate());
-
+                                    //Se hace un nuevo CalendarDay personalizado
+                                    //del día del evento
                                     CalendarDay calendarDay = new CalendarDay(calendar);
 
+                                    //Si el día del evento es posterior al día de hoy
+                                    //Se carga en futuros eventos
                                     if (calendar.after(today)) {
                                         nextEvents.add(event);
                                         calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_current, null));
@@ -301,10 +305,6 @@ public class CalendarFragment extends Fragment {
                                         calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_past_event, null));
                                         calendarDay.setLabelColor(R.color.black);
                                     }
-
-                                    //Se hace un nuevo CalendarDay personalizado
-                                    //del día del evento
-
 
                                     //Añadimos el día al calendario
                                     //Esto lo hace con todos los días, representando así todos los
@@ -367,10 +367,6 @@ public class CalendarFragment extends Fragment {
 
             CalendarDay calendarDay = new CalendarDay(calendar);
 
-
-            calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_exit_bckgrnd, null));
-            calendarDay.setLabelColor(R.color.orange);
-
             calendarDays.add(calendarDay);
         }
 
@@ -390,7 +386,7 @@ public class CalendarFragment extends Fragment {
         if (delay > 0) {
             //notificamos al momento
             createWorkRequest(event.getId(),
-                    getResources().getString(R.string.eventoNotificacionTituloNow, event.getName()),
+                    getResources().getString(R.string.eventoNotificacionTituloNow, event.getName(), event.getHour()),
                     mensaje,
                     delay);
 

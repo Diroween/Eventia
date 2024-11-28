@@ -101,7 +101,7 @@
     <string name="notificationPermissionsLack">Eventia is not allowed to send notifications on your device, making some features unavailable.</string>
     <string name="botonAbrirConfiguracion">Go to settings</string>
     <string name="botonSaltar">Skip for now</string>
-    <string name="eventoNotificacionTituloNow">Your event: %1$s is taking place at this moment!</string>
+    <string name="eventoNotificacionTituloNow">Your event: %1$s is taking place now at %2$s!</string>
     <string name="eventoNotificacionTitulo1h">Your event: %1$s will take place in an hour!</string>
     <string name="eventoNotificacionTitulo24h">Your event: %1$s will take place in 24h!</string>
     <string name="eventoNotificacionTitulo7d">Your event: %1$s will take place in 7 days!</string>

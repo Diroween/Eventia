@@ -46,6 +46,7 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Tomamos el intent de CalendarFragment
         String date = getIntent().getStringExtra("date");
 
         recyclerView = findViewById(R.id.rvEventsOnCurrentDay);

@@ -94,9 +94,11 @@ public class PreviousEventsActivity extends AppCompatActivity {
                             if (event != null && dataSnapshot.child("registeredUsers")
                                     .hasChild(user.getUid())) {
                                 try {
+                                    //Establecemos un formato fecha/hora
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+
                                     //Se recoge la fecha del evento
-                                    Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
-                                            .parse(event.getDate());
+                                    Date eventDate = simpleDateFormat.parse(event.getDate() + " " + event.getHour());
 
                                     //Se coge una instancia de Calendar de Java
                                     Calendar calendar = Calendar.getInstance();
