@@ -1,8 +1,5 @@
 package com.proyect.event;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,17 +19,15 @@ public class Event
     private String image;
     private String hour;
 
-    private Map<String, Boolean> registeredUsers;
+    private Map<String, String> registeredUsers;
 
-    public Map<String, Boolean> getRegisteredUsers() {
+    public Map<String, String> getRegisteredUsers() {
         return registeredUsers;
     }
 
-    public void setRegisteredUsers(Map<String, Boolean> registeredUsers) {
+    public void setRegisteredUsers(Map<String, String> registeredUsers) {
         this.registeredUsers = registeredUsers;
     }
-
-
 
     /**
      * Cremos un constructor vacío para poder realizar la serialización de los datos
@@ -47,7 +42,7 @@ public class Event
      * Creamos un constructor con argumentos, tantos como atributos tiene
      * */
 
-    public Event(String id, String name, String date, String place, String image, String hour, Map<String, Boolean> registeredUsers) {
+    public Event(String id, String name, String date, String place, String image, String hour, Map<String, String> registeredUsers) {
         this.id = id;
         this.name = name;
         this.date = date;
@@ -133,11 +128,5 @@ public class Event
     {
         this.hour = hour;
     }
-
-    /*@Override
-    public String toString() {
-
-    }*/
-
 
 }

@@ -98,7 +98,9 @@
     <string name="leave">Salir</string>
     <string name="eventdeleted">Evento eliminado</string>
     <string name="eventdeletederror">Error al eliminar el evento</string>
-    <string name="pastevents">Eventos\nprevios</string>
+    <string name="pastevents">Eventos previos</string>
+    <string name="eventedited">Evento editado</string>
+    <string name="eventediterror">No se ha podido editar el evento</string>
     <string name="notificationPermissionsLack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
     <string name="botonAbrirConfiguracion">Ir a configuración</string>
     <string name="botonSaltar">Saltar por ahora</string>

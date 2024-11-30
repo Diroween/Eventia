@@ -33,19 +33,24 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.proyect.MainActivity;
 import com.proyect.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class EventEditorActivity extends AppCompatActivity {
+public class EventEditorActivity extends AppCompatActivity
+{
 
     private static final int REQUEST_CODE = 2;
     TextView tvEventDate;
@@ -57,6 +62,7 @@ public class EventEditorActivity extends AppCompatActivity {
     Button btnEditEvent;
     private Uri eventImageUri;
     private Event event;
+
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult
             (new ActivityResultContracts.StartActivityForResult(), result ->
             {
@@ -75,7 +81,8 @@ public class EventEditorActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_creation);
@@ -373,6 +380,10 @@ public class EventEditorActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Método para poder guardar un evento modificado
+     * */
+
     private void saveEvent(String imageUri)
     {
         //Cogemos el usuario actual de la base de datos
@@ -385,53 +396,68 @@ public class EventEditorActivity extends AppCompatActivity {
         event.setHour(tvEventHour.getText().toString());
         event.setImage(imageUri);
 
-        //Cogemos una referencia a la base de datos de eventos y ahijamos
-        //el nuevo evento, usando un escuchador de eventos para cuando se realiza
-        databaseReference.child("events").child(event.getId()).setValue(event)
-                .addOnCompleteListener(task ->
+        // Referencia al evento en la base de datos
+        DatabaseReference eventReference = databaseReference.child("events")
+                .child(event.getId());
+
+        //Recogemos de la base de datos los usuarios ya registrados en el evento
+        eventReference.child("registeredUsers").addListenerForSingleValueEvent(
+                new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                //Guardamos todos los usuarios registrados en una lista temporal
+                //para ello iteramos tantas veces como usuarios haya
+                Map<String, Object> registeredUsersMap = new HashMap<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
-                    //Si la tarea se completa satisfactoriamente
-                    if (task.isSuccessful()) {
-                        //Nos metemos en el evento y ahijamos al usuario que lo crea
-                        //como integrante del evento, se le añade un escuchador
-                        databaseReference.child("events").child(event.getId())
-                                .child("registeredUsers").child(user.getUid())
-                                .setValue(true).addOnCompleteListener(task1 ->
+                    registeredUsersMap.put(snapshot.getKey(), snapshot.getValue());
+                }
+
+                //Actualizamos el evento sobreescribiendo los datos anteriores
+                //Si no se ha podido actualizar se manda un toast informativo
+                eventReference.setValue(event).addOnCompleteListener(task ->
+                {
+                    if (task.isSuccessful())
+                    {
+                        //Una vez se actualizado los datos añadimos los usuarios que ya estaban
+                        //registrados anteriormente y mostramos un Toast informativo
+                        eventReference.child("registeredUsers").updateChildren(registeredUsersMap)
+                                .addOnCompleteListener(task1 ->
                                 {
-                                    //si se ha conseguido ahijar se manda un toast indicando
-                                    //se he podido hacer el proceso satisfactoriamente
-                                    if (task1.isSuccessful()) {
-                                        Toast.makeText(this,
-                                                R.string.eventcreated,
-                                                Toast.LENGTH_SHORT).show();
-
-                                        //Tras crear un nuevo evento se incia de nuevo el main
-                                        //para que se actualicen todos los eventos
-                                        Intent intent = new Intent(this
-                                                , MainActivity.class);
-
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                                        getApplicationContext().startActivity(intent);
-
-                                        finishAffinity();
-                                    }
-                                    //Si no, se indica con un toast
-                                    else {
-                                        Toast.makeText(this,
-                                                R.string.registererror,
+                                    if (task1.isSuccessful())
+                                    {
+                                        Toast.makeText(EventEditorActivity.this,
+                                                R.string.eventedited,
                                                 Toast.LENGTH_SHORT).show();
                                     }
-
+                                    else
+                                    {
+                                        Toast.makeText(EventEditorActivity.this,
+                                                R.string.eventediterror,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                 });
                     }
-                    //Si no se indica que ha habido un error al crear el evento
-                    else {
-                        Toast.makeText(this,
-                                R.string.createeventerror,
+                    else
+                    {
+                        Toast.makeText(EventEditorActivity.this,
+                                R.string.eventediterror,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+                Toast.makeText(EventEditorActivity.this,
+                        R.string.eventloaderror,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         //Se cierra la actividad
         finish();

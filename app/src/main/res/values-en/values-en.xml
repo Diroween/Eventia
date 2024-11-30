@@ -99,6 +99,8 @@
     <string name="leave">Leave</string>
     <string name="eventdeleted">Event deleted</string>
     <string name="eventdeletederror">Event deleted error</string>
+    <string name="eventedited">Event updated</string>
+    <string name="eventediterror">Event couldn\'t be updated.</string>
     <string name="pastevents">Previous events</string>
     <string name="notificationPermissionsLack">Eventia is not allowed to send notifications on your device, making some features unavailable.</string>
     <string name="botonAbrirConfiguracion">Go to settings</string>
