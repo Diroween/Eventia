@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -125,7 +124,8 @@ public class EventEditorActivity extends AppCompatActivity {
                 .transform(new CircleCrop())
                 .into(ivEventImage);
 
-        // Si el evento cuenta con una imagen subida, establecemos su propia URI para cargarlo en el ImageView del editor
+        // Si el evento cuenta con una imagen subida,
+        // establecemos su propia URI para cargarlo en el ImageView del editor
         eventImageUri = Uri.parse(eventImage);
 
         dateString = eventDate;
@@ -146,13 +146,15 @@ public class EventEditorActivity extends AppCompatActivity {
                                 tvEventDate.setText(date);
                                 dateString = String.format("%02d-%02d-%02d", i, i1+1, i2);
                             }
-                        }, Integer.parseInt(dpdDate[0]), Integer.parseInt(dpdDate[1])-1, Integer.parseInt(dpdDate[2])
+                        }, Integer.parseInt(dpdDate[0]), Integer.parseInt(dpdDate[1])-1,
+                        Integer.parseInt(dpdDate[2])
                 );
                 datePickerDialog.show();
             }
         });
 
-        tvEventHour.setOnClickListener(new View.OnClickListener() {
+        tvEventHour.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 //Creamos un objeto timepickerdialog con el contexto
@@ -160,11 +162,13 @@ public class EventEditorActivity extends AppCompatActivity {
                 TimePickerDialog timePickerDialog = new TimePickerDialog(
                         EventEditorActivity.this,
                         new TimePickerDialog.OnTimeSetListener() {
+
                             /**
                              * Método para dar funcionalidad a la selección de una hora
                              * */
                             @Override
-                            public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                            public void onTimeSet(TimePicker timePicker, int i, int i1)
+                            {
                                 //le seleccionamos un formato para la hora y minutos
                                 String hour = String.format("%02d:%02d", i, i1);
 
@@ -191,8 +195,6 @@ public class EventEditorActivity extends AppCompatActivity {
 
         //le ponemos su id
         event.setId(eventId);
-
-
 
         //Creamos una instancia de calendario
         Calendar calendar = Calendar.getInstance();
@@ -254,7 +256,8 @@ public class EventEditorActivity extends AppCompatActivity {
         });
     }
 
-    private boolean checkEmptyFields() {
+    private boolean checkEmptyFields()
+    {
         return !etEventName.getText().toString().isEmpty()
                 && !etEventPlace.getText().toString().isEmpty()
                 && !tvEventDate.getText().toString().isEmpty()
@@ -263,7 +266,8 @@ public class EventEditorActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode
-            , @NonNull String[] permissions, @NonNull int[] grantResults) {
+            , @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         //Si el código de permiso coincide con el requerido
@@ -298,10 +302,12 @@ public class EventEditorActivity extends AppCompatActivity {
         }
 
         //Para versiones anteriores a Android 13
-        else {
+        else
+        {
             //Si no se tiene permisos, se piden
             if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
             }
@@ -313,7 +319,8 @@ public class EventEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void openFileChooser() {
+    private void openFileChooser()
+    {
         //Creamos un intent
         Intent intent = new Intent();
 
@@ -327,9 +334,11 @@ public class EventEditorActivity extends AppCompatActivity {
         pickImageLauncher.launch(intent);
     }
 
-    private void uploadImage() {
+    private void uploadImage()
+    {
         //Si la uri de la imagen no es nula
-        if (eventImageUri != null) {
+        if (eventImageUri != null)
+        {
             //Se abre una referencia a la base de datos y en la carpeta de usuarios
             //con el id del usuario se guarda su foto de perfil
             StorageReference fileStorageReference = FirebaseStorage.getInstance().getReference
@@ -364,7 +373,8 @@ public class EventEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void saveEvent(String imageUri) {
+    private void saveEvent(String imageUri)
+    {
         //Cogemos el usuario actual de la base de datos
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

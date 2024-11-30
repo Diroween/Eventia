@@ -22,12 +22,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.calendar.CalendarFragmentAdapter;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 
 public class PreviousEventsActivity extends AppCompatActivity {
@@ -39,8 +38,10 @@ public class PreviousEventsActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         //Métodos necesarios para que la cativity se muestre correctamente en pantalla
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_previous_events);
@@ -58,29 +59,26 @@ public class PreviousEventsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rvPastEvents);
         pastEvents = new ArrayList<>();
 
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         calendarFragmentAdapter = new CalendarFragmentAdapter(this, pastEvents);
         recyclerView.setAdapter(calendarFragmentAdapter);
 
-
-
-
-
     }
 
-    public void loadUserEvents() {
+    public void loadUserEvents()
+    {
         //Recogemos los datos del usuario de Firebase que ha iniciado sesión
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener()
+                {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         pastEvents.clear();
 
@@ -88,17 +86,20 @@ public class PreviousEventsActivity extends AppCompatActivity {
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
                         //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
                             Event event = dataSnapshot.getValue(Event.class);
 
                             if (event != null && dataSnapshot.child("registeredUsers")
-                                    .hasChild(user.getUid())) {
-                                try {
+                                    .hasChild(user.getUid()))
+                            {
+                                try
+                                {
                                     //Establecemos un formato fecha/hora
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                     //Se recoge la fecha del evento
-                                    Date eventDate = simpleDateFormat.parse(event.getDate() + " " + event.getHour());
+                                    Date eventDate = simpleDateFormat.parse(event.getDate());
 
                                     //Se coge una instancia de Calendar de Java
                                     Calendar calendar = Calendar.getInstance();
@@ -114,7 +115,8 @@ public class PreviousEventsActivity extends AppCompatActivity {
 
 
                                     //Si es anterior, se carga en eventos pasados
-                                    if (calendar.before(today)) {
+                                    if (calendar.before(today))
+                                    {
                                         pastEvents.add(event);
                                     }
                                 }
@@ -126,16 +128,52 @@ public class PreviousEventsActivity extends AppCompatActivity {
                             }
                         }
 
-                        /*
-                        //añadimos al calendario todos los dias personalizados
-                        calendarView.setCalendarDays(calendarDays);*/
+                        pastEvents.sort(new Comparator<Event>()
+                        {
+                            @Override
+                            public int compare(Event e1, Event e2)
+                            {
+                                //Damos un formato simple a la fecha y la hora y los comparamos
+                                try
+                                {
+                                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+
+                                    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+
+                                    Date date1 = sdfDate.parse(e1.getDate());
+
+                                    Date date2 = sdfDate.parse(e2.getDate());
+
+                                    //Si la fecha es la misma pasamos a ordenar por hora
+                                    if (date1.equals(date2))
+                                    {
+                                        //Cogemos las horas y se comparan
+                                        Date time1 = sdfTime.parse(e1.getHour());
+                                        Date time2 = sdfTime.parse(e2.getHour());
+
+                                        return time1.compareTo(time2);
+                                    }
+
+                                    //Si las fechas no son iguales se ordena directamente por fecha
+                                    else
+                                    {
+                                        return date1.compareTo(date2);
+                                    }
+                                }
+                                catch (ParseException e)
+                                {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
 
                         //Le decimos al adaptador que la lista ha cambiado sus datos
                         calendarFragmentAdapter.notifyDataSetChanged();
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
                         Toast.makeText(getApplicationContext(), R.string.loadeventserror,
                                 Toast.LENGTH_SHORT).show();
                     }

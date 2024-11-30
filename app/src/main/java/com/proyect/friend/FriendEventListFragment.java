@@ -114,7 +114,7 @@ public class FriendEventListFragment extends Fragment
         events = new ArrayList<Event>();
 
         //Pasamos el arraylist como argumento para inicializar el listadapter
-        listAdapter = new EventListAdapter(events);
+        listAdapter = new EventListAdapter(view.getContext(), events);
 
         //Setteamos el adapter a la lista
         rvEvents.setAdapter(listAdapter);

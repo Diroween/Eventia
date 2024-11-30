@@ -45,7 +45,8 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
 
     public CalendarFragmentAdapter(Context context, ArrayList<Event> eventList)
     {
-        this.context = context; this.eventList = eventList;
+        this.context = context;
+        this.eventList = eventList;
         this.monthsArray = context.getResources().getStringArray(R.array.material_calendar_months_array);
     }
 

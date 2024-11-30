@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,6 +47,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -98,7 +100,8 @@ public class CalendarFragment extends Fragment {
      * Método para crear nuevas instancias de CalendarFragment
      */
 
-    public static CalendarFragment newInstance(String param1, String param2) {
+    public static CalendarFragment newInstance(String param1, String param2)
+    {
         CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
@@ -187,21 +190,27 @@ public class CalendarFragment extends Fragment {
         loadUserEvents();
 
 
-        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener() {
+        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
+        {
             @Override
-            public void onClick(@NonNull CalendarDay calendarDay) {
+            public void onClick(@NonNull CalendarDay calendarDay)
+            {
 
                 Calendar calendar = calendarDay.getCalendar();
 
                 LocalDate fechaSelec = calendarDay.getCalendar().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDate fechaActual = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                if (allEvents.contains(fechaSelec.toString())) {
+                //Comento esta línea ya que no se usa la variable
+                //LocalDate fechaActual = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+                if (allEvents.contains(fechaSelec.toString()))
+                {
                     Intent intent = new Intent(calendarView.getContext(), EventOnCurrentDayActivity.class);
                     intent.putExtra("date", fechaSelec.toString());
                     startActivity(intent);
-                } else {
-
+                }
+                else
+                {
                     //Cogemos los datos de ese día
                     String year = String.valueOf(calendar.get(Calendar.YEAR));
                     String month = String.valueOf(calendar.get(Calendar.MONTH) + 1);
@@ -222,22 +231,28 @@ public class CalendarFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
     /**
-     * Método para actualizar la lista de eventos cuando uno se elimina
+     * Método para actualizar la lista de eventos cuando uno se crea, elimina o modifica
      */
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
-        try {
-            setCalendarDays();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+
+        //try
+        //{
+          //  setCalendarDays();
+        //}
+
+        //catch (ParseException e)
+        //{
+          //  throw new RuntimeException(e);
+        //}
+
         loadUserEvents();
     }
 
@@ -245,39 +260,50 @@ public class CalendarFragment extends Fragment {
      * Método para poder cargar los eventos en el calendario y en la lista
      */
 
-    public void loadUserEvents() {
+    public void loadUserEvents()
+    {
         //Recogemos los datos del usuario de Firebase que ha iniciado sesión
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener()
+                {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         nextEvents.clear();
                         pastEvents.clear();
                         allEvents.clear();
+                        calendarDays.clear();
 
                         //Dentro del bucle:
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
                         //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
                             Event event = dataSnapshot.getValue(Event.class);
 
                             if (event != null && dataSnapshot.child("registeredUsers")
-                                    .hasChild(user.getUid())) {
-                                try {
-                                    //Añadimos todos los eventos en un array para poder dar funcionalidad mas adelante a listener del calendario y manejar los eventos
+                                    .hasChild(user.getUid()))
+                            {
+                                try
+                                {
+                                    //Se añaden las fechas de los eventos al ArrayList para dar
+                                    //funcionalidad mas adelante al listener del calendario
+                                    //y manejar los eventos
                                     allEvents.add(event.getDate());
 
                                     //Establecemos un formato fecha/hora
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+                                    SimpleDateFormat simpleDateFormat =
+                                            new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                     //Se recoge la fecha del evento
-                                    Date eventDate = simpleDateFormat.parse(event.getDate() + " " + event.getHour());
+                                    Date eventDate = simpleDateFormat.parse(event.getDate()
+                                            + " " + event.getHour());
 
                                     //Se coge una instancia de Calendar de Java
                                     Calendar calendar = Calendar.getInstance();
@@ -294,16 +320,32 @@ public class CalendarFragment extends Fragment {
 
                                     //Si el día del evento es posterior al día de hoy
                                     //Se carga en futuros eventos
-                                    if (calendar.after(today)) {
+
+                                    if (calendar.after(today))
+                                    {
                                         nextEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_current, null));
-                                        calendarDay.setLabelColor(R.color.black);
+                                        calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                .getDrawable(getResources(),
+                                                        R.drawable.calendar_day_current,
+                                                        null));
+                                        //calendarDay.setLabelColor(R.color.black);
                                     }
 
-                                    if (calendar.before(today)) {
+                                    else if (calendar.before(today))
+                                    {
                                         pastEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(getResources().getDrawable(R.drawable.calendar_day_past_event, null));
-                                        calendarDay.setLabelColor(R.color.black);
+                                        calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                .getDrawable(getResources(),
+                                                        R.drawable.calendar_day_past_event,
+                                                        null));
+                                        //calendarDay.setLabelColor(R.color.black);
+                                    }
+                                    else
+                                    {
+                                        nextEvents.add(event);
+                                        calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                .getDrawable(getResources(),
+                                                        R.drawable.calendar_day_current, null));
                                     }
 
                                     //Añadimos el día al calendario
@@ -331,11 +373,54 @@ public class CalendarFragment extends Fragment {
                                 }
 
                                 //Si no se consigue parsear bien la fecha se recoge una excepción
-                                catch (ParseException e) {
+                                catch (ParseException e)
+                                {
                                     throw new RuntimeException(e);
                                 }
                             }
                         }
+
+                        //Ordenamos los eventos por fecha y hora
+                        //para ello ordenamos el arraylist
+
+                        nextEvents.sort(new Comparator<Event>()
+                        {
+                            @Override
+                            public int compare(Event e1, Event e2)
+                            {
+                                //Damos un formato simple a la fecha y la hora y los comparamos
+                                try
+                                {
+                                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+
+                                    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+
+                                    Date date1 = sdfDate.parse(e1.getDate());
+
+                                    Date date2 = sdfDate.parse(e2.getDate());
+
+                                    //Si la fecha es la misma pasamos a ordenar por hora
+                                    if (date1.equals(date2))
+                                    {
+                                        //Cogemos las horas y se comparan
+                                        Date time1 = sdfTime.parse(e1.getHour());
+                                        Date time2 = sdfTime.parse(e2.getHour());
+
+                                        return time1.compareTo(time2);
+                                    }
+
+                                    //Si las fechas no son iguales se ordena directamente por fecha
+                                    else
+                                    {
+                                        return date1.compareTo(date2);
+                                    }
+                                }
+                                catch (ParseException e)
+                                {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
 
                         //añadimos al calendario todos los dias personalizados
                         calendarView.setCalendarDays(calendarDays);
@@ -351,15 +436,27 @@ public class CalendarFragment extends Fragment {
                     }
                 });
 
-
     }
 
-    public void setCalendarDays() throws ParseException {
+    //Este método no hace nada
+    //Se está usando un arraylist que no se llena nunca con nada
+    //Si siempre está vacío ese arralylist local llamado events
+    //no va a actuliza nada, lo comento pq no hace nada
+    //me imagino que era para quitar etiquetas eventos que se borren o añadan
+    //he incluido en loaduserevents que se vacie el array de calendardays
+    //cada vez que se ejecuta el método, lo cual
+    //sí actualiza la lista y quita los días eliminados
+    //por esto que explico lo comento y se puede eliminar este método
+
+    /*
+    public void setCalendarDays() throws ParseException
+    {
 
         ArrayList<Event> events = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
 
-        for (Event event : events) {
+        for (Event event : events)
+        {
             Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
                     .parse(event.getDate());
 
@@ -370,13 +467,13 @@ public class CalendarFragment extends Fragment {
             calendarDays.add(calendarDay);
         }
 
-
         //añadimos al calendario todos los dias personalizados
         calendarView.setCalendarDays(calendarDays);
 
         //Le decimos al adaptador que la lista ha cambiado sus datos
         calendarAdapter.notifyDataSetChanged();
     }
+     */
 
     @SuppressLint("StringFormatInvalid")
     public void programarNotificacion(Event event, long delay) {

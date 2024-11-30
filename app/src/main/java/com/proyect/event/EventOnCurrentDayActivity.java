@@ -36,11 +36,13 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_current_day);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
+        {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -56,13 +58,15 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
 
         events = new ArrayList<>();
 
-        listAdapter = new EventListAdapter(events);
+        listAdapter = new EventListAdapter(EventOnCurrentDayActivity.this, events);
 
         recyclerView.setAdapter(listAdapter);
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
                 intent.putExtra("date", date);
                 startActivity(intent);
@@ -74,27 +78,29 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         //Le asignamos un escuchador a la referencia de datos
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener()
+        {
             /**
              * Método sobreescrito para la lógica de funcionamiento
              * */
 
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
 
                 events.clear();
 
-
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
                     Event event = dataSnapshot.getValue(Event.class);
 
-                    if (event != null && dataSnapshot.child("registeredUsers").hasChild(currentUserId)) {
-
-                        if (date.equals(event.getDate())) {
+                    if (event != null && dataSnapshot.child("registeredUsers")
+                            .hasChild(currentUserId))
+                    {
+                        if (date.equals(event.getDate()))
+                        {
                             events.add(event);
                         }
-
                     }
                 }
 
