@@ -200,9 +200,6 @@ public class CalendarFragment extends Fragment {
 
                 LocalDate fechaSelec = calendarDay.getCalendar().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-                //Comento esta línea ya que no se usa la variable
-                //LocalDate fechaActual = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
                 if (allEvents.contains(fechaSelec.toString()))
                 {
                     Intent intent = new Intent(calendarView.getContext(), EventOnCurrentDayActivity.class);
@@ -242,16 +239,6 @@ public class CalendarFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
-
-        //try
-        //{
-          //  setCalendarDays();
-        //}
-
-        //catch (ParseException e)
-        //{
-          //  throw new RuntimeException(e);
-        //}
 
         loadUserEvents();
     }
@@ -437,43 +424,6 @@ public class CalendarFragment extends Fragment {
                 });
 
     }
-
-    //Este método no hace nada
-    //Se está usando un arraylist que no se llena nunca con nada
-    //Si siempre está vacío ese arralylist local llamado events
-    //no va a actuliza nada, lo comento pq no hace nada
-    //me imagino que era para quitar etiquetas eventos que se borren o añadan
-    //he incluido en loaduserevents que se vacie el array de calendardays
-    //cada vez que se ejecuta el método, lo cual
-    //sí actualiza la lista y quita los días eliminados
-    //por esto que explico lo comento y se puede eliminar este método
-
-    /*
-    public void setCalendarDays() throws ParseException
-    {
-
-        ArrayList<Event> events = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-
-        for (Event event : events)
-        {
-            Date eventDate = new SimpleDateFormat("yyyy-MM-dd")
-                    .parse(event.getDate());
-
-            calendar.setTime(eventDate);
-
-            CalendarDay calendarDay = new CalendarDay(calendar);
-
-            calendarDays.add(calendarDay);
-        }
-
-        //añadimos al calendario todos los dias personalizados
-        calendarView.setCalendarDays(calendarDays);
-
-        //Le decimos al adaptador que la lista ha cambiado sus datos
-        calendarAdapter.notifyDataSetChanged();
-    }
-     */
 
     @SuppressLint("StringFormatInvalid")
     public void programarNotificacion(Event event, long delay) {
