@@ -23,7 +23,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class EventOnCurrentDayActivity extends AppCompatActivity {
@@ -87,17 +90,40 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
             {
-
+                //vaciamos el array de eventos
                 events.clear();
 
+                //En el bucle:
+                //recogemos cada evento
+                //le damos un formato a las fechas que coincida
+                // con el que se le pasa de calendar fragment
+                //si la fecha pasada es igual a al evento encontrado se añade al array list
                 for (DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
                     Event event = dataSnapshot.getValue(Event.class);
 
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                    Date eventDate;
+
+                    String formattedDate;
+
+                    try
+                    {
+                        eventDate  = sdf.parse(event.getDate());
+
+                        formattedDate = sdf.format(eventDate);
+                    }
+                    catch (ParseException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+
+
                     if (event != null && dataSnapshot.child("registeredUsers")
                             .hasChild(currentUserId))
                     {
-                        if (date.equals(event.getDate()))
+                        if (date.equals(formattedDate))
                         {
                             events.add(event);
                         }

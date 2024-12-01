@@ -266,6 +266,9 @@ public class CalendarFragment extends Fragment {
                         allEvents.clear();
                         calendarDays.clear();
 
+                        //Creamos un formato para las fechas que se van a guardar
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
                         //Dentro del bucle:
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
@@ -279,10 +282,14 @@ public class CalendarFragment extends Fragment {
                             {
                                 try
                                 {
+                                    //Formateamos las fechas guardar
+                                    Date date = sdf.parse(event.getDate());
+                                    String formattedDate = sdf.format(date);
+
                                     //Se añaden las fechas de los eventos al ArrayList para dar
                                     //funcionalidad mas adelante al listener del calendario
                                     //y manejar los eventos
-                                    allEvents.add(event.getDate());
+                                    allEvents.add(formattedDate);
 
                                     //Establecemos un formato fecha/hora
                                     SimpleDateFormat simpleDateFormat =

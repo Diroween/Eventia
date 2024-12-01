@@ -101,6 +101,12 @@
     <string name="pastevents">Eventos previos</string>
     <string name="eventedited">Evento editado</string>
     <string name="eventediterror">No se ha podido editar el evento</string>
+    <string name="removeuserfromevent">Eliminar del evento</string>
+    <string name="userremovedfromevent">El usuario ha sido eliminado del evento</string>
+    <string name="promotetoadmin">Hacer administrador</string>
+    <string name="userpromotedtoadmin">El usuario ahora es administrador</string>
+    <string name="eventedit">Editar evento</string>
+    <string name="savechanges">Guardar cambios</string>
     <string name="notificationPermissionsLack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
     <string name="botonAbrirConfiguracion">Ir a configuración</string>
     <string name="botonSaltar">Saltar por ahora</string>
@@ -109,6 +115,7 @@
     <string name="eventoNotificacionTitulo24h">Tu evento: %1$s tendrá lugar dentro de 24h!</string>
     <string name="eventoNotificacionTitulo7d">Tu evento: %1$s tendrá lugar dentro de 7 días!</string>
     <string name="eventoNotificacionMensaje">Ubicación: %1$s</string>
+
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

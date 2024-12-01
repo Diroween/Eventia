@@ -121,7 +121,8 @@ public class FriendsFragment extends Fragment
         //inicializamos el arraylist y lo pasamos a la inicialización del adaptador
         friends = new ArrayList<User>();
 
-        friendsAdapter = new FriendsAdapter(friends);
+        //setteamos el LongClick como false, ya que no queremos un menú contextual en este fragment
+        friendsAdapter = new FriendsAdapter(friends, false);
 
         //asignamos el adaptador Recyclerview
         rvFriends.setAdapter(friendsAdapter);

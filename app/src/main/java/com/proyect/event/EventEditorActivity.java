@@ -105,10 +105,10 @@ public class EventEditorActivity extends AppCompatActivity
         ivEventImage = findViewById(R.id.iv_event_image);
 
         tvEventTitle = findViewById(R.id.tv_title);
-        tvEventTitle.setText("Event Editor");
+        tvEventTitle.setText(R.string.eventedit);
 
         btnEditEvent = findViewById(R.id.btn_create_event);
-        btnEditEvent.setText("EDIT EVENT");
+        btnEditEvent.setText(R.string.savechanges);
 
         View view = findViewById(R.id.main);
         view.setBackgroundColor(Color.LTGRAY);
@@ -386,9 +386,6 @@ public class EventEditorActivity extends AppCompatActivity
 
     private void saveEvent(String imageUri)
     {
-        //Cogemos el usuario actual de la base de datos
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         //Setteamos el resto de datos del evento
         event.setName(etEventName.getText().toString());
         event.setPlace(etEventPlace.getText().toString());

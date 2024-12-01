@@ -3,7 +3,10 @@ package com.proyect.event;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +64,8 @@ public class EventViewerActivity extends AppCompatActivity
     FloatingActionButton fbEditEvent;
     FloatingActionButton fbDeleteEvent;
 
+    String eventId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -87,7 +92,7 @@ public class EventViewerActivity extends AppCompatActivity
         //Recogemos los datos del evento que pasamos desde el adaptador de calendarFragment
         Intent intent = getIntent();
 
-        String eventId = intent.getStringExtra("event_id");
+        eventId = intent.getStringExtra("event_id");
         String eventName = intent.getStringExtra("event_name");
         String eventDate = intent.getStringExtra("event_date");
         String eventImage = intent.getStringExtra("event_image");
@@ -95,7 +100,7 @@ public class EventViewerActivity extends AppCompatActivity
         String eventHour = intent.getStringExtra("event_hour");
         String eventData = intent.getStringExtra("event_data");
 
-        //Asignamos lso datos recogidos
+        //Asignamos los datos recogidos a los elementos en pantalla
         tvEventName.setText(eventName);
         tvEventData.setText(eventData);
 
@@ -111,12 +116,17 @@ public class EventViewerActivity extends AppCompatActivity
 
         registeredUsers = new ArrayList<User>();
 
-        adapter = new FriendsAdapter(registeredUsers);
+        String userId = FirebaseAuth.getInstance().getUid();
+
+        //Al adaptador le pasamos true para que se despliegue el menu contextual
+        adapter = new FriendsAdapter(registeredUsers, userId, this::showContextMenu, true);
 
         rv_users.setAdapter(adapter);
 
         //Cogemos una referncia a base de datos
         reference = FirebaseDatabase.getInstance().getReference();
+
+        checkAdmin(eventId);
 
         //Damos función al botón de añdir amigos al evento
         fbAddFriends.setOnClickListener(l ->
@@ -129,6 +139,7 @@ public class EventViewerActivity extends AppCompatActivity
             startActivity(intentInvite);
         });
 
+        //damos función al botón de editar un evento
         fbEditEvent.setOnClickListener(l ->
         {
             Intent intentEditEvent = new Intent(this, EventEditorActivity.class);
@@ -173,8 +184,9 @@ public class EventViewerActivity extends AppCompatActivity
                         //En el bucle:
                         //Cogemos cada usuario registrado
                         //Lo buscamos en la base de datos de usuarios
-                        //Si existe se añade el usario
+                        //Si existe se añade el usuario
                         //y se notifican cambios de datos para el adaptador
+                        //si no se puede se loggea el mensaje de error
                         for(DataSnapshot dataSnapshot: snapshot.getChildren())
                         {
                             String userId = dataSnapshot.getKey();
@@ -193,10 +205,6 @@ public class EventViewerActivity extends AppCompatActivity
                                                 adapter.notifyDataSetChanged();
                                             }
                                         }
-
-                                        /**
-                                         * Si no se puede se loggea el mensaje
-                                         * */
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error)
@@ -219,6 +227,11 @@ public class EventViewerActivity extends AppCompatActivity
                 });
     }
 
+    /**
+     * Método para que un usuario abandone un evento
+     * @param eventId el id del evento
+     * */
+
     private void removeUserFromEvent(String eventId)
     {
         //Cogemos el id del usuario
@@ -228,18 +241,22 @@ public class EventViewerActivity extends AppCompatActivity
         DatabaseReference eventRegistered = reference.child("events").child(eventId)
                 .child("registeredUsers").child(userId);
 
-        //Se pregunta al usuario si de verdad quieres salir de un evento
+        //Se pregunta al usuario si de verdad quiere salirse de un evento
         //Si es afirmativo se procede al borrado
         Snackbar.make(findViewById(android.R.id.content),
                         R.string.leaveeventquestion,Snackbar.LENGTH_LONG)
                 .setAction(R.string.leave, var ->
                 {
-
                     //Eliminamos al usuario
                     eventRegistered.removeValue().addOnCompleteListener(task ->
                     {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful())
+                        {
                             Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
+
+                            //Comprobamos si hay administrados, si no es así
+                            //se intenta asignar uno nuevo
+                            checkAndPromoteToAdmin(userId);
 
                             //Checkeamos si hay usuarios registrados, si no los hay se elimina
                             noRegisteredUsersDelete(eventId);
@@ -249,7 +266,8 @@ public class EventViewerActivity extends AppCompatActivity
                         }
 
                         //Si no se ha podido se manda un Toast
-                        else {
+                        else
+                        {
                             Toast.makeText(this, R.string.registereddeleteerror,
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -307,4 +325,249 @@ public class EventViewerActivity extends AppCompatActivity
             }
         });
     }
+
+    /**
+     * Método que comprueba si hay administradores al salirse un usuario del evento
+     * Si no hay se promueve a un usuario registrado en el evento a administrador
+     *
+     * @param removedUserId id del usuario que se ha salido del evento
+     * */
+    private void checkAndPromoteToAdmin(String removedUserId)
+    {
+        //Cogemos una referencia de los usuarios registrado en la base de datos
+        DatabaseReference eventRegister = reference.child("events").child(eventId)
+                .child("registeredUsers");
+
+        //Añadimos un escuchador para encontrar si alguien es admin
+        eventRegister.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                //Creamos dos variables
+                //la primera guarda si hay ya un rol de admin+
+                //la segunda guarda el id del usuario que será el nuevo administrador
+                boolean adminRole = false;
+                String newAdminId = null;
+
+                //En el bucle:
+                //Se mira si un usuario tiene el rol de administrador, si es así se sale del bucle
+                //y no se asigna ningún nuevo rol
+                //si no nadie tiene un rol de admin se guarda el booleano como true y el id del nuevo
+                //admin
+                for (DataSnapshot userSnapshot : snapshot.getChildren())
+                {
+                    String userId = userSnapshot.getKey();
+                    String role = userSnapshot.getValue(String.class);
+
+                    if (role != null && role.equals("admin"))
+                    {
+                        adminRole = true;
+                        break;
+                    }
+
+                    if (newAdminId == null && !userId.equals(removedUserId))
+                    {
+                        newAdminId = userId;
+                    }
+                }
+
+                //Si no hay administrador y hay alguien a quien poder promover a administrador
+                //se settea a la nueva persona como administrador
+                //si no se ha podido hacer se hace un log del error
+                if(!adminRole && newAdminId != null)
+                {
+                    eventRegister.child(newAdminId).setValue("admin").addOnCompleteListener(task ->
+                    {
+                        if (task.isSuccessful())
+                        {
+                            Log.e("INFO", "Un nuevo usuario ha sido promovido a admin");
+                        }
+                        else
+                        {
+                            Log.e("INFO", "No se ha podido promover a nadie a admin");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("WARNING", "Error al realizar el cambio de admin");
+            }
+        });
+    }
+
+    /**
+     * Método para comprobar si el usuario que abre el evento es admin
+     * Si el usuario es administrador se le permitirá modificar un evento y añadir amigos a él
+     */
+
+    private void checkAdmin(String eventId)
+    {
+        //Cogemos el id del usuario
+        String userId = FirebaseAuth.getInstance().getUid();
+
+        //buscamos al usuario en el evento
+        reference.child("events").child(eventId).child("registeredUsers")
+                .child(userId).addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        //guardamos el rol del usuario
+                        String role = snapshot.getValue(String.class);
+
+                        //Si tiene rol y es administrador, podrá editar el evento e invitar amigos
+                        //Si no, no le aparecerá el botón en el layout
+                        if(role != null && role.equals("admin"))
+                        {
+                            fbEditEvent.setVisibility(View.VISIBLE);
+                            fbAddFriends.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            fbEditEvent.setVisibility(View.INVISIBLE);
+                            fbAddFriends.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("Info", "No se ha encontrado el rol del usuario");
+                    }
+                });
+    }
+
+    /**
+     * Método para poder mostrar un context menú para la pulsación larga en un usuario
+     *
+     * @param view vista donde cargar el menú
+     * @param user usuario selección en el que se hace la pulsación larga
+     * */
+
+    private void showContextMenu(View view, User user)
+    {
+        //Cogemos el id del usuario actual
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //Cogemos la referencia del usuario activo en la base de datos
+        reference.child("events").child(eventId).child("registeredUsers").child(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        //miramos si el usuarios es un administrador
+                        String role = snapshot.getValue(String.class);
+
+                        //Si el usuario es administrador se infla el menú contextual y se muestra
+                        if ("admin".equals(role))
+                        {
+                            PopupMenu popup = new PopupMenu(EventViewerActivity.this, view);
+
+                            popup.getMenuInflater().inflate(R.menu.event_admin_context_menu, popup.getMenu());
+
+                            //Se le asigna función a la pulsación de las distintas opciones del menú
+                            popup.setOnMenuItemClickListener(item -> handleContextItemSelected(item, user));
+
+                            popup.show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("Error", "Error al verificar el rol del usuario");
+                    }
+                });
+    }
+
+    /**
+     * Método para poder dar funcionalidad a la opción seleccionada en el menú contextual
+     *
+     * @param item la opción del menú contextual que se elige
+     * @param user usuario en el que se ha desplegado el menú contextual
+     * */
+
+    private boolean handleContextItemSelected(MenuItem item, User user)
+    {
+        //dependiendo de la opción seleccionada se ejecuta el método correspondiente
+        //para quitar a una persona del evento o hacerle admin
+        if(item.getItemId() == R.id.menu_remove_user)
+        {
+            removeUserAsAdmin(user);
+
+            return true;
+        }
+        else if (item.getItemId() == R.id.menu_make_admin)
+        {
+            makeUserAdmin(user);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Método para quitar a un usuario del evento
+     * esto solo podrá hacerse en caso de ser administrador
+     *
+     * @param user el usuario que se desea eliminar
+     * */
+
+    private void removeUserAsAdmin(User user)
+    {
+        //Se coge la referencia en la bdd de la persona, en el evento,
+        //en la que se ha desplegado el menú contextual
+        DatabaseReference userReference = reference.child("events").child(eventId)
+                .child("registeredUsers").child(user.getId());
+
+        //Se elimina a ese usuario de la base de datos y se manda un toast informativo
+        //tanto si se ha podido como si ha ocurrido un error
+        userReference.removeValue().addOnCompleteListener(task ->
+        {
+            if (task.isSuccessful())
+            {
+                Toast.makeText(this, R.string.userremovedfromevent, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(this, R.string.frienddeletederror, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Método para promover a un usuario a ser administrador
+     *
+     * @param user el usuario que se desea promover
+     * */
+    private void makeUserAdmin(User user)
+    {
+        //Se coge la referencia en la bdd de la persona, en el evento,
+        //en la que se ha desplegado el menú contextual
+        DatabaseReference userRef = reference.child("events").child(eventId)
+                .child("registeredUsers").child(user.getId());
+
+        //Se pone admin como rol del usuario en la bdd y se manda un toast informativo
+        //tanto si se ha podido como si ha ocurrido un error
+        userRef.setValue("admin").addOnCompleteListener(task ->
+        {
+            if (task.isSuccessful())
+            {
+                Toast.makeText(this, R.string.userpromotedtoadmin, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(this, R.string.registererror, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
