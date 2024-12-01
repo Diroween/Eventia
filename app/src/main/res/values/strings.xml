@@ -108,14 +108,14 @@
     <string name="alreadyadmin">El usuario ya es administrador</string>
     <string name="eventedit">Editar evento</string>
     <string name="savechanges">Guardar cambios</string>
-    <string name="notificationPermissionsLack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
-    <string name="botonAbrirConfiguracion">Ir a configuración</string>
-    <string name="botonSaltar">Saltar por ahora</string>
-    <string name="eventoNotificacionTituloNow">Tu evento: %1$s está teniendo lugar ahora a las %2$s!</string>
-    <string name="eventoNotificacionTitulo1h">Tu evento: %1$s tendrá lugar dentro de una hora!</string>
-    <string name="eventoNotificacionTitulo24h">Tu evento: %1$s tendrá lugar dentro de 24h!</string>
-    <string name="eventoNotificacionTitulo7d">Tu evento: %1$s tendrá lugar dentro de 7 días!</string>
-    <string name="eventoNotificacionMensaje">Ubicación: %1$s</string>
+    <string name="notificationpermissionslack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
+    <string name="btn_openconfiguration">Ir a configuración</string>
+    <string name="btn_skip">Saltar por ahora</string>
+    <string name="event_notificationtitle_now">Tu evento: %1$s está teniendo lugar ahora a las %2$s!</string>
+    <string name="event_notificationtitle_1h">Tu evento: %1$s tendrá lugar dentro de una hora!</string>
+    <string name="event_notificationtitle_24h">Tu evento: %1$s tendrá lugar dentro de 24h!</string>
+    <string name="event_notificationtitle_7d">Tu evento: %1$s tendrá lugar dentro de 7 días!</string>
+    <string name="event_notificationmessage">Ubicación: %1$s</string>
 
 
     <string-array name="array_config">

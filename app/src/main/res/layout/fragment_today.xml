@@ -8,29 +8,25 @@
 
     <!--Añadimos un linearlayour donde contener nuestros elementos-->
 
-    <LinearLayout android:id="@+id/ll_today_fragment"
+    <LinearLayout
+        android:id="@+id/ll_today_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--El texto se puede cambiar más adelante en el tv
-        esto es solo para ir probando-->
-
-        <TextView android:id="@+id/tv_greetings_today"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="15sp"
-            android:text="Buenos días, pepito"/>
 
         <!--En este tv mostramos la fecha-->
 
-        <TextView android:id="@+id/tv_date_today"
+        <TextView
+            android:id="@+id/tv_date_today"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginVertical="15dp"
-            android:textSize="20sp"/>
+            android:layout_marginTop="10dp"
+            android:textColor="#0f9390"
+            android:fontFamily="@font/aclonica"
+            android:textSize="20sp"
+            />
 
         <!--En el swiperefresh metemos la lista para que se pueda
         actualizar facilmente deslizando hacia arriba-->
@@ -38,16 +34,19 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/srl_today"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
 
-            <ListView android:id="@+id/lv_today"
+            <ListView
+                android:id="@+id/lv_today"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="7sp"/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

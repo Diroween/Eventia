@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/imageView"
         android:layout_centerHorizontal="true"
-        android:text="@string/notificationPermissionsLack"
+        android:text="@string/notificationpermissionslack"
         android:textAlignment="center"
         android:textSize="18sp"/>
 
@@ -29,7 +29,7 @@
         android:id="@+id/btnAjustes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/botonAbrirConfiguracion"
+        android:text="@string/btn_openconfiguration"
         android:layout_below="@id/textView2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
@@ -39,7 +39,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/botonSaltar"
+        android:text="@string/btn_skip"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="25dp"

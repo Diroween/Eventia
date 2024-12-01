@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.proyect.calendar.CalendarFragment;
 import com.proyect.friend.FriendsAdapter;
 import com.proyect.R;
 import com.proyect.user.User;
@@ -260,6 +261,9 @@ public class EventViewerActivity extends AppCompatActivity
 
                             //Checkeamos si hay usuarios registrados, si no los hay se elimina
                             noRegisteredUsersDelete(eventId);
+
+                            //Cancelamos todos las notificaciones programadas para dicho evento
+                            CalendarFragment.cancelWorkRequest(eventId);
 
                             //cerramos la vista del evento
                             finish();
