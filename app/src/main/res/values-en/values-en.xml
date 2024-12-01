@@ -108,7 +108,7 @@
     <string name="alreadyadmin">User is already admin</string>
     <string name="eventedit">Event editor</string>
     <string name="savechanges">Save changes</string>
-    <string name="pastevents">Previous events</string>
+    <string name="pastevents">Previous\nevents</string>
     <string name="notificationpermissionslack">Eventia is not allowed to send notifications on your device, making some features unavailable.</string>
     <string name="btn_openconfiguration">Go to settings</string>
     <string name="btn_skip">Skip for now</string>

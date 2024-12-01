@@ -98,7 +98,7 @@
     <string name="leave">Salir</string>
     <string name="eventdeleted">Evento eliminado</string>
     <string name="eventdeletederror">Error al eliminar el evento</string>
-    <string name="pastevents">Eventos previos</string>
+    <string name="pastevents">Eventos\nprevios</string>
     <string name="eventedited">Evento editado</string>
     <string name="eventediterror">No se ha podido editar el evento</string>
     <string name="removeuserfromevent">Eliminar del evento</string>
