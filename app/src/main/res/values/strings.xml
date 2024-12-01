@@ -105,6 +105,7 @@
     <string name="userremovedfromevent">El usuario ha sido eliminado del evento</string>
     <string name="promotetoadmin">Hacer administrador</string>
     <string name="userpromotedtoadmin">El usuario ahora es administrador</string>
+    <string name="alreadyadmin">El usuario ya es administrador</string>
     <string name="eventedit">Editar evento</string>
     <string name="savechanges">Guardar cambios</string>
     <string name="notificationPermissionsLack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>

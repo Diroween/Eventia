@@ -552,22 +552,47 @@ public class EventViewerActivity extends AppCompatActivity
     {
         //Se coge la referencia en la bdd de la persona, en el evento,
         //en la que se ha desplegado el menú contextual
-        DatabaseReference userRef = reference.child("events").child(eventId)
+        DatabaseReference userReference = reference.child("events").child(eventId)
                 .child("registeredUsers").child(user.getId());
 
-        //Se pone admin como rol del usuario en la bdd y se manda un toast informativo
-        //tanto si se ha podido como si ha ocurrido un error
-        userRef.setValue("admin").addOnCompleteListener(task ->
+        //Se añade un escuchador de eventos para comprobar si el usuario ya es un admin
+        userReference.addListenerForSingleValueEvent(new ValueEventListener()
         {
-            if (task.isSuccessful())
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
             {
-                Toast.makeText(this, R.string.userpromotedtoadmin, Toast.LENGTH_SHORT).show();
+                //cogemos el rol
+                String role = snapshot.getValue(String.class);
+
+                //si es admin se manda un Toast indicandolo
+                if (role != null && role.equals("admin"))
+                {
+                    Toast.makeText(EventViewerActivity.this, R.string.alreadyadmin, Toast.LENGTH_SHORT).show();
+                }
+
+                //Si no, se pone admin como rol del usuario en la bdd y se manda un toast informativo
+                //tanto si se ha podido como si ha ocurrido un error
+                else
+                {
+                    userReference.setValue("admin").addOnCompleteListener(task ->
+                    {
+                        if (task.isSuccessful())
+                        {
+                            Toast.makeText(EventViewerActivity.this, R.string.userpromotedtoadmin, Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(EventViewerActivity.this, R.string.registererror, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
-            else
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
             {
-                Toast.makeText(this, R.string.registererror, Toast.LENGTH_SHORT).show();
+
             }
         });
     }
-
 }

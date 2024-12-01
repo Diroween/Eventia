@@ -105,6 +105,7 @@
     <string name="userremovedfromevent">User removed from event</string>
     <string name="promotetoadmin">Promote to admin</string>
     <string name="userpromotedtoadmin">User promoted to admin</string>
+    <string name="alreadyadmin">User is already admin</string>
     <string name="eventedit">Event editor</string>
     <string name="savechanges">Save changes</string>
     <string name="pastevents">Previous events</string>
