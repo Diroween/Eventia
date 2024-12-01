@@ -109,6 +109,8 @@
     <string name="eventedit">Editar evento</string>
     <string name="savechanges">Guardar cambios</string>
     <string name="notificationpermissionslack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
+    <string name="notificationpermissionsgranted">Permisos de notificación concedidos</string>
+    <string name="notificationpermissionsdenied">Permisos de notificación denegados</string>
     <string name="btn_openconfiguration">Ir a configuración</string>
     <string name="btn_skip">Saltar por ahora</string>
     <string name="event_notificationtitle_now">Tu evento: %1$s está teniendo lugar ahora a las %2$s!</string>

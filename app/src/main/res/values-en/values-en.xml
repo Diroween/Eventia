@@ -110,6 +110,8 @@
     <string name="savechanges">Save changes</string>
     <string name="pastevents">Previous\nevents</string>
     <string name="notificationpermissionslack">Eventia is not allowed to send notifications on your device, making some features unavailable.</string>
+    <string name="notificationpermissionsgranted">Notification permission granted</string>
+    <string name="notificationpermissionsdenied">Notification permission denied</string>
     <string name="btn_openconfiguration">Go to settings</string>
     <string name="btn_skip">Skip for now</string>
     <string name="event_notificationtitle_now">Your event: %1$s is taking place now at %2$s!</string>

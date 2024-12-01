@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
+        requestNotificationPermission();
+
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -165,8 +167,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivNotes.setOnClickListener(this);
         ivFriends.setOnClickListener(this);
 
-        requestNotificationPermission();
-
         arrayToday = new ArrayList<String>();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -193,7 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.ll_fragments_main, new CalendarFragment());
+
+                // Al pulsar de forma reiterada en el botón de atrás termina crasheando la app
+                // es posible que al cambiar "new CalendarFrgment()" por la instancia ya hecha de calendar
+                // mas arriba, la diferencia sería que solo se refrescaría una vez al pulsar back estando posicionado
+                // en el calendario, pero no crashea
+                transaction.replace(R.id.ll_fragments_main, calendarFragment);
                 transaction.commit();
             }
         });
@@ -289,22 +294,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                showRationaleDialog();
+            }
+        } else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
                     showRationaleDialog();
                 } else {
-                    // Request permission
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE);
                 }
             }
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                showRationaleDialog();
-            }
         }
+
+
     }
 
     @Override
@@ -314,10 +321,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted
-                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.notificationpermissionsgranted), Toast.LENGTH_SHORT).show();
             } else {
                 // Permission denied
-                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.notificationpermissionsdenied), Toast.LENGTH_SHORT).show();
             }
         }
     }
