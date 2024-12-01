@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_event_list"
-        android:contentDescription="@string/app_name"/>
+        android:contentDescription="@string/app_name" />
 
     <TextView android:id="@+id/tv_event_name"
         android:layout_width="wrap_content"
@@ -44,7 +44,8 @@
         android:text="@string/eventname"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:elevation="3dp"/>
 
     <EditText android:id="@+id/et_event_name"
         android:layout_width="wrap_content"
@@ -63,7 +64,8 @@
         android:textColorHint="@android:color/darker_gray"
         android:fontFamily="@font/aclonica"
         android:textSize="15sp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:elevation="3dp"/>
 
     <TextView android:id="@+id/tv_event_place"
         android:layout_width="wrap_content"
@@ -80,7 +82,8 @@
         android:text="@string/eventplace"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:elevation="3dp"/>
 
     <EditText android:id="@+id/et_event_place"
         android:layout_width="wrap_content"
@@ -99,7 +102,8 @@
         android:textColorHint="@android:color/darker_gray"
         android:fontFamily="@font/aclonica"
         android:textSize="15sp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:elevation="3dp"/>
 
     <TextView android:id="@+id/tv_event_date_title"
         android:layout_width="wrap_content"
@@ -116,7 +120,8 @@
         android:text="@string/eventdate"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:elevation="3dp"/>
 
     <TextView android:id="@+id/tv_event_date"
         android:layout_width="wrap_content"
@@ -132,7 +137,8 @@
         android:text="@string/eventdate"
         android:fontFamily="@font/aclonica"
         android:textSize="15sp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:elevation="3dp"/>
 
     <TextView android:id="@+id/tv_event_hour_title"
         android:layout_width="wrap_content"
@@ -149,7 +155,8 @@
         android:text="@string/eventhour"
         android:textColor="@color/black"
         android:fontFamily="@font/gabriela"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:elevation="3dp"/>
 
     <TextView android:id="@+id/tv_event_hour"
         android:layout_width="wrap_content"
@@ -168,7 +175,8 @@
         android:textColorHint="@android:color/darker_gray"
         android:fontFamily="@font/aclonica"
         android:textSize="13sp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:elevation="3dp"/>
 
     <Button android:id="@+id/btn_create_event"
         android:layout_width="wrap_content"
@@ -181,6 +189,6 @@
         android:textSize="15sp"
         android:layout_marginBottom="10dp"
         android:padding="15dp"
-        android:background="@drawable/btn_login_bckgrnd"/>
+        android:background="@drawable/btn_login_bckgrnd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

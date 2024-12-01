@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,8 +30,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -111,7 +108,7 @@ public class EventEditorActivity extends AppCompatActivity
         btnEditEvent.setText(R.string.savechanges);
 
         View view = findViewById(R.id.main);
-        view.setBackgroundColor(Color.LTGRAY);
+        view.setBackgroundResource(R.drawable.edit_bckground);
 
         etEventName = findViewById(R.id.et_event_name);
         etEventName.setText(eventName);
