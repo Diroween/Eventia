@@ -39,8 +39,7 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_current_day);
@@ -61,15 +60,13 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
 
         events = new ArrayList<>();
 
-        listAdapter = new EventListAdapter(EventOnCurrentDayActivity.this, events);
+        listAdapter = new EventListAdapter(getApplicationContext(), events);
 
         recyclerView.setAdapter(listAdapter);
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener()
-        {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EventCreationActivity.class);
                 intent.putExtra("date", date);
                 startActivity(intent);
@@ -81,15 +78,13 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         //Le asignamos un escuchador a la referencia de datos
-        databaseReference.addValueEventListener(new ValueEventListener()
-        {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             /**
              * Método sobreescrito para la lógica de funcionamiento
              * */
 
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot)
-            {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //vaciamos el array de eventos
                 events.clear();
 
@@ -98,8 +93,7 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
                 //le damos un formato a las fechas que coincida
                 // con el que se le pasa de calendar fragment
                 //si la fecha pasada es igual a al evento encontrado se añade al array list
-                for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Event event = dataSnapshot.getValue(Event.class);
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -108,30 +102,33 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
 
                     String formattedDate;
 
-                    try
-                    {
-                        eventDate  = sdf.parse(event.getDate());
+                    try {
+                        eventDate = sdf.parse(event.getDate());
 
                         formattedDate = sdf.format(eventDate);
-                    }
-                    catch (ParseException e)
-                    {
+                    } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
 
                     if (event != null && dataSnapshot.child("registeredUsers")
-                            .hasChild(currentUserId))
-                    {
-                        if (date.equals(formattedDate))
-                        {
+                            .hasChild(currentUserId)) {
+                        if (date.equals(formattedDate)) {
                             events.add(event);
                         }
                     }
                 }
 
+                events.sort(new EventDateComparator());
+
                 //Le indicamos al adaptador que los datos han cambiado
                 listAdapter.notifyDataSetChanged();
+
+                //Si no hay eventos (por una edición de fecha proveniente de EventEditorActivity)
+                //cerramos la actividad directamente
+                if (events.isEmpty()) {
+                    finish();
+                }
             }
 
 
@@ -142,5 +139,6 @@ public class EventOnCurrentDayActivity extends AppCompatActivity {
         });
 
     }
+
 
 }

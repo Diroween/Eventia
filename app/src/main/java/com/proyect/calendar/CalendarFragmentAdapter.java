@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventViewerActivity;
-import com.proyect.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

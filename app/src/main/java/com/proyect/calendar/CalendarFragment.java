@@ -1,6 +1,5 @@
 package com.proyect.calendar;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +13,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.applandeo.materialcalendarview.CalendarDay;
 import com.applandeo.materialcalendarview.CalendarView;
@@ -33,23 +28,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventCreationActivity;
+import com.proyect.event.EventDateComparator;
 import com.proyect.event.EventOnCurrentDayActivity;
 import com.proyect.event.EventRequestsActivity;
-import com.proyect.notification.ReminderWorker;
+import com.proyect.notification.NotificationHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -77,8 +67,6 @@ public class CalendarFragment extends Fragment {
 
     public CalendarView calendarView;
     FloatingActionButton fbEventRequests;
-    private String mParam1;
-    private String mParam2;
     private DatabaseReference databaseReference;
     private ArrayList<CalendarDay> calendarDays;
     private CalendarFragmentAdapter calendarAdapter;
@@ -100,41 +88,11 @@ public class CalendarFragment extends Fragment {
      * Método para crear nuevas instancias de CalendarFragment
      */
 
-    public static CalendarFragment newInstance(String param1, String param2) {
+    public static CalendarFragment newInstance() {
         CalendarFragment fragment = new CalendarFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    /**
-     * Método para lanzar el trabajo en segundo plano
-     */
-    public static void createWorkRequest(String workName, String titulo, String message, long timeDelayInSeconds) {
-        OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(ReminderWorker.class)
-                .setInitialDelay(timeDelayInSeconds, TimeUnit.SECONDS)
-                .setInputData(new Data.Builder().putString("title", titulo).putString("message", message).build())
-                .build();
-
-        //empleamos ExistingWorkPolicy.REPLACE para sobreescribir trabajos previos en caso de haberse editado la hora del evento
-        WorkManager.getInstance(context).enqueueUniqueWork(
-                workName,
-                ExistingWorkPolicy.REPLACE,
-                myWorkRequest
-        );
-    }
-
-    /**
-     * Método para cancelar todos los trabajos con un nombre dado.
-     */
-    public static void cancelWorkRequest(String name) {
-        WorkManager instance = WorkManager.getInstance(context);
-        instance.cancelUniqueWork(name);
-        instance.cancelUniqueWork(name + "_3600");
-        instance.cancelUniqueWork(name + "_86400");
-        instance.cancelUniqueWork(name + "_604800");
     }
 
     /**
@@ -145,8 +103,6 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -196,7 +152,7 @@ public class CalendarFragment extends Fragment {
             startActivity(intentRequests);
         });
 
-
+        // Cargamos los eventos del usuario
         loadUserEvents();
 
 
@@ -339,23 +295,8 @@ public class CalendarFragment extends Fragment {
                                     //días pasados donde también tuvo evento el usuario
                                     calendarDays.add(calendarDay);
 
-                                    // Dividimos el año, mes y día
-                                    String[] fechas = event.getDate().split("-");
-
-                                    // Dividimos horas y minutos
-                                    String[] horas = event.getHour().split(":");
-
-                                    LocalDate fechaEvento = LocalDate.of(Integer.parseInt(fechas[0]), Integer.parseInt(fechas[1]), Integer.parseInt(fechas[2]));
-                                    LocalTime horaEvento = LocalTime.of(Integer.parseInt(horas[0]), Integer.parseInt(horas[1]));
-
-                                    LocalDateTime fechaHoraActual = LocalDateTime.now();
-                                    LocalDateTime fechaHoraEvento = LocalDateTime.of(fechaEvento, horaEvento);
-
-                                    ZoneOffset offset = ZonedDateTime.now().getOffset();
-
-                                    long delaySegundos = fechaHoraEvento.toEpochSecond(offset) - fechaHoraActual.toEpochSecond(offset);
-
-                                    programarNotificacion(event, delaySegundos);
+                                    //Programamos las notificaciones del evento empleando el calculo de getSecondsUntilEvent()
+                                    NotificationHelper.enqueueNotifications(getContext(), event, NotificationHelper.getSecondsUntilEvent(event));
                                 }
 
                                 //Si no se consigue parsear bien la fecha se recoge una excepción
@@ -367,38 +308,7 @@ public class CalendarFragment extends Fragment {
 
                         //Ordenamos los eventos por fecha y hora
                         //para ello ordenamos el arraylist
-
-                        nextEvents.sort(new Comparator<Event>() {
-                            @Override
-                            public int compare(Event e1, Event e2) {
-                                //Damos un formato simple a la fecha y la hora y los comparamos
-                                try {
-                                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-
-                                    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-
-                                    Date date1 = sdfDate.parse(e1.getDate());
-
-                                    Date date2 = sdfDate.parse(e2.getDate());
-
-                                    //Si la fecha es la misma pasamos a ordenar por hora
-                                    if (date1.equals(date2)) {
-                                        //Cogemos las horas y se comparan
-                                        Date time1 = sdfTime.parse(e1.getHour());
-                                        Date time2 = sdfTime.parse(e2.getHour());
-
-                                        return time1.compareTo(time2);
-                                    }
-
-                                    //Si las fechas no son iguales se ordena directamente por fecha
-                                    else {
-                                        return date1.compareTo(date2);
-                                    }
-                                } catch (ParseException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
+                        nextEvents.sort(new EventDateComparator());
 
                         //añadimos al calendario todos los dias personalizados
                         calendarView.setCalendarDays(calendarDays);
@@ -414,45 +324,6 @@ public class CalendarFragment extends Fragment {
                     }
                 });
 
-    }
-
-    // Programamos una o varias notificaciones en base a los segundos que quedan hasta la fecha del evento.
-    @SuppressLint("StringFormatInvalid")
-    public void programarNotificacion(Event event, long delay) {
-
-        String mensaje = getResources().getString(R.string.event_notificationmessage, event.getPlace());
-
-        if (delay > 0) {
-            //notificamos al momento
-            createWorkRequest(event.getId(),
-                    getResources().getString(R.string.event_notificationtitle_now, event.getName(), event.getHour()),
-                    mensaje,
-                    delay);
-
-            if (delay > 3600) {
-                //notificamos una hora antes
-                createWorkRequest(event.getId() + "_3600",
-                        getResources().getString(R.string.event_notificationtitle_1h, event.getName()),
-                        mensaje,
-                        delay - 3600);
-
-                if (delay > 86400) {
-                    //notificamos un día antes
-                    createWorkRequest(event.getId() + "_86400",
-                            getResources().getString(R.string.event_notificationtitle_24h, event.getName()),
-                            mensaje,
-                            delay - 86400);
-
-                    if (delay > 604800) {
-                        //notificamos una semana antes
-                        createWorkRequest(event.getId() + "_604800",
-                                getResources().getString(R.string.event_notificationtitle_7d, event.getName()),
-                                mensaje,
-                                delay - 604800);
-                    }
-                }
-            }
-        }
     }
 
 

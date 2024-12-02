@@ -22,8 +22,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.proyect.friend.FriendInviterAdapter;
 import com.proyect.R;
+import com.proyect.friend.FriendInviterAdapter;
 import com.proyect.user.User;
 
 import java.util.ArrayList;
