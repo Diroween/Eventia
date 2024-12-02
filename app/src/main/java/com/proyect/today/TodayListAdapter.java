@@ -2,18 +2,26 @@ package com.proyect.today;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventViewerActivity;
+import com.proyect.friend.FriendsAdapter;
 import com.proyect.user.User;
 
 import java.text.ParseException;
@@ -24,7 +32,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-public class TodayListAdapter extends ArrayAdapter<Event> {
+public class TodayListAdapter extends ArrayAdapter<Event>
+{
+
+    /**
+     * Declaramos las variables de clase necesarias
+     * */
 
     ArrayList<Event> events;
     private Context context;
@@ -33,28 +46,40 @@ public class TodayListAdapter extends ArrayAdapter<Event> {
 
     DatabaseReference reference;
 
-
-    public TodayListAdapter(Context context, int resource, ArrayList<Event> events) {
+    /**
+     * Constructor con argumentos
+     * */
+    public TodayListAdapter(Context context, int resource, ArrayList<Event> events)
+    {
         super(context, resource, events);
         this.context = context;
         this.events = events;
         this.monthsArray = context.getResources().getStringArray(R.array.material_calendar_months_array);
     }
 
+    /**
+     * Método para cargar el layout de cada elemento de la lista y darle funcionalidad
+     * */
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+        //Hacemos que se coja como holder, el que hemos personalizado
         TodayListViewHolder holder;
         Event event = getItem(position);
-
-        if(convertView == null) {
+        if(convertView == null)
+        {
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.item_today_list_fragment, parent, false);
             holder = new TodayListViewHolder(convertView);
             convertView.setTag(holder);
-        } else {
+        }
+        else
+        {
             holder = (TodayListViewHolder) convertView.getTag();
         }
 
+        //Se asignan los valores a los elementos en pantalla
         holder.tvEventName.setText(event.getName());
         holder.tvEventPlace.setText(event.getPlace());
         holder.tvEventHour.setText(event.getHour());
@@ -68,13 +93,9 @@ public class TodayListAdapter extends ArrayAdapter<Event> {
                     .placeholder(R.drawable.ic_event_list).into(holder.ivEventImage);
         }
 
+        //Cogemos la refencia a la base de datos y declaramos el intent
+        //al que se va cuando se clica en el evento
         reference = FirebaseDatabase.getInstance().getReference();
-
-        Map<String, String> registeredUsers = event.getRegisteredUsers();
-
-        holder.tvEventUsers.setText(""+registeredUsers.size());
-
-
 
         Intent intent = new Intent(context, EventViewerActivity.class);
 
@@ -114,13 +135,7 @@ public class TodayListAdapter extends ArrayAdapter<Event> {
                         ,event.getPlace());
             }
 
-            String format2 = String.format("%02d %s %d"
-                    ,calendar.get(Calendar.DAY_OF_MONTH)
-                    ,monthsArray[calendar.get(Calendar.MONTH)]
-                    ,calendar.get(Calendar.YEAR));
-
-
-
+            //Pasamos los extras necesarios al intent
             intent.putExtra("event_id", event.getId());
             intent.putExtra("event_name", event.getName());
             intent.putExtra("event_data", formattedDate);
@@ -140,26 +155,58 @@ public class TodayListAdapter extends ArrayAdapter<Event> {
             throw new RuntimeException(e);
         }
 
-
-
-        intent.putExtra("event_id", event.getId());
-        intent.putExtra("event_name", event.getName());
-        intent.putExtra("event_date", event.getDate());
-        intent.putExtra("event_place", event.getPlace());
-        intent.putExtra("event_hour", event.getHour());
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 context.startActivity(intent);
             }
         });
 
-        return convertView;
-    }
+        //Miramos cuales son los usuarios registrados y cogemos sus referencias y el número total
+        Map<String, String> registeredUsers = event.getRegisteredUsers();
 
-    private ArrayList<User> getRegisteredUsers() {
-        return null;
+        holder.tvEventUsers.setText(""+registeredUsers.size());
+
+        ArrayList <User> registeredUsersList = new ArrayList<User>();
+
+        //Asignamos un adaptador para mostrar los amigos
+        FriendsAdapter friendsAdapter = new FriendsAdapter(registeredUsersList,
+                FirebaseAuth.getInstance().getUid(), false);
+
+        holder.rvRegisteredUsers.setAdapter(friendsAdapter);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+
+        //Dentro del bucle miramos si el usuario no es null y lo añadimos a la lista de usuarios
+        //registrados dentro del evento
+        for(String userId : registeredUsers.keySet())
+        {
+            reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot)
+                {
+                    User user = snapshot.getValue(User.class);
+
+                    if(user != null)
+                    {
+                        registeredUsersList.add(user);
+                        friendsAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error)
+                {
+                    Log.e("ERROR", "No se han podido cargar los participantes");
+                }
+            });
+
+        }
+
+
+        return convertView;
     }
 
 

@@ -169,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         arrayToday = new ArrayList<String>();
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
             /**
              * Le damos funcionalidad al botón de volver atrás
              * En este caso queremos que cuando se de atrás en cualquier fragment cargado
@@ -179,27 +180,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
              * */
 
             @Override
-            public void handleOnBackPressed() {
+            public void handleOnBackPressed()
+            {
                 //Cogemos el manejador de eventos
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
+                Fragment fragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
+
                 //Si el fragment cargado es una instacia del fragment principal
-                //El calendarfragment, se vuelve a cargar para actualizarse
+                //El calendarfragment, se sale de la app, como hacen el resto de apps
                 //sino se carga el calendario para mostrar los eventos
 
-                ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
-                ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
-                ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
-                ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
+                if(fragment instanceof CalendarFragment)
+                {
+                    finish();
+                }
+                else
+                {
+                    ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
+                    ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
+                    ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
+                    ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-                // Al pulsar de forma reiterada en el botón de atrás termina crasheando la app
-                // es posible que al cambiar "new CalendarFrgment()" por la instancia ya hecha de calendar
-                // mas arriba, la diferencia sería que solo se refrescaría una vez al pulsar back estando posicionado
-                // en el calendario, pero no crashea
-                transaction.replace(R.id.ll_fragments_main, calendarFragment);
-                transaction.commit();
+                    transaction.replace(R.id.ll_fragments_main, calendarFragment);
+                    transaction.commit();
+                }
+
             }
         });
     }
