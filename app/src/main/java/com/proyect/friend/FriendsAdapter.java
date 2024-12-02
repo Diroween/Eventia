@@ -39,12 +39,19 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     private boolean enableLongClick;
 
     /**
-     * Constructores con argumento
+     * Constructores con argumentos
      * */
 
     public FriendsAdapter(ArrayList<User> friends, boolean enableLongClick)
     {
         this.friends = friends;
+        this.enableLongClick = enableLongClick;
+    }
+
+    public FriendsAdapter(ArrayList<User> friends, String currentUserId, boolean enableLongClick)
+    {
+        this.friends = friends;
+        this.currentUserId = currentUserId;
         this.enableLongClick = enableLongClick;
     }
 

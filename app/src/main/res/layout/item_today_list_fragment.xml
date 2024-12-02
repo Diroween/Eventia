@@ -5,45 +5,42 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     android:background="@drawable/item_event_bckgrnd"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/iv_user_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:id="@+id/iv_event_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:contentDescription="@string/events"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_event_list"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_event_data"
         android:layout_width="0dp"
         android:layout_height="150dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/iv_user_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="@id/iv_event_image"
+        app:layout_constraintEnd_toEndOf="@id/iv_event_image"
+        app:layout_constraintTop_toBottomOf="@id/iv_event_image">
 
-        <TextView
-            android:id="@+id/tv_event_name"
-            android:layout_width="wrap_content"
+        <TextView android:id="@+id/tv_event_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginVertical="15dp"
             android:fontFamily="@font/gabriela"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_event_hour"
+        <ImageView android:id="@+id/iv_event_hour"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="10dp"
@@ -54,8 +51,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_event_name" />
 
 
-        <ImageView
-            android:id="@+id/iv_event_place"
+        <ImageView android:id="@+id/iv_event_place"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="10dp"
@@ -65,8 +61,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_event_hour" />
 
-        <ImageView
-            android:id="@+id/iv_event_users"
+        <ImageView android:id="@+id/iv_event_users"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="10dp"
@@ -76,42 +71,62 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_event_place" />
 
-        <TextView
-            android:id="@+id/tv_event_hour"
-            android:layout_width="wrap_content"
+        <TextView android:id="@+id/tv_event_hour"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:fontFamily="@font/aclonica"
-            android:textAlignment="center"
             android:textColor="#0f9390"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@id/iv_event_hour"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_event_name" />
 
-        <TextView
-            android:id="@+id/tv_event_place"
-            android:layout_width="wrap_content"
+        <TextView android:id="@+id/tv_event_place"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:fontFamily="@font/aclonica"
-            android:textAlignment="center"
             android:textColor="#1a2b63"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@id/iv_event_place"
-            app:layout_constraintTop_toBottomOf="@id/tv_event_hour" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_event_hour"/>
 
-        <TextView
-            android:id="@+id/tv_event_users"
-            android:layout_width="wrap_content"
+        <TextView android:id="@+id/tv_event_users"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:fontFamily="@font/aclonica"
-            android:textAlignment="center"
             android:textColor="#1a2b63"
             android:textSize="15sp"
             app:layout_constraintStart_toEndOf="@id/iv_event_users"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_event_place" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView android:id="@+id/tv_users_registered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="@font/gabriela"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:text="@string/registeredusers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_event_data"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_registered_users"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_users_registered"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
