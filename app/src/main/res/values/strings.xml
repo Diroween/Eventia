@@ -119,6 +119,7 @@
     <string name="event_notificationtitle_24h">Tu evento: %1$s tendrá lugar dentro de 24h!</string>
     <string name="event_notificationtitle_7d">Tu evento: %1$s tendrá lugar dentro de 7 días!</string>
     <string name="event_notificationmessage">Ubicación: %1$s</string>
+    <string name="event_notificationchannel">Notificaciones de eventos</string>
 
 
     <string-array name="array_config">

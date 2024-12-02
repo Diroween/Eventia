@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.proyect.R;
+import com.proyect.notification.NotificationHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,8 +47,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventEditorActivity extends AppCompatActivity
-{
+public class EventEditorActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 2;
     TextView tvEventDate;
@@ -78,8 +78,7 @@ public class EventEditorActivity extends AppCompatActivity
     private DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_event_creation);
@@ -146,19 +145,18 @@ public class EventEditorActivity extends AppCompatActivity
                             @Override
                             public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
-                                String date = String.format("%02d/%02d/%02d", i2, i1+1, i);
+                                String date = String.format("%02d/%02d/%02d", i2, i1 + 1, i);
                                 tvEventDate.setText(date);
-                                dateString = String.format("%02d-%02d-%02d", i, i1+1, i2);
+                                dateString = String.format("%02d-%02d-%02d", i, i1 + 1, i2);
                             }
-                        }, Integer.parseInt(dpdDate[0]), Integer.parseInt(dpdDate[1])-1,
+                        }, Integer.parseInt(dpdDate[0]), Integer.parseInt(dpdDate[1]) - 1,
                         Integer.parseInt(dpdDate[2])
                 );
                 datePickerDialog.show();
             }
         });
 
-        tvEventHour.setOnClickListener(new View.OnClickListener()
-        {
+        tvEventHour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Creamos un objeto timepickerdialog con el contexto
@@ -171,8 +169,7 @@ public class EventEditorActivity extends AppCompatActivity
                              * Método para dar funcionalidad a la selección de una hora
                              * */
                             @Override
-                            public void onTimeSet(TimePicker timePicker, int i, int i1)
-                            {
+                            public void onTimeSet(TimePicker timePicker, int i, int i1) {
                                 //le seleccionamos un formato para la hora y minutos
                                 String hour = String.format("%02d:%02d", i, i1);
 
@@ -209,16 +206,13 @@ public class EventEditorActivity extends AppCompatActivity
         //pasamos ese día a un formato más visual para el usuario
         //ponemos en el campo para mostrar la fecha la del formato amigable
         //Si hay un error se recoge
-        try
-        {
+        try {
             Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
 
             String showDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
 
             tvEventDate.setText(showDate);
-        }
-        catch (ParseException e)
-        {
+        } catch (ParseException e) {
             throw new RuntimeException(e);
         }
 
@@ -249,6 +243,14 @@ public class EventEditorActivity extends AppCompatActivity
                     saveEvent(eventImageUri.toString());
                 }
 
+                //Cancelamos todos los trabajos programados para dicho evento
+                NotificationHelper.cancelAllWorkRequests(event.getName());
+
+                //Lanzamos todos los trabajos necesarios basándonos en la nueva fecha del evento
+                //Esto principalmente es para que en caso de adelantar o atrasar un evento
+                // no se quedasen trabajos antiguos activos o no se lanzasen trabajos nuevos.
+                NotificationHelper.enqueueNotifications(getApplicationContext(), event, NotificationHelper.getSecondsUntilEvent(event));
+
             }
 
             //Si no se han completado todos los campos
@@ -260,8 +262,7 @@ public class EventEditorActivity extends AppCompatActivity
         });
     }
 
-    private boolean checkEmptyFields()
-    {
+    private boolean checkEmptyFields() {
         return !etEventName.getText().toString().isEmpty()
                 && !etEventPlace.getText().toString().isEmpty()
                 && !tvEventDate.getText().toString().isEmpty()
@@ -270,8 +271,7 @@ public class EventEditorActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode
-            , @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+            , @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         //Si el código de permiso coincide con el requerido
@@ -306,12 +306,10 @@ public class EventEditorActivity extends AppCompatActivity
         }
 
         //Para versiones anteriores a Android 13
-        else
-        {
+        else {
             //Si no se tiene permisos, se piden
             if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            {
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
             }
@@ -323,8 +321,7 @@ public class EventEditorActivity extends AppCompatActivity
         }
     }
 
-    private void openFileChooser()
-    {
+    private void openFileChooser() {
         //Creamos un intent
         Intent intent = new Intent();
 
@@ -338,11 +335,9 @@ public class EventEditorActivity extends AppCompatActivity
         pickImageLauncher.launch(intent);
     }
 
-    private void uploadImage()
-    {
+    private void uploadImage() {
         //Si la uri de la imagen no es nula
-        if (eventImageUri != null)
-        {
+        if (eventImageUri != null) {
             //Se abre una referencia a la base de datos y en la carpeta de usuarios
             //con el id del usuario se guarda su foto de perfil
             StorageReference fileStorageReference = FirebaseStorage.getInstance().getReference
@@ -379,10 +374,9 @@ public class EventEditorActivity extends AppCompatActivity
 
     /**
      * Método para poder guardar un evento modificado
-     * */
+     */
 
-    private void saveEvent(String imageUri)
-    {
+    private void saveEvent(String imageUri) {
         //Setteamos el resto de datos del evento
         event.setName(etEventName.getText().toString());
         event.setPlace(etEventPlace.getText().toString());
@@ -396,62 +390,52 @@ public class EventEditorActivity extends AppCompatActivity
 
         //Recogemos de la base de datos los usuarios ya registrados en el evento
         eventReference.child("registeredUsers").addListenerForSingleValueEvent(
-                new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                //Guardamos todos los usuarios registrados en una lista temporal
-                //para ello iteramos tantas veces como usuarios haya
-                Map<String, Object> registeredUsersMap = new HashMap<>();
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //Guardamos todos los usuarios registrados en una lista temporal
+                        //para ello iteramos tantas veces como usuarios haya
+                        Map<String, Object> registeredUsersMap = new HashMap<>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                {
-                    registeredUsersMap.put(snapshot.getKey(), snapshot.getValue());
-                }
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            registeredUsersMap.put(snapshot.getKey(), snapshot.getValue());
+                        }
 
-                //Actualizamos el evento sobreescribiendo los datos anteriores
-                //Si no se ha podido actualizar se manda un toast informativo
-                eventReference.setValue(event).addOnCompleteListener(task ->
-                {
-                    if (task.isSuccessful())
-                    {
-                        //Una vez se actualizado los datos añadimos los usuarios que ya estaban
-                        //registrados anteriormente y mostramos un Toast informativo
-                        eventReference.child("registeredUsers").updateChildren(registeredUsersMap)
-                                .addOnCompleteListener(task1 ->
-                                {
-                                    if (task1.isSuccessful())
-                                    {
-                                        Toast.makeText(EventEditorActivity.this,
-                                                R.string.eventedited,
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(EventEditorActivity.this,
-                                                R.string.eventediterror,
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        //Actualizamos el evento sobreescribiendo los datos anteriores
+                        //Si no se ha podido actualizar se manda un toast informativo
+                        eventReference.setValue(event).addOnCompleteListener(task ->
+                        {
+                            if (task.isSuccessful()) {
+                                //Una vez se actualizado los datos añadimos los usuarios que ya estaban
+                                //registrados anteriormente y mostramos un Toast informativo
+                                eventReference.child("registeredUsers").updateChildren(registeredUsersMap)
+                                        .addOnCompleteListener(task1 ->
+                                        {
+                                            if (task1.isSuccessful()) {
+                                                Toast.makeText(EventEditorActivity.this,
+                                                        R.string.eventedited,
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(EventEditorActivity.this,
+                                                        R.string.eventediterror,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                Toast.makeText(EventEditorActivity.this,
+                                        R.string.eventediterror,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                    else
-                    {
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         Toast.makeText(EventEditorActivity.this,
-                                R.string.eventediterror,
+                                R.string.eventloaderror,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-                Toast.makeText(EventEditorActivity.this,
-                        R.string.eventloaderror,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
 
         //Se cierra la actividad
         finish();

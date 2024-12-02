@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.event.Event;
+import com.proyect.event.EventDateComparator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +30,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -246,44 +246,8 @@ public class TodayFragment extends Fragment
                         //Ordenamos los eventos por fecha y hora
                         //para ello ordenamos el arraylist
 
-                        todayEvents.sort(new Comparator<Event>()
-                        {
-                            @Override
-                            public int compare(Event e1, Event e2)
-                            {
-                                //Damos un formato simple a la fecha y la hora y los comparamos
-                                try
-                                {
-                                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+                        todayEvents.sort(new EventDateComparator());
 
-                                    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-
-                                    Date date1 = sdfDate.parse(e1.getDate());
-
-                                    Date date2 = sdfDate.parse(e2.getDate());
-
-                                    //Si la fecha es la misma pasamos a ordenar por hora
-                                    if (date1.equals(date2))
-                                    {
-                                        //Cogemos las horas y se comparan
-                                        Date time1 = sdfTime.parse(e1.getHour());
-                                        Date time2 = sdfTime.parse(e2.getHour());
-
-                                        return time1.compareTo(time2);
-                                    }
-
-                                    //Si las fechas no son iguales se ordena directamente por fecha
-                                    else
-                                    {
-                                        return date1.compareTo(date2);
-                                    }
-                                }
-                                catch (ParseException e)
-                                {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
 
                         //Le decimos al adaptador que la lista ha cambiado sus datos
                         adapter.notifyDataSetChanged();

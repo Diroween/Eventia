@@ -29,7 +29,7 @@
     <string name="note">Note</string>
     <string name="savednote">Note saved</string>
     <string name="savenoteerror">Note must have a title to be saved</string>
-    <string name="deletednote">Nota deleted</string>
+    <string name="deletednote">Note deleted</string>
     <string name="emaildoesntmatch">Email does not match with format example@example.com</string>
     <string name="accountnotcreated">The account could not be created, please, check email and password</string>
     <string name="accountnotfound">Account not found.\nPlease, check email and password</string>
@@ -120,6 +120,7 @@
     <string name="event_notificationtitle_24h">Your event: %1$s will take place in 24h!</string>
     <string name="event_notificationtitle_7d">Your event: %1$s will take place in 7 days!</string>
     <string name="event_notificationmessage">Location: %1$s</string>
+    <string name="event_notificationchannel">Event notifications</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
