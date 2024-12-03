@@ -1,0 +1,50 @@
+@startuml
+class com.proyect.today.TodayListAdapter {
+~ ArrayList<Event> events
+- Context context
+- String[] monthsArray
+- String formattedDate
+~ DatabaseReference reference
++ View getView(int,View,ViewGroup)
+}
+
+
+class com.proyect.today.TodayListViewHolder {
+~ TextView tvEventName
+~ TextView tvEventDate
+~ TextView tvEventHour
+~ TextView tvEventPlace
+~ TextView tvEventUsers
+~ ImageView ivEventImage
+~ ImageView ivEventHourIcon
+~ ImageView ivEventPlaceIcon
+~ ImageView ivEventUsersIcon
+~ RecyclerView rvRegisteredUsers
+}
+
+class com.proyect.today.TodayFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+~ ListView lvToday
+~ TodayListAdapter adapter
+- String mParam1
+- String mParam2
+- TextView tvDateToday
+- SwipeRefreshLayout srlToday
+- ArrayList<Event> todayEvents
+- DatabaseReference databaseReference
++ {static} TodayFragment newInstance(String,String)
++ void onCreate(Bundle)
++ void onViewCreated(View,Bundle)
++ void onResume()
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void loadUserEvents()
+}
+
+
+
+
+android.widget.ArrayAdapter <|-- com.proyect.today.TodayListAdapter
+com.proyect.today.ViewHolder <|-- com.proyect.today.TodayListViewHolder
+androidx.fragment.app.Fragment <|-- com.proyect.today.TodayFragment
+@enduml

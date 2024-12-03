@@ -1,0 +1,45 @@
+@startuml
+class com.proyect.calendar.CalendarFragmentViewHolder {
+~ ImageView ivEventImage
+~ TextView tvEventName
+~ TextView tvEventData
+}
+
+class com.proyect.calendar.CalendarFragmentAdapter {
+- ArrayList<Event> eventList
+- Context context
+- String[] monthsArray
+- String formattedDate
++ CalendarFragmentViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(CalendarFragmentViewHolder,int)
++ int getItemCount()
+}
+
+
+class com.proyect.calendar.CalendarFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- {static} Context context
++ CalendarView calendarView
+~ FloatingActionButton fbEventRequests
+- DatabaseReference databaseReference
+- ArrayList<CalendarDay> calendarDays
+- CalendarFragmentAdapter calendarAdapter
+- RecyclerView rvCalendar
+- ArrayList<Event> nextEvents
+- ArrayList<Event> pastEvents
+- ArrayList<String> allEvents
++ {static} CalendarFragment newInstance()
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void onResume()
++ void loadUserEvents()
+}
+
+
+
+
+com.proyect.calendar.ViewHolder <|-- com.proyect.calendar.CalendarFragmentViewHolder
+com.proyect.calendar.Adapter <|-- com.proyect.calendar.CalendarFragmentAdapter
+androidx.fragment.app.Fragment <|-- com.proyect.calendar.CalendarFragment
+@enduml

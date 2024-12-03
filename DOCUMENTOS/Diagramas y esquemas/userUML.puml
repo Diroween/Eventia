@@ -1,0 +1,41 @@
+@startuml
+class com.proyect.user.UserSettings {
+~ ImageView ivUserImage
+~ TextView tvUserId
+~ TextView tvUserName
+~ TextView tvUserEmail
+~ TextView tvTxtbtnChangeImage
+~ ImageView ivLogout
+~ Button btnPreviousEvents
+- {static} int REQUEST_CODE
+- Uri userImageUri
+- ActivityResultLauncher<Intent> pickImageLauncher
+# void onCreate(Bundle)
+- void requestPermissions()
++ void onRequestPermissionsResult(int,String[],int[])
+- void openFileChooser()
+- void uploadImage()
+- void updateProfile(String)
+}
+
+
+class com.proyect.user.User {
+- String email
+- String name
+- String id
+- String imageUrl
++ String getEmail()
++ void setEmail(String)
++ String getName()
++ void setName(String)
++ String getId()
++ void setId(String)
++ String getImageUrl()
++ void setImageUrl(String)
+}
+
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.user.UserSettings
+@enduml
