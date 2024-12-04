@@ -37,8 +37,7 @@ public class PreviousEventsActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         //Métodos necesarios para que la cativity se muestre correctamente en pantalla
 
         super.onCreate(savedInstanceState);
@@ -53,8 +52,6 @@ public class PreviousEventsActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        loadUserEvents();
-
         recyclerView = findViewById(R.id.rvPastEvents);
         pastEvents = new ArrayList<>();
 
@@ -65,19 +62,16 @@ public class PreviousEventsActivity extends AppCompatActivity {
 
     }
 
-    public void loadUserEvents()
-    {
+    public void loadUserEvents() {
         //Recogemos los datos del usuario de Firebase que ha iniciado sesión
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addListenerForSingleValueEvent(new ValueEventListener()
-                {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot)
-                    {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         pastEvents.clear();
 
@@ -85,20 +79,17 @@ public class PreviousEventsActivity extends AppCompatActivity {
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
                         //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                        {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Event event = dataSnapshot.getValue(Event.class);
 
                             if (event != null && dataSnapshot.child("registeredUsers")
-                                    .hasChild(user.getUid()))
-                            {
-                                try
-                                {
+                                    .hasChild(user.getUid())) {
+                                try {
                                     //Establecemos un formato fecha/hora
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                     //Se recoge la fecha del evento
-                                    Date eventDate = simpleDateFormat.parse(event.getDate());
+                                    Date eventDate = simpleDateFormat.parse(event.getDate() + " " + event.getHour());
 
                                     //Se coge una instancia de Calendar de Java
                                     Calendar calendar = Calendar.getInstance();
@@ -112,10 +103,8 @@ public class PreviousEventsActivity extends AppCompatActivity {
                                     //Si el día del evento es posterior al día de hoy
                                     //Se carga en futuros eventos
 
-
                                     //Si es anterior, se carga en eventos pasados
-                                    if (calendar.before(today))
-                                    {
+                                    if (calendar.before(today)) {
                                         pastEvents.add(event);
                                     }
                                 }
@@ -134,13 +123,18 @@ public class PreviousEventsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error)
-                    {
+                    public void onCancelled(@NonNull DatabaseError error) {
                         Toast.makeText(getApplicationContext(), R.string.loadeventserror,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadUserEvents();
     }
 }

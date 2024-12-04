@@ -153,7 +153,8 @@ public class NotificationHelper {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(icon).bigLargeIcon((Bitmap) null))
                 .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
 
         createNotificationChannel(notificationBuilder.build());
     }

@@ -96,8 +96,6 @@
     <string name="leaveeventquestion">¿Estas seguro de que quieres salirte del evento?</string>
     <string name="leave">Salir</string>
     <string name="registereddeleteerror">No has podido salir del evento</string>
-    <string name="leaveeventquestion">¿Estas seguro de que quieres salirte del evento?</string>
-    <string name="leave">Salir</string>
     <string name="eventdeleted">Evento eliminado</string>
     <string name="eventdeletederror">Error al eliminar el evento</string>
     <string name="pastevents">Eventos\nprevios</string>
