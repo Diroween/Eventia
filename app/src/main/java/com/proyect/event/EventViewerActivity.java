@@ -173,7 +173,8 @@ public class EventViewerActivity extends AppCompatActivity {
         reference.child("events").child(eventId).child("registeredUsers")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) 
+                    {
                         //Vaciamos el arraylist
                         registeredUsers.clear();
 
@@ -223,7 +224,8 @@ public class EventViewerActivity extends AppCompatActivity {
      * @param eventId el id del evento
      */
 
-    private void removeUserFromEvent(String eventId) {
+    private void removeUserFromEvent(String eventId) 
+    {
         //Cogemos el id del usuario
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -240,7 +242,8 @@ public class EventViewerActivity extends AppCompatActivity {
                     //Eliminamos al usuario
                     eventRegistered.removeValue().addOnCompleteListener(task ->
                     {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful()) 
+                        {
                             Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
 
                             //Comprobamos si hay administrados, si no es así
@@ -258,11 +261,13 @@ public class EventViewerActivity extends AppCompatActivity {
                         }
 
                         //Si no se ha podido se manda un Toast
-                        else {
+                        else 
+                        {
                             Toast.makeText(this, R.string.registereddeleteerror,
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
+                  
                 }).show();
     }
 

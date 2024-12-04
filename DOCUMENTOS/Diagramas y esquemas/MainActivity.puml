@@ -1,0 +1,27 @@
+@startuml
+class com.proyect.MainActivity {
+- {static} int REQUEST_CODE
+~ ImageView ivUserImage
+~ TextView tvDisplayname
+~ ImageView ivCalendar
+~ ImageView ivToday
+~ ImageView ivNotes
+~ ImageView ivFriends
+~ ArrayList<String> arrayToday
+~ FragmentManager fragmentManager
+# void onCreate(Bundle)
++ void onClick(View)
++ boolean onCreateOptionsMenu(Menu)
++ boolean onOptionsItemSelected(MenuItem)
+# void onDestroy()
+- void requestNotificationPermission()
++ void onRequestPermissionsResult(int,String[],int[])
+- void showRationaleDialog()
+}
+
+
+
+
+com.proyect.OnClickListener <|.. com.proyect.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.MainActivity
+@enduml

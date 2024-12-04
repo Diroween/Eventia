@@ -1,0 +1,14 @@
+@startuml
+class com.proyect.Splash {
++ ImageView ivSplash
++ AnimationDrawable animation
+- FirebaseAuth firebaseAuth
+# void onCreate(Bundle)
+- void rememberLogIn(String,String)
+}
+
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.Splash
+@enduml

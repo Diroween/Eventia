@@ -1,0 +1,67 @@
+@startuml
+class com.proyect.note.Note {
+- String noteName
+- String noteBody
++ String getNoteName()
++ void setNoteName(String)
++ String getNoteBody()
++ void setNoteBody(String)
+}
+
+
+class com.proyect.note.NotesViewHolder {
+~ TextView tvNoteName
+~ TextView tvNoteBody
+}
+
+class com.proyect.note.NotesAdapter {
+~ Context context
+~ ArrayList<Note> arrayNotes
++ NotesViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(NotesViewHolder,int)
++ int getItemCount()
+}
+
+
+class com.proyect.note.NotesActivity {
+~ ImageView ivUserImage
+~ TextView tvDisplayname
+~ ImageView btnSave
+~ EditText etTitle
+~ EditText etBody
+~ String noteName
+~ String noteBody
+~ String noteStore
+# void onCreate(Bundle)
++ void onClick(View)
++ boolean onCreateOptionsMenu(Menu)
+}
+
+
+class com.proyect.note.NotesFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+~ FloatingActionButton fabAddNote
+~ RecyclerView rvNotes
+- SwipeRefreshLayout srlNotes
+~ NotesAdapter adapter
+~ ArrayList<Note> arrayNotes
++ {static} NotesFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void onViewCreated(View,Bundle)
++ ArrayList<Note> getNotes(SharedPreferences)
++ void deleteNote(SharedPreferences,String)
+}
+
+
+
+
+com.proyect.note.ViewHolder <|-- com.proyect.note.NotesViewHolder
+com.proyect.note.Adapter <|-- com.proyect.note.NotesAdapter
+com.proyect.note.OnClickListener <|.. com.proyect.note.NotesActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.note.NotesActivity
+androidx.fragment.app.Fragment <|-- com.proyect.note.NotesFragment
+@enduml

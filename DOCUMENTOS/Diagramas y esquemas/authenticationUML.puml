@@ -1,0 +1,37 @@
+@startuml
+class com.proyect.authentication.LoginActivity {
+- FirebaseAuth firebaseAuth
+~ EditText etEmail
+~ EditText etPassword
+~ Button btnLogin
+~ TextView tvSignUpTxtBtn
+~ ToggleButton tgbRememberme
+# void onCreate(Bundle)
++ void onClick(View)
+- void logIn(String,String)
+}
+
+
+class com.proyect.authentication.SignupActivity {
+~ EditText etEmail
+~ EditText etPassword
+~ EditText etConfirmPass
+~ EditText etUsername
+~ Button btnSignup
+- FirebaseAuth firebaseAuth
+- DatabaseReference databaseReference
+- FirebaseUser user
+# void onCreate(Bundle)
++ void onClick(View)
+- void createAccount(String,String,String)
+- void writeNewUser(String,String,String)
+}
+
+
+
+
+com.proyect.authentication.OnClickListener <|.. com.proyect.authentication.LoginActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.authentication.LoginActivity
+com.proyect.authentication.OnClickListener <|.. com.proyect.authentication.SignupActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.authentication.SignupActivity
+@enduml

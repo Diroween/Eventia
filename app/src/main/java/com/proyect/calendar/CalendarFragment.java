@@ -39,6 +39,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 
 
@@ -308,6 +309,7 @@ public class CalendarFragment extends Fragment {
 
                         //Ordenamos los eventos por fecha y hora
                         //para ello ordenamos el arraylist
+                      
                         nextEvents.sort(new EventDateComparator());
 
                         //añadimos al calendario todos los dias personalizados

@@ -1,0 +1,214 @@
+@startuml
+class com.proyect.event.EventListViewHolder {
+~ TextView tvEventName
+~ TextView tvEventDate
+~ TextView tvEventPlace
+~ ImageView ivEventImage
+}
+
+class com.proyect.event.EventInviterActivity {
+~ FriendInviterAdapter friendsAdapter
+~ RecyclerView rvFriends
+~ ArrayList<User> friends
+~ DatabaseReference databaseReference
+~ User selectedFriend
+~ Button btnInvite
+~ String eventId
+~ String eventName
+# void onCreate(Bundle)
+- void loadFriends()
+- void inviteFriend()
+}
+
+
+class com.proyect.event.Event {
+- String id
+- String name
+- String date
+- String place
+- String image
+- String hour
+- Map<String,String> registeredUsers
++ Map<String,String> getRegisteredUsers()
++ void setRegisteredUsers(Map<String,String>)
++ String getId()
++ void setId(String)
++ String getName()
++ void setName(String)
++ String getDate()
++ void setDate(String)
++ String getPlace()
++ void setPlace(String)
++ String getImage()
++ void setImage(String)
++ String getHour()
++ void setHour(String)
+}
+
+
+class com.proyect.event.EventRequestAdapter {
+- ArrayList<EventRequest> eventRequests
+- OnRequestActionListener listener
++ EventRequestViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(EventRequestViewHolder,int)
++ int getItemCount()
+}
+
+
+interface com.proyect.event.EventRequestAdapter$OnRequestActionListener {
+~ void onAccept(String)
+~ void onReject(String)
+}
+
+class com.proyect.event.EventDateComparator {
++ int compare(Event,Event)
+}
+
+class com.proyect.event.EventRequestViewHolder {
+~ TextView tvEventName
+~ TextView btnAcccept
+~ TextView btnReject
+}
+
+class com.proyect.event.EventCreationActivity {
+~ TextView tvEventDate
+~ EditText etEventName
+~ EditText etEventPlace
+~ TextView tvEventHour
+~ ImageView ivEventImage
+~ Button btnCreateEvent
+- {static} int REQUEST_CODE
+- Uri eventImageUri
+- Event event
+- String dateString
+- DatabaseReference databaseReference
+- ActivityResultLauncher<Intent> pickImageLauncher
+# void onCreate(Bundle)
+- boolean checkEmptyFields()
++ void onRequestPermissionsResult(int,String[],int[])
+- void requestPermissions()
+- void openFileChooser()
+- void uploadImage()
+- void saveEvent(String)
+}
+
+
+class com.proyect.event.PreviousEventsActivity {
+~ RecyclerView recyclerView
+~ CalendarFragmentAdapter calendarFragmentAdapter
+~ ArrayList<Event> pastEvents
+~ DatabaseReference databaseReference
+# void onCreate(Bundle)
++ void loadUserEvents()
+}
+
+
+class com.proyect.event.EventEditorActivity {
+- {static} int REQUEST_CODE
+~ TextView tvEventDate
+~ TextView tvEventTitle
+~ EditText etEventName
+~ EditText etEventPlace
+~ TextView tvEventHour
+~ ImageView ivEventImage
+~ Button btnEditEvent
+- Uri eventImageUri
+- Event event
+- ActivityResultLauncher<Intent> pickImageLauncher
+- String dateString
+- DatabaseReference databaseReference
+# void onCreate(Bundle)
+- boolean checkEmptyFields()
++ void onRequestPermissionsResult(int,String[],int[])
+- void requestPermissions()
+- void openFileChooser()
+- void uploadImage()
+- void saveEvent(String)
+}
+
+
+class com.proyect.event.EventViewerActivity {
+~ RecyclerView rv_users
+~ ArrayList<User> registeredUsers
+~ FriendsAdapter adapter
+~ DatabaseReference reference
+~ TextView tvEventName
+~ TextView tvEventData
+~ ImageView ivEventImage
+~ FloatingActionButton fbAddFriends
+~ FloatingActionButton fbEditEvent
+~ FloatingActionButton fbDeleteEvent
+~ String eventId
+# void onCreate(Bundle)
+- void loadRegisteredUsers(String)
+- void removeUserFromEvent(String)
+- void noRegisteredUsersDelete(String)
+- void checkAndPromoteToAdmin(String)
+- void checkAdmin(String)
+- void showContextMenu(View,User)
+- boolean handleContextItemSelected(MenuItem,User)
+- void removeUserAsAdmin(User)
+- void makeUserAdmin(User)
+}
+
+
+class com.proyect.event.EventListAdapter {
+~ ArrayList<Event> events
+- Context context
+- String[] monthsArray
+- String formattedDate
++ EventListViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(EventListViewHolder,int)
++ int getItemCount()
+}
+
+
+class com.proyect.event.EventOnCurrentDayActivity {
+~ RecyclerView recyclerView
+~ FloatingActionButton floatingActionButton
+~ ArrayList<Event> events
+~ EventListAdapter listAdapter
+~ DatabaseReference databaseReference
+# void onCreate(Bundle)
+}
+
+
+class com.proyect.event.EventRequestsActivity {
+~ RecyclerView rvEventRequests
+~ EventRequestAdapter eventRequestAdapter
+~ ArrayList<EventRequest> eventRequests
+~ DatabaseReference databaseReference
+~ FirebaseUser currentUser
+# void onCreate(Bundle)
+- void loadEventRequests()
+- void acceptEventRequest(String)
+- void declineEventRequest(String)
+}
+
+
+class com.proyect.event.EventRequest {
+- String eventId
+- String status
++ String getEventId()
++ void setEventId(String)
++ String getStatus()
++ void setStatus(String)
+}
+
+
+
+
+com.proyect.event.ViewHolder <|-- com.proyect.event.EventListViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventInviterActivity
+com.proyect.event.Adapter <|-- com.proyect.event.EventRequestAdapter
+com.proyect.event.EventRequestAdapter +.. com.proyect.event.EventRequestAdapter$OnRequestActionListener
+java.util.Comparator <|.. com.proyect.event.EventDateComparator
+com.proyect.event.ViewHolder <|-- com.proyect.event.EventRequestViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventCreationActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.PreviousEventsActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventEditorActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventViewerActivity
+com.proyect.event.Adapter <|-- com.proyect.event.EventListAdapter
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventOnCurrentDayActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.event.EventRequestsActivity
+@enduml
