@@ -149,15 +149,15 @@ public class EventCreationActivity extends AppCompatActivity
                     public void onTimeSet(TimePicker timePicker, int i, int i1)
                     {
                         //le seleccionamos un formato para la hora y minutos
-                        String hour = i + ":" + String.format("%02d", i1);
+                        String hour = String.format("%02d:%02d", i, i1);
 
                         //ponemos la hora en el textview
                         tvEventHour.setText(hour);
                     }
 
                 } //Indicamos que queremos que sea una hora en formato 24 horas
-                , calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
+                , calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                        calendar.getInstance().get(Calendar.MINUTE),
                         true);
 
                 //Poppeamos el timepicker
@@ -415,7 +415,7 @@ public class EventCreationActivity extends AppCompatActivity
                        //como integrante del evento, se le añade un escuchador
                         databaseReference.child("events").child(event.getId())
                                 .child("registeredUsers").child(user.getUid())
-                                .setValue(true).addOnCompleteListener(task1 ->
+                                .setValue("admin").addOnCompleteListener(task1 ->
                                 {
                                     //si se ha conseguido ahijar se manda un toast indicando
                                     //se he podido hacer el proceso satisfactoriamente

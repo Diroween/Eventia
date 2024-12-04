@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -158,8 +159,37 @@ public class NotesActivity extends AppCompatActivity implements View.OnClickList
             etBody.setText(noteBody);
         }
 
-        //Le ponemos un escuchador de click a cada uno de los botones
+        //Le ponemos un escuchador de click al botón
         btnSave.setOnClickListener(this);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
+        {
+            /**
+             * Le damos funcionalidad al botón de volver atrás
+             * En este caso queremos que cuando se de atrás se guarde la nota
+             * de la misma manera que si hubiese pulsado en el botón de guardar
+             * */
+
+            @Override
+            public void handleOnBackPressed()
+            {
+                //Creamos una vista cogiendo el contexto de la aplicación
+                View view = new View(getApplicationContext());
+
+                //Ejecutamos el método onClick, al igual que
+                //si se hubiese el botón de guardar si el usuario
+                //ha puesto algún título a la nota
+                //sino se cierra como antes
+                if(!etTitle.getText().toString().isEmpty())
+                {
+                    onClick(view);
+                }
+                else
+                {
+                    finish();
+                }
+            }
+        });
     }
 
     /**

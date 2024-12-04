@@ -23,20 +23,45 @@ import java.util.ArrayList;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
 {
     /**
-     * Creamos dos variables de clase, el arraylist y la variable que guarda el valor del item
+     * Creamos cinco variables de clase:
+     * - El arraylist
+     * - La variable que guarda el valor del item
+     * - Un string con el Id del usuario actual
+     * - Un objeto de la interfaz OnItemClickListener para poder mostrar un popupmenu
+     * - Un valor booleano para ctivar o desactivare el longclick
      * seleccionado y que inicializamos con el valor sin posición
      * */
 
     private ArrayList<User> friends;
+    private OnItemClickListener onItemClickListener;
+    private String currentUserId;
     private int selectedItem = RecyclerView.NO_POSITION;
+    private boolean enableLongClick;
 
     /**
-     * Constructor con argumento
+     * Constructores con argumentos
      * */
 
-    public FriendsAdapter(ArrayList<User> friends)
+    public FriendsAdapter(ArrayList<User> friends, boolean enableLongClick)
     {
         this.friends = friends;
+        this.enableLongClick = enableLongClick;
+    }
+
+    public FriendsAdapter(ArrayList<User> friends, String currentUserId, boolean enableLongClick)
+    {
+        this.friends = friends;
+        this.currentUserId = currentUserId;
+        this.enableLongClick = enableLongClick;
+    }
+
+    public FriendsAdapter(ArrayList<User> friends, String currentUserId,
+                          OnItemClickListener onItemClickListener, boolean enableLongClick)
+    {
+        this.friends = friends;
+        this.onItemClickListener = onItemClickListener;
+        this.currentUserId = currentUserId;
+        this.enableLongClick = enableLongClick;
     }
 
     /**
@@ -94,19 +119,41 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
             notifyItemChanged(previousSelectedPosition);
             notifyItemChanged(selectedItem);
 
-            //Hacemos un intent para que se pueda abrir la actividad
-            //para ver a un amigo
-            Intent intent = new Intent(holder.itemView.getContext(), FriendViewerActivity.class);
+            //Si el usuario que vamos a ver es el propio usuario
+            //se queda seleccionado pero no se muestra a sí mismo
+            if (!friend.getId().equals(currentUserId))
+            {
+                //Hacemos un intent para que se pueda abrir la actividad
+                //para ver a un amigo
+                Intent intent = new Intent(holder.itemView.getContext(), FriendViewerActivity.class);
 
-            //Ponemos como extras todos los datos que vamos a mostrar de cada amigo
-            //que coinciden con los registrados de un amigo en la bdd
-            intent.putExtra("friendId", friend.getId());
-            intent.putExtra("friendName", friend.getName());
-            intent.putExtra("friendImageUrl", friend.getImageUrl());
+                //Ponemos como extras todos los datos que vamos a mostrar de cada amigo
+                //que coinciden con los registrados de un amigo en la bdd
+                intent.putExtra("friendId", friend.getId());
+                intent.putExtra("friendName", friend.getName());
+                intent.putExtra("friendImageUrl", friend.getImageUrl());
 
-            //Se inicia la actividad que muestra cada amigo
-            holder.itemView.getContext().startActivity(intent);
+                //Se inicia la actividad que muestra cada amigo
+                holder.itemView.getContext().startActivity(intent);
+            }
+
         });
+
+        //Si se confirma que se pueda desplegar el menú contextual y que no es el propio usuario
+        //el que está siendo seleccionado, se activa la pulsación prolongada
+        if(enableLongClick)
+        {
+            holder.itemView.setOnLongClickListener(v ->
+            {
+                if (!friend.getId().equals(currentUserId))
+                {
+                    onItemClickListener.onItemClick(v, friend);
+                }
+
+                return true;
+            });
+        }
+
     }
 
     /**
@@ -116,5 +163,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     public int getItemCount()
     {
         return friends.size();
+    }
+
+    /**
+     * Interfaz para poder cargar el menú contextual en un usuario
+     * */
+
+    public interface OnItemClickListener
+    {
+        void onItemClick(View view, User user);
     }
 }

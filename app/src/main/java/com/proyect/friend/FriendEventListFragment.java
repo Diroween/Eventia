@@ -1,16 +1,15 @@
 package com.proyect.friend;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -20,14 +19,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.event.Event;
+import com.proyect.event.EventDateComparator;
 import com.proyect.event.EventListAdapter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 
 /**
  * Fragment FriendEventListFragment para mostrar los eventos
@@ -114,7 +110,7 @@ public class FriendEventListFragment extends Fragment
         events = new ArrayList<Event>();
 
         //Pasamos el arraylist como argumento para inicializar el listadapter
-        listAdapter = new EventListAdapter(events);
+        listAdapter = new EventListAdapter(view.getContext(), events);
 
         //Setteamos el adapter a la lista
         rvEvents.setAdapter(listAdapter);
@@ -183,31 +179,5 @@ public class FriendEventListFragment extends Fragment
         return view;
     }
 
-    /**
-     * Clase comparadora para ordenar los eventos por fecha ascendente
-     * */
 
-    public class EventDateComparator implements Comparator<Event>
-    {
-        @Override
-        public int compare(Event event1, Event event2)
-        {
-            //Cogemos el formato de fecha que guardamos en el evento
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            try
-            {
-                //Formatemos las fechas y las comparamos entre sí
-                //para que nos devuelva esta comparación
-                Date date1 = dateFormat.parse(event1.getDate());
-                Date date2 = dateFormat.parse(event2.getDate());
-
-                return date1.compareTo(date2);
-            }
-            catch (ParseException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

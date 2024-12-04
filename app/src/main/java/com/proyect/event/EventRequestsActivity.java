@@ -148,7 +148,7 @@ public class EventRequestsActivity extends AppCompatActivity
                 .child("registeredUsers");
 
         //Grabamos al usuario en los usuarios registrados de la app
-        eventRef.child(currentUser.getUid()).setValue(true).addOnCompleteListener(task ->
+        eventRef.child(currentUser.getUid()).setValue("guest").addOnCompleteListener(task ->
                 {
                     //Si se ha podido completar correctamente
                     if (task.isSuccessful())

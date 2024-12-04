@@ -96,8 +96,33 @@
     <string name="leaveeventquestion">¿Estas seguro de que quieres salirte del evento?</string>
     <string name="leave">Salir</string>
     <string name="registereddeleteerror">No has podido salir del evento</string>
+    <string name="leaveeventquestion">¿Estas seguro de que quieres salirte del evento?</string>
+    <string name="leave">Salir</string>
     <string name="eventdeleted">Evento eliminado</string>
     <string name="eventdeletederror">Error al eliminar el evento</string>
+    <string name="pastevents">Eventos\nprevios</string>
+    <string name="eventedited">Evento editado</string>
+    <string name="eventediterror">No se ha podido editar el evento</string>
+    <string name="removeuserfromevent">Eliminar del evento</string>
+    <string name="userremovedfromevent">El usuario ha sido eliminado del evento</string>
+    <string name="promotetoadmin">Hacer administrador</string>
+    <string name="userpromotedtoadmin">El usuario ahora es administrador</string>
+    <string name="alreadyadmin">El usuario ya es administrador</string>
+    <string name="eventedit">Editar evento</string>
+    <string name="savechanges">Guardar cambios</string>
+    <string name="registeredusers">Participantes del evento</string>
+    <string name="notificationpermissionslack">Eventia no tiene permisos para enviar notificaciones en tu dispositivo, limitando así la funcionalidad de la aplicación.</string>
+    <string name="notificationpermissionsgranted">Permisos de notificación concedidos</string>
+    <string name="notificationpermissionsdenied">Permisos de notificación denegados</string>
+    <string name="btn_openconfiguration">Ir a configuración</string>
+    <string name="btn_skip">Saltar por ahora</string>
+    <string name="event_notificationtitle_now">Tu evento: %1$s está teniendo lugar ahora a las %2$s!</string>
+    <string name="event_notificationtitle_1h">Tu evento: %1$s tendrá lugar dentro de una hora!</string>
+    <string name="event_notificationtitle_24h">Tu evento: %1$s tendrá lugar dentro de 24h!</string>
+    <string name="event_notificationtitle_7d">Tu evento: %1$s tendrá lugar dentro de 7 días!</string>
+    <string name="event_notificationmessage">Ubicación: %1$s</string>
+    <string name="event_notificationchannel">Notificaciones de eventos</string>
+
 
     <string-array name="array_config">
         <item name="colors">Colores</item>

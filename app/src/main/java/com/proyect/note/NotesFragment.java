@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,6 +54,8 @@ public class NotesFragment extends Fragment
     private SwipeRefreshLayout srlNotes;
     NotesAdapter adapter;
     ArrayList<Note> arrayNotes;
+
+    SharedPreferences sharedNotes;
 
     /**
      * Constructor sin argumentos necesario para el funcionamiento del fragment
@@ -125,7 +126,7 @@ public class NotesFragment extends Fragment
         String noteStore = firebaseUser.getEmail();
 
         //Creamos un SharedPrefereces para que guarde permanentemente las notas
-        SharedPreferences sharedNotes = view.getContext().getSharedPreferences(noteStore,
+        sharedNotes = view.getContext().getSharedPreferences(noteStore,
                 Context.MODE_PRIVATE);
 
         //Llenamos el array con los nombres de las notas alamcenados
@@ -154,18 +155,7 @@ public class NotesFragment extends Fragment
             @Override
             public void onRefresh()
             {
-                //Le indicamos que vacie arrayNames
-                arrayNotes.clear();
-
-                //Le indicamos que se vuelva a llenar con las shared preferences actualizadas
-                arrayNotes.addAll(getNotes(sharedNotes));
-
-                //Le indicamos al adaptardor que ha habido cambios
-                //y le forzamosa actualizarse
-                adapter.notifyDataSetChanged();
-
-                //Hacemos que la flecha de refrescar desaparezca
-                srlNotes.setRefreshing(false);
+                refreshNotes();
             }
 
         });
@@ -241,6 +231,27 @@ public class NotesFragment extends Fragment
 
         //le indicamos al adaptador que cuando se cree el fragment se actualice
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshNotes();
+    }
+
+    public void refreshNotes() {
+        //Le indicamos que vacie arrayNames
+        arrayNotes.clear();
+
+        //Le indicamos que se vuelva a llenar con las shared preferences actualizadas
+        arrayNotes.addAll(getNotes(sharedNotes));
+
+        //Le indicamos al adaptardor que ha habido cambios
+        //y le forzamosa actualizarse
+        adapter.notifyDataSetChanged();
+
+        //Hacemos que la flecha de refrescar desaparezca
+        srlNotes.setRefreshing(false);
     }
 
     /**

@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventViewerActivity;
-import com.proyect.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +45,8 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
 
     public CalendarFragmentAdapter(Context context, ArrayList<Event> eventList)
     {
-        this.context = context; this.eventList = eventList;
+        this.context = context;
+        this.eventList = eventList;
         this.monthsArray = context.getResources().getStringArray(R.array.material_calendar_months_array);
     }
 
@@ -117,6 +118,9 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
             intent.putExtra("event_id", event.getId());
             intent.putExtra("event_name", event.getName());
             intent.putExtra("event_data", formattedDate);
+            intent.putExtra("event_date", event.getDate());
+            intent.putExtra("event_place", event.getPlace());
+            intent.putExtra("event_hour", event.getHour());
 
             if(event.getImage() != null)
             {

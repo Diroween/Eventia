@@ -1,5 +1,7 @@
 package com.proyect.event;
 
+import java.util.Map;
+
 /**
  * Clase Event que representa un evento en la aplicación
  * */
@@ -17,6 +19,16 @@ public class Event
     private String image;
     private String hour;
 
+    private Map<String, String> registeredUsers;
+
+    public Map<String, String> getRegisteredUsers() {
+        return registeredUsers;
+    }
+
+    public void setRegisteredUsers(Map<String, String> registeredUsers) {
+        this.registeredUsers = registeredUsers;
+    }
+
     /**
      * Cremos un constructor vacío para poder realizar la serialización de los datos
      * */
@@ -30,13 +42,14 @@ public class Event
      * Creamos un constructor con argumentos, tantos como atributos tiene
      * */
 
-    public Event(String id, String name, String date, String place, String image, String hour) {
+    public Event(String id, String name, String date, String place, String image, String hour, Map<String, String> registeredUsers) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.place = place;
         this.image = image;
         this.hour = hour;
+        this.registeredUsers = registeredUsers;
     }
 
     /**
@@ -115,4 +128,5 @@ public class Event
     {
         this.hour = hour;
     }
+
 }

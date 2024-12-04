@@ -1,26 +1,31 @@
 package com.proyect;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -28,18 +33,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.proyect.calendar.CalendarFragment;
 import com.proyect.friend.FriendsFragment;
 import com.proyect.note.NotesFragment;
+import com.proyect.notification.NotificationSettingsActivity;
 import com.proyect.today.TodayFragment;
 import com.proyect.user.UserSettings;
 
 import java.util.ArrayList;
 
 /**
-* Creamos MainActivity con implementación de View.OnClickListener para mejorar la gestión del
-* método onClick
-* */
+ * Creamos MainActivity con implementación de View.OnClickListener para mejorar la gestión del
+ * método onClick
+ */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
-{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     /**
      * Creamos las variables de clase necesarias
      * //
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * //
      * Y el manejador de fragments
      */
+    private static final int REQUEST_CODE = 100;
     ImageView ivUserImage;
     TextView tvDisplayname;
 
@@ -68,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FragmentManager fragmentManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -81,11 +86,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
+        requestNotificationPermission();
+
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Creamos una toolbar para el main de la aplicación
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tb_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_main);
 
         //Le indicamos a la activity que use la toolbar que hemos creado
         setSupportActionBar(toolbar);
@@ -103,8 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
 
         //Si la tiene
-        if(imageUri != null)
-        {
+        if (imageUri != null) {
             //Cargamos la imagen
             Glide.with(this).load(imageUri.toString())
                     .placeholder(R.drawable.baseline_tag_faces_128)
@@ -113,8 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //Si no la tiene
-        else
-        {
+        else {
             //Cargamos directamente el placeholder
             Glide.with(this).load(R.drawable.baseline_tag_faces_128)
                     .into(ivUserImage);
@@ -180,30 +185,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Cogemos el manejador de eventos
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
+                Fragment fragment = fragmentManager.findFragmentById(R.id.ll_fragments_main);
+
                 //Si el fragment cargado es una instacia del fragment principal
-                //El calendarfragment, se vuelve a cargar para actualizarse
+                //El calendarfragment, se sale de la app, como hacen el resto de apps
                 //sino se carga el calendario para mostrar los eventos
 
+                if(fragment instanceof CalendarFragment)
+                {
+                    finish();
+                }
+                else
+                {
                     ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
                     ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
                     ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
                     ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.replace(R.id.ll_fragments_main, new CalendarFragment());
+
+                    transaction.replace(R.id.ll_fragments_main, calendarFragment);
                     transaction.commit();
+                }
+
             }
         });
     }
 
     /**
      * Orverrideamos el método onClick para dar funcionalidad a los iv que funcionan como botones
-     *
-    */
+     */
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
         //Creamos un fragment
         Fragment fragment;
 
@@ -215,8 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Dependiendo del botón que pulsemos inicializamos el fragment correspondiente
         //y se cambia el color de los botones
-        if (view.getId()==R.id.btn_today)
-        {
+        if (view.getId() == R.id.btn_today) {
             fragment = new TodayFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
@@ -224,27 +237,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
-        }
-        else if (view.getId()==R.id.btn_notes)
-        {
+        } else if (view.getId() == R.id.btn_notes) {
             fragment = new NotesFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
             ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
             ivNotes.setBackgroundResource(R.drawable.btn_notes_colored50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
-        }
-        else if(view.getId()==R.id.btn_friends)
-        {
+        } else if (view.getId() == R.id.btn_friends) {
             fragment = new FriendsFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
             ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
             ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_colored50x50);
-        }
-        else
-        {
+        } else {
             fragment = new CalendarFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
@@ -268,8 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         //le decimos al menú que la crearse y use el layout de la carpeta menu
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
@@ -282,18 +288,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return false;
     }
 
     /**
      * Sobreescritura de onDestroy, por si debemos cerrar algo, de momento no es necesario.
-     * */
+     */
 
-        @Override
-    protected void onDestroy()
-    {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void requestNotificationPermission() {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                showRationaleDialog();
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
+                    showRationaleDialog();
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE);
+                }
+            }
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                Toast.makeText(this, getString(R.string.notificationpermissionsgranted), Toast.LENGTH_SHORT).show();
+            } else {
+                // Permission denied
+                Toast.makeText(this, getString(R.string.notificationpermissionsdenied), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void showRationaleDialog() {
+        Intent intent = new Intent(this, NotificationSettingsActivity.class);
+        startActivity(intent);
     }
 }
