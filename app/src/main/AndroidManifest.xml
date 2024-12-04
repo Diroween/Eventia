@@ -31,6 +31,7 @@
             android:exported="false" />
         <activity
             android:name=".event.EventEditorActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".event.EventRequestsActivity"
@@ -43,6 +44,7 @@
             android:exported="false" />
         <activity
             android:name=".event.EventCreationActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".friend.FriendViewerActivity"
@@ -55,12 +57,15 @@
             android:exported="false" />
         <activity
             android:name=".authentication.SignupActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".authentication.LoginActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".note.NotesActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".user.UserSettings"
