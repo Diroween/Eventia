@@ -57,21 +57,26 @@ public class PreviousEventsActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        loadUserEvents();
+
         calendarFragmentAdapter = new CalendarFragmentAdapter(this, pastEvents);
         recyclerView.setAdapter(calendarFragmentAdapter);
 
     }
 
-    public void loadUserEvents() {
+    public void loadUserEvents()
+    {
         //Recogemos los datos del usuario de Firebase que ha iniciado sesión
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener()
+                {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         pastEvents.clear();
 
@@ -79,12 +84,14 @@ public class PreviousEventsActivity extends AppCompatActivity {
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
                         //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
                             Event event = dataSnapshot.getValue(Event.class);
 
                             if (event != null && dataSnapshot.child("registeredUsers")
                                     .hasChild(user.getUid())) {
-                                try {
+                                try
+                                {
                                     //Establecemos un formato fecha/hora
                                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -110,7 +117,8 @@ public class PreviousEventsActivity extends AppCompatActivity {
                                 }
 
                                 //Si no se consigue parsear bien la fecha se recoge una excepción
-                                catch (ParseException e) {
+                                catch (ParseException e)
+                                {
                                     throw new RuntimeException(e);
                                 }
                             }
@@ -133,8 +141,9 @@ public class PreviousEventsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume()
+    {
+        super.onResume();
         loadUserEvents();
     }
 }

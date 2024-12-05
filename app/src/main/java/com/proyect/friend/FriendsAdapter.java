@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,6 +16,7 @@ import com.proyect.R;
 import com.proyect.user.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Clase que extiende RecyclerView Adapter con un viewholder personalizado
@@ -36,6 +38,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     private OnItemClickListener onItemClickListener;
     private String currentUserId;
     private int selectedItem = RecyclerView.NO_POSITION;
+    private HashMap<String, String> roles;
     private boolean enableLongClick;
 
     /**
@@ -56,11 +59,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
     }
 
     public FriendsAdapter(ArrayList<User> friends, String currentUserId,
-                          OnItemClickListener onItemClickListener, boolean enableLongClick)
+                          OnItemClickListener onItemClickListener, HashMap<String, String> roles,
+                          boolean enableLongClick)
     {
         this.friends = friends;
         this.onItemClickListener = onItemClickListener;
         this.currentUserId = currentUserId;
+        this.roles = roles;
         this.enableLongClick = enableLongClick;
     }
 
@@ -143,6 +148,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder>
         //el que está siendo seleccionado, se activa la pulsación prolongada
         if(enableLongClick)
         {
+            String role = roles.get(friend.getId());
+
+            if ("admin".equals(role))
+            {
+                holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext()
+                        , R.drawable.adminbckgrnd));
+            }
+
             holder.itemView.setOnLongClickListener(v ->
             {
                 if (!friend.getId().equals(currentUserId))

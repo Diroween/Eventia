@@ -34,13 +34,21 @@ import com.proyect.friend.FriendsAdapter;
 import com.proyect.notification.NotificationHelper;
 import com.proyect.user.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Actividad para poder ver los eventos
  */
 
-public class EventViewerActivity extends AppCompatActivity {
+public class EventViewerActivity extends AppCompatActivity
+{
     /**
      * Variables de clase, tantas como elementos tengamos que tratar:
      * Una lista de las personas registradas en la app
@@ -49,6 +57,8 @@ public class EventViewerActivity extends AppCompatActivity {
      * Una referencia a la base de datos
      * TextViews e ImageView para mostrar los datos de los eventos
      * Un botón flotante para poder añadir a tus amigos al evento
+     * Las variables String que representan los datos de un evento
+     * El mapa con los roles de cada usuario
      */
 
     RecyclerView rv_users;
@@ -65,9 +75,18 @@ public class EventViewerActivity extends AppCompatActivity {
     FloatingActionButton fbDeleteEvent;
 
     String eventId;
+    String eventName;
+    String eventDate;
+    String eventImage;
+    String eventPlace;
+    String eventHour;
+    String eventData;
+
+    HashMap<String, String> roles;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         //Métodos necesarios para poder mostrar elementos en pantalla correctamente
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -88,26 +107,18 @@ public class EventViewerActivity extends AppCompatActivity {
         fbEditEvent = findViewById(R.id.fb_edit_event);
         fbDeleteEvent = findViewById(R.id.fb_delete_event);
 
+        roles = new HashMap<String, String>();
+
+        //Cogemos una referncia a base de datos
+        reference = FirebaseDatabase.getInstance().getReference();
+
         //Recogemos los datos del evento que pasamos desde el adaptador de calendarFragment
         Intent intent = getIntent();
 
         eventId = intent.getStringExtra("event_id");
-        String eventName = intent.getStringExtra("event_name");
-        String eventDate = intent.getStringExtra("event_date");
-        String eventImage = intent.getStringExtra("event_image");
-        String eventPlace = intent.getStringExtra("event_place");
-        String eventHour = intent.getStringExtra("event_hour");
-        String eventData = intent.getStringExtra("event_data");
 
-        //Asignamos los datos recogidos a los elementos en pantalla
-        tvEventName.setText(eventName);
-        tvEventData.setText(eventData);
-
-        Glide.with(this)
-                .load(eventImage)
-                .placeholder(R.drawable.ic_event_list)
-                .transform(new CircleCrop())
-                .into(ivEventImage);
+        loadData();
+        loadRoles();
 
         rv_users = findViewById(R.id.rv_registered_users);
 
@@ -118,12 +129,10 @@ public class EventViewerActivity extends AppCompatActivity {
         String userId = FirebaseAuth.getInstance().getUid();
 
         //Al adaptador le pasamos true para que se despliegue el menu contextual
-        adapter = new FriendsAdapter(registeredUsers, userId, this::showContextMenu, true);
+        adapter = new FriendsAdapter(registeredUsers, userId, this::showContextMenu,
+                roles, true);
 
         rv_users.setAdapter(adapter);
-
-        //Cogemos una referncia a base de datos
-        reference = FirebaseDatabase.getInstance().getReference();
 
         checkAdmin(eventId);
 
@@ -165,13 +174,109 @@ public class EventViewerActivity extends AppCompatActivity {
     }
 
     /**
+     * Método onResume de la actividad para actualizar los datos mostrados
+     * (NO METER NADA MÁS AQUÍ, la aplicación carga muy rápido y a firebase no le da tiempo cargar
+     * los datos del evento)
+     * */
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        loadData();
+    }
+
+    /**
+     * Método para cargar los datos del evento seleccionado en pantalla
+     * */
+
+    private void loadData()
+    {
+        //Cogemos la referencia en la base de datos del evento
+        //cargamos todos los datos que necesitamos y los asignamos a los elementos en pantalla
+        reference.child("events").child(eventId).addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                //recogemos el evento de la bdd
+                Event event = snapshot.getValue(Event.class);
+
+                //Si el evento existe
+                if(event != null)
+                {
+                    //Cargamos todas la variables
+                    eventName = event.getName();
+                    eventDate = event.getDate();
+                    eventPlace = event.getPlace();
+                    eventHour = event.getHour();
+                    eventImage = event.getImage();
+                    eventData = formatDate(event);
+
+                    //Asignamos los datos recogidos a los elementos en pantalla
+                    tvEventName.setText(eventName);
+                    tvEventData.setText(eventData);
+
+                    Glide.with(getApplicationContext())
+                            .load(eventImage)
+                            .placeholder(R.drawable.ic_event_list)
+                            .transform(new CircleCrop())
+                            .into(ivEventImage);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("Error", "No se han podido cargar datos");
+            }
+        });
+    }
+
+    /**
+     * Método para cargar el mapa de roles de los usuarios registrados en el evento
+     * */
+
+    private void loadRoles()
+    {
+        //vaciamos el mapa de roles
+        roles.clear();
+
+        //cogemos al referencia a la bdd y buscamos usuarios y roles en el evento
+        reference.child("events").child(eventId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                Event event = snapshot.getValue(Event.class);
+
+                if(event != null)
+                {
+                    //Guardamos los roles de los usuarios
+                    roles.putAll(event.getRegisteredUsers());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("Error", "No se han podido cargar roles");
+            }
+        });
+
+
+    }
+
+    /**
      * Método para poder cargar los usuarios registrado en la lista
      */
 
-    private void loadRegisteredUsers(String eventId) {
+    private void loadRegisteredUsers(String eventId)
+    {
         //Cogemos una referencia a la base de datos
         reference.child("events").child(eventId).child("registeredUsers")
-                .addValueEventListener(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener()
+                {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) 
                     {
@@ -188,13 +293,17 @@ public class EventViewerActivity extends AppCompatActivity {
                             String userId = dataSnapshot.getKey();
 
                             reference.child("users").child(userId)
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    .addListenerForSingleValueEvent(new ValueEventListener()
+                                    {
                                         @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                                        {
                                             User user = snapshot.getValue(User.class);
 
-                                            if (user != null) {
+                                            if (user != null)
+                                            {
                                                 registeredUsers.add(user);
+                                                registeredUsers.sort(new UserRoleComparator(roles));
                                                 adapter.notifyDataSetChanged();
                                             }
                                         }
@@ -244,7 +353,8 @@ public class EventViewerActivity extends AppCompatActivity {
                     {
                         if (task.isSuccessful()) 
                         {
-                            Toast.makeText(this, R.string.registereddelete, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.registereddelete
+                                    , Toast.LENGTH_SHORT).show();
 
                             //Comprobamos si hay administrados, si no es así
                             //se intenta asignar uno nuevo
@@ -276,24 +386,31 @@ public class EventViewerActivity extends AppCompatActivity {
      * y eliminar el evento si no hay usuario registrados a él
      */
 
-    private void noRegisteredUsersDelete(String eventId) {
+    private void noRegisteredUsersDelete(String eventId)
+    {
         //cogemos una referencia a los usuarios registrados al evento
         DatabaseReference registeredUsersRef = reference.child("events").child(eventId)
                 .child("registeredUsers");
 
-        registeredUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        registeredUsersRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists() || snapshot.getChildrenCount() == 0) {
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                if (!snapshot.exists() || snapshot.getChildrenCount() == 0)
+                {
                     //Si no quedan usuarios registrados, eliminamos el evento
                     reference.child("events").child(eventId).removeValue()
                             .addOnCompleteListener(task ->
                             {
-                                if (task.isSuccessful()) {
+                                if (task.isSuccessful())
+                                {
                                     Toast.makeText(EventViewerActivity.this,
                                             R.string.eventdeleted,
                                             Toast.LENGTH_SHORT).show();
-                                } else {
+                                }
+                                else
+                                {
                                     Toast.makeText(EventViewerActivity.this,
                                             R.string.eventdeletederror,
                                             Toast.LENGTH_SHORT).show();
@@ -320,15 +437,18 @@ public class EventViewerActivity extends AppCompatActivity {
      *
      * @param removedUserId id del usuario que se ha salido del evento
      */
-    private void checkAndPromoteToAdmin(String removedUserId) {
+    private void checkAndPromoteToAdmin(String removedUserId)
+    {
         //Cogemos una referencia de los usuarios registrado en la base de datos
         DatabaseReference eventRegister = reference.child("events").child(eventId)
                 .child("registeredUsers");
 
         //Añadimos un escuchador para encontrar si alguien es admin
-        eventRegister.addListenerForSingleValueEvent(new ValueEventListener() {
+        eventRegister.addListenerForSingleValueEvent(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
                 //Creamos dos variables
                 //la primera guarda si hay ya un rol de admin+
                 //la segunda guarda el id del usuario que será el nuevo administrador
@@ -340,16 +460,19 @@ public class EventViewerActivity extends AppCompatActivity {
                 //y no se asigna ningún nuevo rol
                 //si no nadie tiene un rol de admin se guarda el booleano como true y el id del nuevo
                 //admin
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot userSnapshot : snapshot.getChildren())
+                {
                     String userId = userSnapshot.getKey();
                     String role = userSnapshot.getValue(String.class);
 
-                    if (role != null && role.equals("admin")) {
+                    if (role != null && role.equals("admin"))
+                    {
                         adminRole = true;
                         break;
                     }
 
-                    if (newAdminId == null && !userId.equals(removedUserId)) {
+                    if (newAdminId == null && !userId.equals(removedUserId))
+                    {
                         newAdminId = userId;
                     }
                 }
@@ -357,12 +480,16 @@ public class EventViewerActivity extends AppCompatActivity {
                 //Si no hay administrador y hay alguien a quien poder promover a administrador
                 //se settea a la nueva persona como administrador
                 //si no se ha podido hacer se hace un log del error
-                if (!adminRole && newAdminId != null) {
+                if (!adminRole && newAdminId != null)
+                {
                     eventRegister.child(newAdminId).setValue("admin").addOnCompleteListener(task ->
                     {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful())
+                        {
                             Log.e("INFO", "Un nuevo usuario ha sido promovido a admin");
-                        } else {
+                        }
+                        else
+                        {
                             Log.e("INFO", "No se ha podido promover a nadie a admin");
                         }
                     });
@@ -370,7 +497,8 @@ public class EventViewerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error)
+            {
                 Log.e("WARNING", "Error al realizar el cambio de admin");
             }
         });
@@ -381,31 +509,38 @@ public class EventViewerActivity extends AppCompatActivity {
      * Si el usuario es administrador se le permitirá modificar un evento y añadir amigos a él
      */
 
-    private void checkAdmin(String eventId) {
+    private void checkAdmin(String eventId)
+    {
         //Cogemos el id del usuario
         String userId = FirebaseAuth.getInstance().getUid();
 
         //buscamos al usuario en el evento
         reference.child("events").child(eventId).child("registeredUsers")
-                .child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                .child(userId).addListenerForSingleValueEvent(new ValueEventListener()
+                {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
                         //guardamos el rol del usuario
                         String role = snapshot.getValue(String.class);
 
                         //Si tiene rol y es administrador, podrá editar el evento e invitar amigos
-                        //Si no, no le aparecerá el botón en el layout
-                        if (role != null && role.equals("admin")) {
+                        //Si no, no le aparecerá los botones en el layout
+                        if (role != null && role.equals("admin"))
+                        {
                             fbEditEvent.setVisibility(View.VISIBLE);
                             fbAddFriends.setVisibility(View.VISIBLE);
-                        } else {
+                        }
+                        else
+                        {
                             fbEditEvent.setVisibility(View.INVISIBLE);
                             fbAddFriends.setVisibility(View.INVISIBLE);
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
                         Log.e("Info", "No se ha encontrado el rol del usuario");
                     }
                 });
@@ -460,15 +595,20 @@ public class EventViewerActivity extends AppCompatActivity {
     private boolean handleContextItemSelected(MenuItem item, User user) {
         //dependiendo de la opción seleccionada se ejecuta el método correspondiente
         //para quitar a una persona del evento o hacerle admin
-        if (item.getItemId() == R.id.menu_remove_user) {
+        if (item.getItemId() == R.id.menu_remove_user)
+        {
             removeUserAsAdmin(user);
 
             return true;
-        } else if (item.getItemId() == R.id.menu_make_admin) {
+        }
+        else if (item.getItemId() == R.id.menu_make_admin)
+        {
             makeUserAdmin(user);
 
             return true;
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -480,7 +620,8 @@ public class EventViewerActivity extends AppCompatActivity {
      * @param user el usuario que se desea eliminar
      */
 
-    private void removeUserAsAdmin(User user) {
+    private void removeUserAsAdmin(User user)
+    {
         //Se coge la referencia en la bdd de la persona, en el evento,
         //en la que se ha desplegado el menú contextual
         DatabaseReference userReference = reference.child("events").child(eventId)
@@ -488,11 +629,18 @@ public class EventViewerActivity extends AppCompatActivity {
 
         //Se elimina a ese usuario de la base de datos y se manda un toast informativo
         //tanto si se ha podido como si ha ocurrido un error
+        //y cancelamos todos las notificaciones programadas para dicho evento
         userReference.removeValue().addOnCompleteListener(task ->
         {
-            if (task.isSuccessful()) {
-                Toast.makeText(this, R.string.userremovedfromevent, Toast.LENGTH_SHORT).show();
-            } else {
+            if (task.isSuccessful())
+            {
+                Toast.makeText(this, R.string.userremovedfromevent
+                        , Toast.LENGTH_SHORT).show();
+
+                NotificationHelper.cancelAllWorkRequests(eventId);
+            }
+            else
+            {
                 Toast.makeText(this, R.string.frienddeletederror, Toast.LENGTH_SHORT).show();
             }
         });
@@ -503,42 +651,151 @@ public class EventViewerActivity extends AppCompatActivity {
      *
      * @param user el usuario que se desea promover
      */
-    private void makeUserAdmin(User user) {
+    private void makeUserAdmin(User user)
+    {
         //Se coge la referencia en la bdd de la persona, en el evento,
         //en la que se ha desplegado el menú contextual
         DatabaseReference userReference = reference.child("events").child(eventId)
                 .child("registeredUsers").child(user.getId());
 
         //Se añade un escuchador de eventos para comprobar si el usuario ya es un admin
-        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        userReference.addListenerForSingleValueEvent(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
                 //cogemos el rol
                 String role = snapshot.getValue(String.class);
 
                 //si es admin se manda un Toast indicandolo
-                if (role != null && role.equals("admin")) {
-                    Toast.makeText(EventViewerActivity.this, R.string.alreadyadmin, Toast.LENGTH_SHORT).show();
+                if (role != null && role.equals("admin"))
+                {
+                    Toast.makeText(EventViewerActivity.this, R.string.alreadyadmin
+                            , Toast.LENGTH_SHORT).show();
                 }
 
                 //Si no, se pone admin como rol del usuario en la bdd y se manda un toast informativo
                 //tanto si se ha podido como si ha ocurrido un error
-                else {
+                else
+                {
                     userReference.setValue("admin").addOnCompleteListener(task ->
                     {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(EventViewerActivity.this, R.string.userpromotedtoadmin, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(EventViewerActivity.this, R.string.registererror, Toast.LENGTH_SHORT).show();
+                        if (task.isSuccessful())
+                        {
+                            Toast.makeText(EventViewerActivity.this
+                                    , R.string.userpromotedtoadmin, Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(EventViewerActivity.this
+                                    , R.string.registererror, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Log.e("Error", "No se ha podido hacer administrador al usuario");
             }
         });
     }
+
+    /**
+     * Método para crear el texto que se muestra con los datos del eventos
+     * dependiendo del idioma del dispositivo
+     * @param event el evento que hemos seleccionado de la lista
+     * */
+
+    public String formatDate(Event event)
+    {
+        String formattedDate = "";
+
+        try {
+            //Creamos un formato para transformar la fecha guardad en String en fecha
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            //Creamos una fecha parseando el string guardado del evento
+            Date date = inputDateFormat.parse(event.getDate());
+
+            //Hacemos una instancia de Calendar
+            Calendar calendar = Calendar.getInstance();
+
+            //Le decimos que se settee como el día del evento
+            calendar.setTime(date);
+
+            String[] monthsArray = getApplicationContext()
+                    .getResources().getStringArray(R.array.material_calendar_months_array);
+
+            //Formateamos la fecha dependiendo de si está el dispositivo en ingles o en español
+            //más parecido a los carteles de eventos
+            if (Locale.getDefault().getLanguage().equals(new Locale("es").getLanguage()))
+            {
+                formattedDate = String.format("%02d de %s de %d a las %s en %s"
+                        , calendar.get(Calendar.DAY_OF_MONTH)
+                        , monthsArray[calendar.get(Calendar.MONTH)]
+                        , calendar.get(Calendar.YEAR)
+                        , event.getHour()
+                        , event.getPlace());
+            }
+            else
+            {
+                formattedDate = String.format("%02d %s %d at %s in %s"
+                        , calendar.get(Calendar.DAY_OF_MONTH)
+                        , monthsArray[calendar.get(Calendar.MONTH)]
+                        , calendar.get(Calendar.YEAR)
+                        , event.getHour()
+                        , event.getPlace());
+            }
+
+            return formattedDate;
+        }
+
+        //Si no se puede parsear se recoge una excepción
+        catch (ParseException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Clase comparadora para ordenar en la vista detalle de un evento quien es administrador
+     * Poninedolos primero en la lista
+     * */
+
+    public class UserRoleComparator implements Comparator<User>
+    {
+        private HashMap<String, String> compareRoles;
+
+        public UserRoleComparator(HashMap<String, String> compareRoles)
+        {
+            this.compareRoles = compareRoles;
+        }
+
+        @Override
+        public int compare(User u1, User u2)
+        {
+            String role1 = compareRoles.get(u1.getId());
+            String role2 = compareRoles.get(u2.getId());
+
+            //Si es administrador le asigna un valor menor para ponerlo más arriba en la lista
+            //Si es invitado lo coloca después
+            //y si son el mismo rol no pone a ninguna encima de otro
+            if ("admin".equals(role1) && !"admin".equals(role2))
+            {
+                return -1;
+            }
+            else if (!"admin".equals(role1) && "admin".equals(role2))
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+
+
 }

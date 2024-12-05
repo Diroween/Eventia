@@ -18,16 +18,7 @@ public class Event
     private String place;
     private String image;
     private String hour;
-
     private Map<String, String> registeredUsers;
-
-    public Map<String, String> getRegisteredUsers() {
-        return registeredUsers;
-    }
-
-    public void setRegisteredUsers(Map<String, String> registeredUsers) {
-        this.registeredUsers = registeredUsers;
-    }
 
     /**
      * Cremos un constructor vacío para poder realizar la serialización de los datos
@@ -122,6 +113,14 @@ public class Event
     public String getHour()
     {
         return hour;
+    }
+
+    public Map<String, String> getRegisteredUsers() {
+        return registeredUsers;
+    }
+
+    public void setRegisteredUsers(Map<String, String> registeredUsers) {
+        this.registeredUsers = registeredUsers;
     }
 
     public void setHour(String hour)
