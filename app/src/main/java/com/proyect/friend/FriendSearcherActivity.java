@@ -223,7 +223,7 @@ public class FriendSearcherActivity extends AppCompatActivity {
                                 Pattern pattern = Pattern.compile(regex);
                                 Matcher matcher = pattern.matcher(user.getName());
 
-                                if (matcher.find()) {
+                                if (matcher.find() && !user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                     //si el usuario no es null nos lo añade al arraylist
                                     //y si tiene una foto el usuario la recoge para mostrarla
                                     if (user != null && dataSnapshot.hasChild("imageUrl")) {
