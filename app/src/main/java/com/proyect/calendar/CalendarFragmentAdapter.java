@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.proyect.R;
 import com.proyect.event.Event;
 import com.proyect.event.EventViewerActivity;
@@ -137,10 +138,12 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
         //Si el evento tiene una imagen se guarda
         //Sino se muestra un placeholder o se carga la que tenemos puesta por defecto
         //que es la misma que el placeholder
-        if(event.getImage() != null)
+        if(!event.getImage().isEmpty())
         {
             Glide.with(context)
                     .load(event.getImage())
+                    .fitCenter()
+                    .transform(new CircleCrop())
                     .placeholder(R.drawable.ic_event_list)
                     .into(holder.ivEventImage);
         }

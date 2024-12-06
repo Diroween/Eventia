@@ -70,7 +70,7 @@ public class FriendSearcherAdapter extends RecyclerView.Adapter<FriendSearcherVi
         holder.tvFriendId.setText(user.getId());
 
         //Si el usuario tiene una imagen la muestra, sino sale un placeholder sustitutivo
-        if(user.getImageUrl() != null)
+        if(!user.getImageUrl().isEmpty())
         {
             Glide.with(holder.itemView.getContext())
                     .load(user.getImageUrl())

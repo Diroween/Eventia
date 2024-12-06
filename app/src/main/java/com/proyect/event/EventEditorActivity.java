@@ -99,6 +99,7 @@ public class EventEditorActivity extends AppCompatActivity {
         String eventImage = intent.getStringExtra("event_image");
 
         ivEventImage = findViewById(R.id.iv_event_image);
+        ivEventImage.setContentDescription(eventImage);
 
         tvEventTitle = findViewById(R.id.tv_title);
         tvEventTitle.setText(R.string.eventedit);
@@ -337,7 +338,7 @@ public class EventEditorActivity extends AppCompatActivity {
 
     private void uploadImage() {
         //Si la uri de la imagen no es nula
-        if (eventImageUri != null) {
+        if (eventImageUri != null && !eventImageUri.toString().contentEquals(ivEventImage.getContentDescription())) {
             //Se abre una referencia a la base de datos y en la carpeta de usuarios
             //con el id del usuario se guarda su foto de perfil
             StorageReference fileStorageReference = FirebaseStorage.getInstance().getReference
