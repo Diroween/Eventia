@@ -76,6 +76,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/btn_login_bckgrnd"
         android:fontFamily="@font/aclonica"
+        android:textColor="@color/white"
         android:text="@string/search" />
 
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_users"

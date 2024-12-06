@@ -84,7 +84,7 @@ public class TodayListAdapter extends ArrayAdapter<Event>
         holder.tvEventPlace.setText(event.getPlace());
         holder.tvEventHour.setText(event.getHour());
 
-        if (!event.getImage().isEmpty())
+        if (event.getImage() != null && !event.getImage().isEmpty())
         {
             Glide.with(holder.itemView.getContext())
                     .load(event.getImage())

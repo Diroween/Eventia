@@ -128,12 +128,20 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 !password.isEmpty() && !confirmPass.isEmpty())
         {
             //Si el email está bien formado, pasamos a comprobar si las contraseñas coinciden
-            if (email != null && Patterns.EMAIL_ADDRESS.matcher(email).matches())
+            if (Patterns.EMAIL_ADDRESS.matcher(email).matches())
             {
                 //Si las contraseñas coinciden, se crea la cuenta
                 if (password.equals(confirmPass))
                 {
-                    createAccount(email, password, username);
+                    if(username.length() >= 3)
+                    {
+                        createAccount(email, password, username);
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), R.string.usernameshort,
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
                 //Si no lo indicamos con un mensaje al usuario con un toast
                 else
