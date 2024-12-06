@@ -10,7 +10,8 @@
         android:id="@+id/cl_fragment_notes"
         android:background="#fff79a"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingVertical="5dp">
 
         <!--En el swiperefresh metemos la lista para que se pueda
        actualizar facilmente deslizando hacia arriba-->
