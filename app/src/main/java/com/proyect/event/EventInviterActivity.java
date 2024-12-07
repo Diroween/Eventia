@@ -101,7 +101,13 @@ public class EventInviterActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                inviteFriend();
+                if (selectedFriend != null) {
+                    inviteFriend();
+                } else {
+                    Toast.makeText(EventInviterActivity.this
+                            , R.string.usernonselected
+                            , Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
