@@ -36,6 +36,7 @@ import com.proyect.R;
 import com.proyect.user.User;
 import com.proyect.user.UserSettings;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -234,12 +235,28 @@ public class FriendSearcherActivity extends AppCompatActivity {
                                 {
                                     User user = dataSnapshot.getValue(User.class);
 
-                                    String regex = "^" + username + ".*";
+                                    //Normalizamos los nombres introducidos quitándoles
+                                    //los acentos
+                                    String introducedName = Normalizer.normalize(username,
+                                            Normalizer.Form.NFD)
+                                            .replaceAll("\\p{M}", "");
 
+                                    String databaseName = Normalizer.normalize(user.getName(),
+                                            Normalizer.Form.NFD)
+                                            .replaceAll("\\p{M}", "");
+
+                                    //En el regex le ponemos que el nombre por el que tiene
+                                    //que buscar es el principio del nombre introducido
+                                    String regex = "^" + introducedName + ".*";
+
+                                    //le pasamos al patrón el regex con una bandera indicando
+                                    //que no tenga en cuenta minusculas y mayúsculas
                                     Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 
-                                    Matcher matcher = pattern.matcher(user.getName());
+                                    //Al matcher le pasamos el nombre nomalizado de la base de datos
+                                    Matcher matcher = pattern.matcher(databaseName);
 
+                                    //Si hay alguna coincidencia
                                     if (matcher.find())
                                     {
                                         //si el usuario no es null nos lo añade al arraylist
@@ -265,8 +282,17 @@ public class FriendSearcherActivity extends AppCompatActivity {
 
                                     }
                                 }
+
+                                //Si no se ha encontrado a nadie se lanza un Toast informativo
+                                if(users.isEmpty())
+                                {
+                                    Toast.makeText(FriendSearcherActivity.this,
+                                            R.string.usernotfound, Toast.LENGTH_SHORT).show();
+                                }
                             }
 
+                            //Si el nombre no es lo suficientemente largo como iniciar la búsqueda
+                            //se indica con un Toast informativo
                             else
                             {
                                 Toast.makeText(FriendSearcherActivity.this,

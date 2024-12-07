@@ -54,7 +54,7 @@
 
     <TextView
         android:id="@+id/tv_friend_req"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:elevation="7dp"
         android:gravity="center"
@@ -62,7 +62,7 @@
         android:padding="5dp"
         android:fontFamily="@font/gabriela"
         android:textSize="14sp"
-        android:background="@drawable/btn_login_bckgrnd"
+        android:background="@drawable/txtview_notifications"
         tools:text="10"
         android:visibility="gone"
         android:textStyle="bold"
