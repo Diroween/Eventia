@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -18,6 +19,7 @@ import androidx.work.WorkManager;
 import com.proyect.MainActivity;
 import com.proyect.R;
 import com.proyect.event.Event;
+import com.proyect.event.EventViewerActivity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,10 +66,10 @@ public class NotificationHelper {
     /**
      * Método para lanzar un trabajo en segundo plano (en nuestro caso, una notificación).
      */
-    public static void createWorkRequest(String workName, String titulo, String message, long timeDelayInSeconds) {
+    public static void createWorkRequest(String workName, String titulo, String message, String eventId, long timeDelayInSeconds) {
         OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(ReminderWorker.class)
                 .setInitialDelay(timeDelayInSeconds, TimeUnit.SECONDS)
-                .setInputData(new Data.Builder().putString("title", titulo).putString("message", message).build())
+                .setInputData(new Data.Builder().putString("title", titulo).putString("message", message).putString("event_id", eventId).build())
                 .build();
 
         //empleamos ExistingWorkPolicy.REPLACE para sobreescribir trabajos previos en caso de haberse editado la hora del evento
@@ -110,6 +112,7 @@ public class NotificationHelper {
             createWorkRequest(event.getId(),
                     context.getResources().getString(R.string.event_notificationtitle_now, event.getName(), event.getHour()),
                     mensaje,
+                    event.getId(),
                     delay);
 
             if (delay > 3600) {
@@ -117,6 +120,7 @@ public class NotificationHelper {
                 createWorkRequest(event.getId() + "_3600",
                         context.getResources().getString(R.string.event_notificationtitle_1h, event.getName()),
                         mensaje,
+                        event.getId(),
                         delay - 3600);
 
                 if (delay > 86400) {
@@ -124,6 +128,7 @@ public class NotificationHelper {
                     createWorkRequest(event.getId() + "_86400",
                             context.getResources().getString(R.string.event_notificationtitle_24h, event.getName()),
                             mensaje,
+                            event.getId(),
                             delay - 86400);
 
                     if (delay > 604800) {
@@ -131,6 +136,7 @@ public class NotificationHelper {
                         createWorkRequest(event.getId() + "_604800",
                                 context.getResources().getString(R.string.event_notificationtitle_7d, event.getName()),
                                 mensaje,
+                                event.getId(),
                                 delay - 604800);
                     }
                 }
@@ -138,14 +144,27 @@ public class NotificationHelper {
         }
     }
 
-    public void createNotification(String title, String message) {
+    public void createNotification(String title, String message, String eventId) {
 
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        //Instanciamos un intent de MainActivity, lo establecemos como stack principal y lo agregamos
+        //a la pila
+        Intent intentMain = new Intent(context, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(intentMain);
 
+        //Instanciamos y agregamos a la pila EventViewerActivity, pasando el id del evento para poder
+        //cargarlo al pulsar en la notificación
+        Intent intentView = new Intent(context, EventViewerActivity.class);
+        intentView.putExtra("event_id", eventId);
+        stackBuilder.addNextIntent(intentView);
+
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Establecemos el icono de la notificación
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_eventia);
 
+        //Configuramos la notificación
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notes_fab)
                 .setLargeIcon(icon)
