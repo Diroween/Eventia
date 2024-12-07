@@ -3,10 +3,10 @@ package com.proyect.calendar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -156,7 +156,8 @@ public class CalendarFragment extends Fragment {
         loadUserEvents();
 
 
-        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener() {
+        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
+        {
             @Override
             public void onClick(@NonNull CalendarDay calendarDay) {
 
@@ -325,9 +326,9 @@ public class CalendarFragment extends Fragment {
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(), R.string.loadeventserror,
-                                Toast.LENGTH_SHORT).show();
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("Error", "No se han podido cargar eventos");
                     }
                 });
 
