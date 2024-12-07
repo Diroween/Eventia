@@ -1,5 +1,6 @@
 package com.proyect.event;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -49,6 +50,9 @@ public class PreviousEventsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 

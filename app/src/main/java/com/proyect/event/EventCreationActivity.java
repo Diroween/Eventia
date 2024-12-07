@@ -3,6 +3,7 @@ package com.proyect.event;
 import android.Manifest;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -91,6 +92,9 @@ public class EventCreationActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Asignamos las variables a sus elementos en pantalla
         tvEventHour = findViewById(R.id.tv_event_hour);

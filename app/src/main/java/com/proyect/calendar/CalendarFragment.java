@@ -39,7 +39,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 
 
@@ -215,7 +214,8 @@ public class CalendarFragment extends Fragment {
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener()
+                {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //Vaciamos la arraylist por si hubiera alguno todavía
@@ -270,21 +270,26 @@ public class CalendarFragment extends Fragment {
                                     //Si el día del evento es posterior al día de hoy
                                     //Se carga en futuros eventos
 
-                                    if (calendar.after(today)) {
+                                    if (calendar.after(today))
+                                    {
                                         nextEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),
                                                         R.drawable.calendar_day_current,
                                                         null));
                                         //calendarDay.setLabelColor(R.color.black);
-                                    } else if (calendar.before(today)) {
+                                    }
+                                    else if (calendar.before(today))
+                                    {
                                         pastEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),
                                                         R.drawable.calendar_day_past_event,
                                                         null));
                                         //calendarDay.setLabelColor(R.color.black);
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         nextEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),

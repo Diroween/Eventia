@@ -1,4 +1,5 @@
 package com.proyect.friend;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -41,6 +42,9 @@ public class FriendViewerActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Asignamos los elementos de pantalla a las variables
         tabLayout = findViewById(R.id.tab_layout);
