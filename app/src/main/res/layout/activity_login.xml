@@ -24,12 +24,11 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/aclonica"
         android:text="@string/app_name"
-        android:textColor="#79DEE2"
+        android:textColor="#1a2b63"
         android:textSize="38sp"
-        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_logo"/>
+        app:layout_constraintTop_toBottomOf="@id/iv_logo" />
 
     <TextView
         android:id="@+id/tv_login"
@@ -91,7 +90,7 @@
         android:layout_marginEnd="25dp"
         android:background="@drawable/btn_login_bckgrnd"
         android:text="@string/login"
-        android:fontFamily="@font/gabriela"
+        android:fontFamily="@font/aclonica"
         android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="@color/white"
@@ -109,7 +108,7 @@
         app:layout_constraintStart_toStartOf="@id/et_password"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:fontFamily="@font/gabriela"
+        android:fontFamily="@font/aclonica"
         android:textStyle="bold"
         android:paddingHorizontal="15dp"
         android:textOn="@string/remembered"

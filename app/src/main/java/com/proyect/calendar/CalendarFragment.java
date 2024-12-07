@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -164,7 +163,8 @@ public class CalendarFragment extends Fragment {
         checkPendingEventRequests();
 
 
-        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener() {
+        calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
+        {
             @Override
             public void onClick(@NonNull CalendarDay calendarDay) {
 
@@ -222,7 +222,9 @@ public class CalendarFragment extends Fragment {
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
-                .addValueEventListener(new ValueEventListener() {
+
+                .addValueEventListener(new ValueEventListener()
+                {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //Vaciamos la arraylist por si hubiera alguno todavía
@@ -277,21 +279,26 @@ public class CalendarFragment extends Fragment {
                                     //Si el día del evento es posterior al día de hoy
                                     //Se carga en futuros eventos
 
-                                    if (calendar.after(today)) {
+                                    if (calendar.after(today))
+                                    {
                                         nextEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),
                                                         R.drawable.calendar_day_current,
                                                         null));
                                         //calendarDay.setLabelColor(R.color.black);
-                                    } else if (calendar.before(today)) {
+                                    }
+                                    else if (calendar.before(today))
+                                    {
                                         pastEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),
                                                         R.drawable.calendar_day_past_event,
                                                         null));
                                         //calendarDay.setLabelColor(R.color.black);
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         nextEvents.add(event);
                                         calendarDay.setBackgroundDrawable(ResourcesCompat
                                                 .getDrawable(getResources(),
@@ -327,9 +334,9 @@ public class CalendarFragment extends Fragment {
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getContext(), R.string.loadeventserror,
-                                Toast.LENGTH_SHORT).show();
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("Error", "No se han podido cargar eventos");
                     }
                 });
 

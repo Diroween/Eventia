@@ -138,7 +138,7 @@ public class CalendarFragmentAdapter extends RecyclerView.Adapter<CalendarFragme
         //Si el evento tiene una imagen se guarda
         //Sino se muestra un placeholder o se carga la que tenemos puesta por defecto
         //que es la misma que el placeholder
-        if(!event.getImage().isEmpty())
+        if(event.getImage() != null && !event.getImage().isEmpty())
         {
             Glide.with(context)
                     .load(event.getImage())

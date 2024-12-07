@@ -1,5 +1,6 @@
 package com.proyect.event;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -56,6 +57,9 @@ public class EventRequestsActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //Se fuerza a la aplicación a mostrarse en vertical
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Inicializamos las variables y elementos en pantalla
         rvEventRequests = findViewById(R.id.rv_events);

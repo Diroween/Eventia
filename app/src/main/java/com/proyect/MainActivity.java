@@ -37,8 +37,6 @@ import com.proyect.notification.NotificationSettingsActivity;
 import com.proyect.today.TodayFragment;
 import com.proyect.user.UserSettings;
 
-import java.util.ArrayList;
-
 /**
  * Creamos MainActivity con implementación de View.OnClickListener para mejorar la gestión del
  * método onClick
@@ -53,12 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * //
      * Declaramos cuatro variables de imagen que funcionarán como botones
      * para moverse por los fragments
-     * //
-     * hacemos un arraylist para today
-     * *-Yosef-* Creo que esto abrá que borrarlo a futuro, ya que es un método rudimentario
-     * y poco eficaz para poder implmentar las cosas de hoy, habrá que hacer otro RecyclerView
-     * //
-     * Y el manejador de fragments
+     * El manejador de fragments
+     * Y la Uri a la imagen de usuario
      */
     private static final int REQUEST_CODE = 100;
     ImageView ivUserImage;
@@ -69,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView ivNotes;
     ImageView ivFriends;
 
-    ArrayList<String> arrayToday;
-
     FragmentManager fragmentManager;
+
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,24 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Asignamos el contenedor de imagen para el usuario
         ivUserImage = findViewById(R.id.iv_user_image);
 
-        //Cogemos la imagen del usuario, en caso de que la tenga
-        Uri imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
-
-        //Si la tiene
-        if (imageUri != null) {
-            //Cargamos la imagen
-            Glide.with(this).load(imageUri.toString())
-                    .placeholder(R.drawable.baseline_tag_faces_128)
-                    .transform(new CircleCrop())
-                    .into(ivUserImage);
-        }
-
-        //Si no la tiene
-        else {
-            //Cargamos directamente el placeholder
-            Glide.with(this).load(R.drawable.baseline_tag_faces_128)
-                    .into(ivUserImage);
-        }
+        //Cargamos la imagen de usuario
+        loadUserImage();
 
         //Asignamos un escuchador para el click
         //El escuchador nos abre el portal de configuración del usuario
@@ -166,8 +144,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivToday.setOnClickListener(this);
         ivNotes.setOnClickListener(this);
         ivFriends.setOnClickListener(this);
-
-        arrayToday = new ArrayList<String>();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true)
         {
@@ -217,19 +193,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
         //Creamos un fragment
         Fragment fragment;
 
-        //Creamos un bundle para pasar datos desde la main
-        Bundle bundle = new Bundle();
-
-        //Pasamos al bundle un Arraylist de String
-        bundle.putStringArrayList("arrayToday", arrayToday);
-
         //Dependiendo del botón que pulsemos inicializamos el fragment correspondiente
         //y se cambia el color de los botones
-        if (view.getId() == R.id.btn_today) {
+        if (view.getId() == R.id.btn_today)
+        {
             fragment = new TodayFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
@@ -237,21 +209,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
 
-        } else if (view.getId() == R.id.btn_notes) {
+        }
+        else if (view.getId() == R.id.btn_notes)
+        {
             fragment = new NotesFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
             ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
             ivNotes.setBackgroundResource(R.drawable.btn_notes_colored50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
-        } else if (view.getId() == R.id.btn_friends) {
+        }
+        else if (view.getId() == R.id.btn_friends)
+        {
             fragment = new FriendsFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_nocolor50x50);
             ivToday.setBackgroundResource(R.drawable.btn_today_nocolor50x50);
             ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_colored50x50);
-        } else {
+        }
+        else
+        {
             fragment = new CalendarFragment();
 
             ivCalendar.setBackgroundResource(R.drawable.btn_calendar_colored50x50);
@@ -259,9 +237,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivNotes.setBackgroundResource(R.drawable.btn_notes_nocolor50x50);
             ivFriends.setBackgroundResource(R.drawable.btn_laugh_nocolor50x50);
         }
-
-        //Le pasamos como argumentos al fragment nuestro bundle
-        fragment.setArguments(bundle);
 
         //Hacemos la transición del fagment actual al nuevo fragment
         FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
@@ -271,11 +246,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
+     * Método onResume sobreescrito para actualizar la foto del usuario
+     * */
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        loadUserImage();
+    }
+
+    /**
      * Realizamos un override de los métodos necesarios para crear el menú
      */
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         //le decimos al menú que la crearse y use el layout de la carpeta menu
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
@@ -340,5 +328,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showRationaleDialog() {
         Intent intent = new Intent(this, NotificationSettingsActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * Método que recoge la uri de la imagen del usuario y la carga en su ImageView correspondiente
+     * */
+
+    private void loadUserImage()
+    {
+        //Cogemos la imagen del usuario, en caso de que la tenga
+        imageUri = FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl();
+
+        //Si el usuario tiene imagen
+        if (imageUri != null)
+        {
+            //Cargamos la imagen
+            Glide.with(this)
+                    .load(imageUri.toString())
+                    .placeholder(R.drawable.baseline_tag_faces_128)
+                    .transform(new CircleCrop())
+                    .into(ivUserImage);
+        }
+
+        //Si no la tiene
+        else
+        {
+            //Cargamos directamente el placeholder
+            Glide.with(this)
+                    .load(R.drawable.baseline_tag_faces_128)
+                    .into(ivUserImage);
+        }
     }
 }
