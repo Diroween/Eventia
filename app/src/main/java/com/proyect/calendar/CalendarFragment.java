@@ -31,7 +31,6 @@ import com.proyect.event.Event;
 import com.proyect.event.EventCreationActivity;
 import com.proyect.event.EventDateComparator;
 import com.proyect.event.EventOnCurrentDayActivity;
-import com.proyect.event.EventRequest;
 import com.proyect.event.EventRequestsActivity;
 import com.proyect.notification.NotificationHelper;
 
@@ -208,7 +207,7 @@ public class CalendarFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadUserEvents();
-        checkPendingEventRequests();
+        //checkPendingEventRequests();
     }
 
     /**
@@ -340,20 +339,26 @@ public class CalendarFragment extends Fragment {
                     }
                 });
 
+        checkPendingEventRequests();
     }
 
     private void checkPendingEventRequests()
     {
         //Cogemos la referencia a las invitaciones de eventos que tiene el usuario
         databaseReference.child("users").child(user.getUid())
-                .child("eventsRequests").addListenerForSingleValueEvent(new ValueEventListener()
+                .child("eventsRequests").addValueEventListener(new ValueEventListener()
                 {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
-                        if (snapshot.getChildrenCount() > 0) {
+                        if (snapshot.getChildrenCount() > 0)
+                        {
                             tvEventRequests.setVisibility(View.VISIBLE);
                             tvEventRequests.setText(String.valueOf(snapshot.getChildrenCount()));
+                        }
+                        else
+                        {
+                            tvEventRequests.setVisibility(View.INVISIBLE);
                         }
                     }
 

@@ -24,8 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.user.User;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
@@ -251,7 +249,7 @@ public class FriendsFragment extends Fragment
     {
         //Cogemos la referencia a las invitaciones de amistad que tiene el usuario
         databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("friend_requests").addListenerForSingleValueEvent(new ValueEventListener()
+                .child("friend_requests").addValueEventListener(new ValueEventListener()
                 {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
@@ -259,6 +257,10 @@ public class FriendsFragment extends Fragment
                         if (snapshot.getChildrenCount() > 0) {
                             tvFriendRequests.setVisibility(View.VISIBLE);
                             tvFriendRequests.setText(String.valueOf(snapshot.getChildrenCount()));
+                        }
+                        else
+                        {
+                            tvFriendRequests.setVisibility(View.INVISIBLE);
                         }
                     }
 
@@ -271,7 +273,8 @@ public class FriendsFragment extends Fragment
     }
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
         checkPendingEventRequests();
     }
