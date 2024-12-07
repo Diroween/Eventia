@@ -225,7 +225,7 @@ public class FriendSearcherActivity extends AppCompatActivity {
                         {
                             //vaciamos el arraylist
                             users.clear();
-
+                          
                             if(username.length() >= 3)
                             {
                                 //por cada hijo que haya encontrado le decimos que coja los datos
@@ -262,6 +262,7 @@ public class FriendSearcherActivity extends AppCompatActivity {
                                             Log.e("Error",
                                                     "No se han encontrado usuarios");
                                         }
+
                                     }
                                 }
                             }

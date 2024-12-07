@@ -52,5 +52,20 @@
         android:contentDescription="@string/app_name"
         android:src="@drawable/baseline_accessibility_new_24"/>
 
+    <TextView
+        android:id="@+id/tv_friend_req"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="7dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:background="@drawable/txtview_notifications"
+        tools:text="10"
+        android:visibility="gone"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/fb_requests"
+        app:layout_constraintEnd_toEndOf="@id/fb_requests"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

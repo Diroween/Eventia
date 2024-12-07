@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.proyect.R;
 import com.proyect.user.User;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -53,6 +56,7 @@ public class FriendsFragment extends Fragment
     private FriendsAdapter friendsAdapter;
     private ArrayList<User> friends;
     private DatabaseReference databaseReference;
+    private TextView tvFriendRequests;
 
     /**
      * Dos botones:
@@ -111,6 +115,8 @@ public class FriendsFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+
+        tvFriendRequests = view.findViewById(R.id.tv_friend_req);
 
         //Inicializamos el Recyclerview y le asignamos un manejador de layout
         rvFriends = view.findViewById(R.id.rv_friends);
@@ -194,6 +200,8 @@ public class FriendsFragment extends Fragment
                     }
                 });
 
+        checkPendingEventRequests();
+
         //Asignamos el botón de las peticiones
         fbFriendRequests = view.findViewById(R.id.fb_requests);
 
@@ -239,5 +247,32 @@ public class FriendsFragment extends Fragment
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 
+    private void checkPendingEventRequests()
+    {
+        //Cogemos la referencia a las invitaciones de amistad que tiene el usuario
+        databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("friend_requests").addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        if (snapshot.getChildrenCount() > 0) {
+                            tvFriendRequests.setVisibility(View.VISIBLE);
+                            tvFriendRequests.setText(String.valueOf(snapshot.getChildrenCount()));
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("INFO", "Fallo al cargar los eventos");
+                    }
+                });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkPendingEventRequests();
+    }
 }

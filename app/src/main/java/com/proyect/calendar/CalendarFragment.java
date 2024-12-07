@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -30,6 +31,7 @@ import com.proyect.event.Event;
 import com.proyect.event.EventCreationActivity;
 import com.proyect.event.EventDateComparator;
 import com.proyect.event.EventOnCurrentDayActivity;
+import com.proyect.event.EventRequest;
 import com.proyect.event.EventRequestsActivity;
 import com.proyect.notification.NotificationHelper;
 
@@ -67,7 +69,9 @@ public class CalendarFragment extends Fragment {
 
     public CalendarView calendarView;
     FloatingActionButton fbEventRequests;
+    TextView tvEventRequests;
     private DatabaseReference databaseReference;
+    private FirebaseUser user;
     private ArrayList<CalendarDay> calendarDays;
     private CalendarFragmentAdapter calendarAdapter;
     private RecyclerView rvCalendar;
@@ -117,6 +121,8 @@ public class CalendarFragment extends Fragment {
         //hacemos una vista que es la que cargará nuestro layout
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
+        tvEventRequests = view.findViewById(R.id.tv_event_req);
+
         //Inicializamos el calendario personalizado
         calendarView = (CalendarView) view.findViewById(R.id.cv_calendar);
 
@@ -154,6 +160,7 @@ public class CalendarFragment extends Fragment {
 
         // Cargamos los eventos del usuario
         loadUserEvents();
+        checkPendingEventRequests();
 
 
         calendarView.setOnCalendarDayClickListener(new OnCalendarDayClickListener()
@@ -200,8 +207,8 @@ public class CalendarFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         loadUserEvents();
+        checkPendingEventRequests();
     }
 
     /**
@@ -210,11 +217,12 @@ public class CalendarFragment extends Fragment {
 
     public void loadUserEvents() {
         //Recogemos los datos del usuario de Firebase que ha iniciado sesión
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         //A la referencia de la base de datos le indicamos que vaya al contenedor eventos
         //y le ponemos un escuchador para que encuentre coincidencias
         databaseReference.child("events").orderByChild("date")
+
                 .addValueEventListener(new ValueEventListener()
                 {
                     @Override
@@ -315,7 +323,7 @@ public class CalendarFragment extends Fragment {
 
                         //Ordenamos los eventos por fecha y hora
                         //para ello ordenamos el arraylist
-                      
+
                         nextEvents.sort(new EventDateComparator());
 
                         //añadimos al calendario todos los dias personalizados
@@ -332,6 +340,29 @@ public class CalendarFragment extends Fragment {
                     }
                 });
 
+    }
+
+    private void checkPendingEventRequests()
+    {
+        //Cogemos la referencia a las invitaciones de eventos que tiene el usuario
+        databaseReference.child("users").child(user.getUid())
+                .child("eventsRequests").addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        if (snapshot.getChildrenCount() > 0) {
+                            tvEventRequests.setVisibility(View.VISIBLE);
+                            tvEventRequests.setText(String.valueOf(snapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error)
+                    {
+                        Log.e("INFO", "Fallo al cargar los eventos");
+                    }
+                });
     }
 
 

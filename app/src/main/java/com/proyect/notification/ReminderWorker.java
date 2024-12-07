@@ -23,9 +23,10 @@ public class ReminderWorker extends Worker {
 
         String title = getInputData().getString("title");
         String message = getInputData().getString("message");
+        String eventId = getInputData().getString("event_id");
 
         notificationHelper.createNotification(title != null ? title : "",
-                message != null ? message : "");
+                message != null ? message : "", eventId != null ? eventId : "");
 
         return ListenableWorker.Result.success();
     }
