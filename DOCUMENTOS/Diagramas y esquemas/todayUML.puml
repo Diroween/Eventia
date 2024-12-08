@@ -1,14 +1,4 @@
 @startuml
-class com.proyect.today.TodayListAdapter {
-~ ArrayList<Event> events
-- Context context
-- String[] monthsArray
-- String formattedDate
-~ DatabaseReference reference
-+ View getView(int,View,ViewGroup)
-}
-
-
 class com.proyect.today.TodayListViewHolder {
 ~ TextView tvEventName
 ~ TextView tvEventDate
@@ -42,9 +32,19 @@ class com.proyect.today.TodayFragment {
 }
 
 
+class com.proyect.today.TodayListAdapter {
+~ ArrayList<Event> events
+- Context context
+- String[] monthsArray
+- String formattedDate
+~ DatabaseReference reference
++ View getView(int,View,ViewGroup)
+}
 
 
-android.widget.ArrayAdapter <|-- com.proyect.today.TodayListAdapter
+
+
 com.proyect.today.ViewHolder <|-- com.proyect.today.TodayListViewHolder
 androidx.fragment.app.Fragment <|-- com.proyect.today.TodayFragment
+android.widget.ArrayAdapter <|-- com.proyect.today.TodayListAdapter
 @enduml

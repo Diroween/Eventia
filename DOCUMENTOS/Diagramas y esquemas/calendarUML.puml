@@ -1,10 +1,4 @@
 @startuml
-class com.proyect.calendar.CalendarFragmentViewHolder {
-~ ImageView ivEventImage
-~ TextView tvEventName
-~ TextView tvEventData
-}
-
 class com.proyect.calendar.CalendarFragmentAdapter {
 - ArrayList<Event> eventList
 - Context context
@@ -16,13 +10,21 @@ class com.proyect.calendar.CalendarFragmentAdapter {
 }
 
 
+class com.proyect.calendar.CalendarFragmentViewHolder {
+~ ImageView ivEventImage
+~ TextView tvEventName
+~ TextView tvEventData
+}
+
 class com.proyect.calendar.CalendarFragment {
 - {static} String ARG_PARAM1
 - {static} String ARG_PARAM2
 - {static} Context context
 + CalendarView calendarView
 ~ FloatingActionButton fbEventRequests
+~ TextView tvEventRequests
 - DatabaseReference databaseReference
+- FirebaseUser user
 - ArrayList<CalendarDay> calendarDays
 - CalendarFragmentAdapter calendarAdapter
 - RecyclerView rvCalendar
@@ -34,12 +36,13 @@ class com.proyect.calendar.CalendarFragment {
 + View onCreateView(LayoutInflater,ViewGroup,Bundle)
 + void onResume()
 + void loadUserEvents()
+- void checkPendingEventRequests()
 }
 
 
 
 
-com.proyect.calendar.ViewHolder <|-- com.proyect.calendar.CalendarFragmentViewHolder
 com.proyect.calendar.Adapter <|-- com.proyect.calendar.CalendarFragmentAdapter
+com.proyect.calendar.ViewHolder <|-- com.proyect.calendar.CalendarFragmentViewHolder
 androidx.fragment.app.Fragment <|-- com.proyect.calendar.CalendarFragment
 @enduml

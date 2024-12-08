@@ -1,4 +1,11 @@
 @startuml
+class com.proyect.notification.ReminderWorker {
+- Context context
+- WorkerParameters params
++ ListenableWorker.Result doWork()
+}
+
+
 class com.proyect.notification.NotificationSettingsActivity {
 - {static} int REQUEST_CODE
 # void onCreate(Bundle)
@@ -11,24 +18,17 @@ class com.proyect.notification.NotificationHelper {
 - {static} Context context
 - String CHANNEL_ID
 + {static} long getSecondsUntilEvent(Event)
-+ {static} void createWorkRequest(String,String,String,long)
++ {static} void createWorkRequest(String,String,String,String,long)
 + {static} void cancelAllWorkRequests(String)
 + {static} void cancelWorkRequest(String)
 + {static} void enqueueNotifications(Context,Event,long)
-+ void createNotification(String,String)
++ void createNotification(String,String,String)
 + void createNotificationChannel(Notification)
 }
 
 
-class com.proyect.notification.ReminderWorker {
-- Context context
-- WorkerParameters params
-+ ListenableWorker.Result doWork()
-}
 
 
-
-
-androidx.appcompat.app.AppCompatActivity <|-- com.proyect.notification.NotificationSettingsActivity
 androidx.work.Worker <|-- com.proyect.notification.ReminderWorker
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.notification.NotificationSettingsActivity
 @enduml

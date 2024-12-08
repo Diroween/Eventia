@@ -1,54 +1,4 @@
 @startuml
-class com.proyect.friend.FriendRequest {
-- String from
-- String status
-- String name
-+ String getFrom()
-+ void setFrom(String)
-+ String getStatus()
-+ void setStatus(String)
-+ String getName()
-+ void setDisplayName(String)
-}
-
-
-class com.proyect.friend.FriendSearcherViewHolder {
-~ TextView tvName
-~ TextView tvFriendId
-~ ImageView ivUser
-}
-
-class com.proyect.friend.FriendRequestAdapter {
-- ArrayList<FriendRequest> friendRequests
-- OnFriendRequestActionListener requestActionListener
-+ FriendsRequestViewHolder onCreateViewHolder(ViewGroup,int)
-+ void onBindViewHolder(FriendsRequestViewHolder,int)
-+ int getItemCount()
-}
-
-
-interface com.proyect.friend.FriendRequestAdapter$OnFriendRequestActionListener {
-~ void onAccept(String)
-~ void onReject(String)
-}
-
-class com.proyect.friend.FriendInfoPageFragment {
-- {static} String ARG_PARAM1
-- {static} String ARG_PARAM2
-- String mParam1
-- String mParam2
-~ ImageView ivDelete
-~ ImageView ivFriendImage
-~ TextView tvFriendId
-~ TextView tvFriendName
-~ TextView tvDelete
-- DatabaseReference databaseReference
-+ {static} FriendInfoPageFragment newInstance(String,String)
-+ void onCreate(Bundle)
-+ View onCreateView(LayoutInflater,ViewGroup,Bundle)
-}
-
-
 class com.proyect.friend.FriendInviterAdapter {
 - ArrayList<User> friends
 - OnUserClickListener clickListener
@@ -63,15 +13,34 @@ interface com.proyect.friend.FriendInviterAdapter$OnUserClickListener {
 ~ void onUserClick(User)
 }
 
-class com.proyect.friend.FriendsRequestViewHolder {
-~ TextView tvName
-~ Button btnAccept
-~ Button btnReject
+class com.proyect.friend.FriendRequest {
+- String from
+- String status
+- String name
++ String getFrom()
++ void setFrom(String)
++ String getStatus()
++ void setStatus(String)
++ String getName()
++ void setDisplayName(String)
 }
 
-class com.proyect.friend.FriendsViewHolder {
-~ TextView tvName
-~ ImageView ivUser
+
+class com.proyect.friend.FriendsAdapter {
+- ArrayList<User> friends
+- OnItemClickListener onItemClickListener
+- String currentUserId
+- int selectedItem
+- HashMap<String,String> roles
+- boolean enableLongClick
++ FriendsViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(FriendsViewHolder,int)
++ int getItemCount()
+}
+
+
+interface com.proyect.friend.FriendsAdapter$OnItemClickListener {
+~ void onItemClick(View,User)
 }
 
 class com.proyect.friend.FriendSearcherActivity {
@@ -91,6 +60,12 @@ class com.proyect.friend.FriendSearcherActivity {
 }
 
 
+class com.proyect.friend.FriendsRequestViewHolder {
+~ TextView tvName
+~ Button btnAccept
+~ Button btnReject
+}
+
 class com.proyect.friend.FriendSearcherAdapter {
 - ArrayList<User> users
 - OnUserClickListener clickListener
@@ -105,6 +80,49 @@ interface com.proyect.friend.FriendSearcherAdapter$OnUserClickListener {
 ~ void onUserClick(User)
 }
 
+class com.proyect.friend.FriendViewerActivity {
+~ TabLayout tabLayout
+~ ViewPager2 viewPager
+~ FriendsViewerPageAdapter viewerAdapter
+# void onCreate(Bundle)
+}
+
+
+class com.proyect.friend.FriendRequestAdapter {
+- ArrayList<FriendRequest> friendRequests
+- OnFriendRequestActionListener requestActionListener
++ FriendsRequestViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(FriendsRequestViewHolder,int)
++ int getItemCount()
+}
+
+
+interface com.proyect.friend.FriendRequestAdapter$OnFriendRequestActionListener {
+~ void onAccept(String)
+~ void onReject(String)
+}
+
+class com.proyect.friend.FriendEventListFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+~ RecyclerView rvEvents
+~ EventListAdapter listAdapter
+~ ArrayList<Event> events
+~ DatabaseReference databaseReference
++ {static} FriendEventListFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.proyect.friend.FriendSearcherViewHolder {
+~ TextView tvName
+~ TextView tvFriendId
+~ ImageView ivUser
+}
+
 class com.proyect.friend.FriendsFragment {
 - {static} String ARG_PARAM1
 - {static} String ARG_PARAM2
@@ -114,14 +132,39 @@ class com.proyect.friend.FriendsFragment {
 - FriendsAdapter friendsAdapter
 - ArrayList<User> friends
 - DatabaseReference databaseReference
+- TextView tvFriendRequests
 ~ FloatingActionButton fbFriendRequests
 ~ FloatingActionButton fbAddFriend
 + {static} FriendsFragment newInstance(String,String)
 + void onCreate(Bundle)
 + void onViewCreated(View,Bundle)
 + View onCreateView(LayoutInflater,ViewGroup,Bundle)
+- void checkPendingEventRequests()
++ void onResume()
 }
 
+
+class com.proyect.friend.FriendInfoPageFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
+~ ImageView ivDelete
+~ ImageView ivFriendImage
+~ TextView tvFriendId
+~ TextView tvFriendName
+~ TextView tvDelete
+- DatabaseReference databaseReference
++ {static} FriendInfoPageFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+
+
+class com.proyect.friend.FriendsViewHolder {
+~ TextView tvName
+~ ImageView ivUser
+}
 
 class com.proyect.friend.FriendRequestActivity {
 ~ ImageView ivUserImage
@@ -144,64 +187,25 @@ class com.proyect.friend.FriendsViewerPageAdapter {
 + int getItemCount()
 }
 
-class com.proyect.friend.FriendEventListFragment {
-- {static} String ARG_PARAM1
-- {static} String ARG_PARAM2
-- String mParam1
-- String mParam2
-~ RecyclerView rvEvents
-~ EventListAdapter listAdapter
-~ ArrayList<Event> events
-~ DatabaseReference databaseReference
-+ {static} FriendEventListFragment newInstance(String,String)
-+ void onCreate(Bundle)
-+ View onCreateView(LayoutInflater,ViewGroup,Bundle)
-}
 
 
-class com.proyect.friend.FriendViewerActivity {
-~ TabLayout tabLayout
-~ ViewPager2 viewPager
-~ FriendsViewerPageAdapter viewerAdapter
-# void onCreate(Bundle)
-}
-
-
-class com.proyect.friend.FriendsAdapter {
-- ArrayList<User> friends
-- OnItemClickListener onItemClickListener
-- String currentUserId
-- int selectedItem
-- boolean enableLongClick
-+ FriendsViewHolder onCreateViewHolder(ViewGroup,int)
-+ void onBindViewHolder(FriendsViewHolder,int)
-+ int getItemCount()
-}
-
-
-interface com.proyect.friend.FriendsAdapter$OnItemClickListener {
-~ void onItemClick(View,User)
-}
-
-
-
-com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendSearcherViewHolder
-com.proyect.friend.Adapter <|-- com.proyect.friend.FriendRequestAdapter
-com.proyect.friend.FriendRequestAdapter +.. com.proyect.friend.FriendRequestAdapter$OnFriendRequestActionListener
-androidx.fragment.app.Fragment <|-- com.proyect.friend.FriendInfoPageFragment
 com.proyect.friend.Adapter <|-- com.proyect.friend.FriendInviterAdapter
 com.proyect.friend.FriendInviterAdapter +.. com.proyect.friend.FriendInviterAdapter$OnUserClickListener
-com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendsRequestViewHolder
-com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendsViewHolder
+com.proyect.friend.Adapter <|-- com.proyect.friend.FriendsAdapter
+com.proyect.friend.FriendsAdapter +.. com.proyect.friend.FriendsAdapter$OnItemClickListener
 androidx.appcompat.app.AppCompatActivity <|-- com.proyect.friend.FriendSearcherActivity
+com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendsRequestViewHolder
 com.proyect.friend.Adapter <|-- com.proyect.friend.FriendSearcherAdapter
 com.proyect.friend.FriendSearcherAdapter +.. com.proyect.friend.FriendSearcherAdapter$OnUserClickListener
+androidx.appcompat.app.AppCompatActivity <|-- com.proyect.friend.FriendViewerActivity
+com.proyect.friend.Adapter <|-- com.proyect.friend.FriendRequestAdapter
+com.proyect.friend.FriendRequestAdapter +.. com.proyect.friend.FriendRequestAdapter$OnFriendRequestActionListener
+androidx.fragment.app.Fragment <|-- com.proyect.friend.FriendEventListFragment
+com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendSearcherViewHolder
 androidx.fragment.app.Fragment <|-- com.proyect.friend.FriendsFragment
+androidx.fragment.app.Fragment <|-- com.proyect.friend.FriendInfoPageFragment
+com.proyect.friend.ViewHolder <|-- com.proyect.friend.FriendsViewHolder
 com.proyect.friend.OnFriendRequestActionListener <|.. com.proyect.friend.FriendRequestActivity
 androidx.appcompat.app.AppCompatActivity <|-- com.proyect.friend.FriendRequestActivity
 androidx.viewpager2.adapter.FragmentStateAdapter <|-- com.proyect.friend.FriendsViewerPageAdapter
-androidx.fragment.app.Fragment <|-- com.proyect.friend.FriendEventListFragment
-androidx.appcompat.app.AppCompatActivity <|-- com.proyect.friend.FriendViewerActivity
-com.proyect.friend.Adapter <|-- com.proyect.friend.FriendsAdapter
-com.proyect.friend.FriendsAdapter +.. com.proyect.friend.FriendsAdapter$OnItemClickListener
 @enduml

@@ -7,16 +7,18 @@ class com.proyect.MainActivity {
 ~ ImageView ivToday
 ~ ImageView ivNotes
 ~ ImageView ivFriends
-~ ArrayList<String> arrayToday
 ~ FragmentManager fragmentManager
+~ Uri imageUri
 # void onCreate(Bundle)
 + void onClick(View)
+# void onResume()
 + boolean onCreateOptionsMenu(Menu)
 + boolean onOptionsItemSelected(MenuItem)
 # void onDestroy()
 - void requestNotificationPermission()
 + void onRequestPermissionsResult(int,String[],int[])
 - void showRationaleDialog()
+- void loadUserImage()
 }
 
 
