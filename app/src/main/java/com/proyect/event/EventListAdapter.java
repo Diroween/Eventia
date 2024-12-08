@@ -77,7 +77,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListViewHolder> 
 
         //Si tiene una imagen asignada el evento se carga en el imageview
         //En caso contrario se carga un placeholder
-        if (event.getImage()!= null && !event.getImage().isEmpty())
+        if (event.getImage()!= null)
         {
             Glide.with(holder.itemView.getContext())
                     .load(event.getImage())

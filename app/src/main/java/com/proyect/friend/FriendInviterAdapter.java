@@ -62,7 +62,7 @@ public class FriendInviterAdapter extends RecyclerView.Adapter<FriendsViewHolder
         holder.tvName.setText(friend.getName());
 
         //Si el usuario tiene una imagen la muestra, sino sale un placeholder sustitutivo
-        if(friend.getImageUrl() != null && !friend.getImageUrl().isEmpty())
+        if(friend.getImageUrl() != null)
         {
             Glide.with(holder.itemView.getContext())
                     .load(friend.getImageUrl())
