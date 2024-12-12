@@ -640,11 +640,6 @@ public class EventViewerActivity extends AppCompatActivity
             {
                 Toast.makeText(this, R.string.userremovedfromevent
                         , Toast.LENGTH_SHORT).show();
-
-                //Este método no tendrá el efecto que se espera ya que cancelAllWorkRequests()
-                //cancela todos los trabajos presentes en el dispositivo del usuario, no realiza
-                //una llamada para cancelar los trabajos del usuario eliminado.
-                NotificationHelper.cancelAllWorkRequests(eventId);
             }
             else
             {
