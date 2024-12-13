@@ -22,7 +22,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_event_data"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/iv_event_image"
         app:layout_constraintEnd_toEndOf="@id/iv_event_image"
         app:layout_constraintTop_toBottomOf="@id/iv_event_image">
@@ -48,7 +48,8 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_event_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_event_name" />
+            app:layout_constraintTop_toTopOf="@id/tv_event_hour"
+            app:layout_constraintBottom_toBottomOf="@id/tv_event_hour"/>
 
 
         <ImageView android:id="@+id/iv_event_place"
@@ -59,7 +60,8 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_event_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_event_hour" />
+            app:layout_constraintTop_toTopOf="@id/tv_event_place"
+            app:layout_constraintBottom_toBottomOf="@id/tv_event_place"/>
 
         <ImageView android:id="@+id/iv_event_users"
             android:layout_width="20dp"
@@ -69,7 +71,8 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_event_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_event_place" />
+            app:layout_constraintTop_toTopOf="@id/tv_event_users"
+            app:layout_constraintBottom_toBottomOf="@id/tv_event_users"/>
 
         <TextView android:id="@+id/tv_event_hour"
             android:layout_width="0dp"
@@ -109,7 +112,7 @@
     <TextView android:id="@+id/tv_users_registered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/gabriela"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -117,7 +120,8 @@
         android:text="@string/registeredusers"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_event_data"/>
+        app:layout_constraintTop_toBottomOf="@id/cl_event_data"
+        app:layout_constraintBottom_toTopOf="@id/rv_registered_users"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_registered_users"
