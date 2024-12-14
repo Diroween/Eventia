@@ -41,7 +41,7 @@
             android:layout_margin="40dp"
             android:src="@drawable/ic_new_note"
             android:contentDescription="@string/app_name"
-            android:backgroundTint="#ffc144"
+            android:backgroundTint="#FBEB39"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

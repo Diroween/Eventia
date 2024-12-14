@@ -178,6 +178,8 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                         //si no hay solicitudes mostramos el texto de advertencia
                         if (friendRequests.isEmpty()) {
                             tvPendingRequests.setVisibility(View.VISIBLE);
+                        } else {
+                            tvPendingRequests.setVisibility(View.GONE);
                         }
 
                         //Le notificamos al adaptador que los datos han cambiado

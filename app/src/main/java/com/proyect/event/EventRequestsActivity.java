@@ -128,6 +128,8 @@ public class EventRequestsActivity extends AppCompatActivity
 
                         if (eventRequests.isEmpty()) {
                             tvPendingRequests.setVisibility(View.VISIBLE);
+                        } else {
+                            tvPendingRequests.setVisibility(View.GONE);
                         }
 
                         //Notificamos que los datos del adaptador han cambiado

@@ -151,47 +151,45 @@ public class FriendsFragment extends Fragment
                         //vaciamos el Arraylist
                         friends.clear();
 
-                        for(DataSnapshot dataSnapshot: snapshot.getChildren())
-                        {
-                            //En el bucle:
-                            //recorremos los datos cogiendo cada unos de los hijos
-                            //del snapshot, los cuales serán cada uno de los amigos
-                            //y los añadimos al Arraylist
-                            String friendUid = dataSnapshot.getKey();
-
-                            databaseReference.child("users").child(friendUid)
-                                    .addListenerForSingleValueEvent(new ValueEventListener()
-                                    {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot)
-                                        {
-                                            User friend = dataSnapshot.getValue(User.class);
-
-                                            //Si tiene una foto el usuario la recoge para mostrarla
-                                            if(friend != null && snapshot.hasChild("imageUrl"))
-                                            {
-                                                friend.setImageUrl(snapshot.child("imageUrl")
-                                                        .getValue(String.class));
-                                            }
-                                            friends.add(friend);
-
-                                            //notificamos al adaptador que los datos han cambiado
-                                            friendsAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error)
-                                        {
-                                            Log.e("INFO"
-                                                    ,"No se han podido cargar los amigos");
-                                        }
-                                    });
-                        }
-
-
                         //si no hay amistades mostramos el texto de advertencia
-                        if (snapshot.getChildrenCount() == 0) {
+                        if (!snapshot.hasChildren()) {
                             tvAddFriends.setVisibility(View.VISIBLE);
+                        } else {
+
+                            tvAddFriends.setVisibility(View.GONE);
+
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                //En el bucle:
+                                //recorremos los datos cogiendo cada unos de los hijos
+                                //del snapshot, los cuales serán cada uno de los amigos
+                                //y los añadimos al Arraylist
+                                String friendUid = dataSnapshot.getKey();
+
+                                databaseReference.child("users").child(friendUid)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                User friend = dataSnapshot.getValue(User.class);
+
+                                                //Si tiene una foto el usuario la recoge para mostrarla
+                                                if (friend != null && snapshot.hasChild("imageUrl")) {
+                                                    friend.setImageUrl(snapshot.child("imageUrl")
+                                                            .getValue(String.class));
+                                                }
+                                                friends.add(friend);
+
+                                                //notificamos al adaptador que los datos han cambiado
+                                                friendsAdapter.notifyDataSetChanged();
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.e("INFO"
+                                                        , "No se han podido cargar los amigos");
+                                            }
+                                        });
+                            }
                         }
                     }
 
@@ -285,5 +283,10 @@ public class FriendsFragment extends Fragment
     {
         super.onResume();
         checkPendingFriendRequests();
+        friendsAdapter.notifyDataSetChanged();
+
+        if (friendsAdapter.getItemCount() != 0) {
+            tvAddFriends.setVisibility(View.GONE);
+        }
     }
 }
