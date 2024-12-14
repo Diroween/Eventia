@@ -52,6 +52,7 @@ public class TodayFragment extends Fragment
     private String mParam1;
     private String mParam2;
     private TextView tvDateToday;
+    private TextView tvCurrentEvents;
 
     private SwipeRefreshLayout srlToday;
 
@@ -102,6 +103,8 @@ public class TodayFragment extends Fragment
 
         //Inicializamos textviews para poner un saludo y otro para mostrar el día de hoy
         tvDateToday = view.findViewById(R.id.tv_date_today);
+
+        tvCurrentEvents = view.findViewById(R.id.tv_no_current_events);
 
         //Inicializo el listview
         lvToday = (ListView) view.findViewById(R.id.lv_today);
@@ -248,6 +251,9 @@ public class TodayFragment extends Fragment
 
                         todayEvents.sort(new EventDateComparator());
 
+                        if (todayEvents.isEmpty()) {
+                            tvCurrentEvents.setVisibility(View.VISIBLE);
+                        }
 
                         //Le decimos al adaptador que la lista ha cambiado sus datos
                         adapter.notifyDataSetChanged();

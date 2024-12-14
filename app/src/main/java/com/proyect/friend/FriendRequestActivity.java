@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,7 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 
     ImageView ivUserImage;
     TextView tvDisplayname;
+    TextView tvPendingRequests;
 
     RecyclerView rvFriends;
     FriendRequestAdapter friendRequestAdapter;
@@ -84,6 +86,8 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
 
         //Asignamos textview al elemento gráfico
         tvDisplayname = findViewById(R.id.tv_displayname);
+        tvPendingRequests = findViewById(R.id.tv_no_pending_requests);
+
 
         //le decimos que su texto debe ser el nombre de usuario de la app
         tvDisplayname.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
@@ -169,6 +173,11 @@ public class FriendRequestActivity extends AppCompatActivity implements FriendRe
                         {
                             FriendRequest request = dataSnapshot.getValue(FriendRequest.class);
                             friendRequests.add(request);
+                        }
+
+                        //si no hay solicitudes mostramos el texto de advertencia
+                        if (friendRequests.isEmpty()) {
+                            tvPendingRequests.setVisibility(View.VISIBLE);
                         }
 
                         //Le notificamos al adaptador que los datos han cambiado

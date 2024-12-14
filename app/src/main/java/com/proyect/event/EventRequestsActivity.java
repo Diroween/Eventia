@@ -3,6 +3,8 @@ package com.proyect.event;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -41,6 +43,7 @@ public class EventRequestsActivity extends AppCompatActivity
      * */
 
     RecyclerView rvEventRequests;
+    TextView tvPendingRequests;
     EventRequestAdapter eventRequestAdapter;
     ArrayList<EventRequest> eventRequests;
     DatabaseReference databaseReference;
@@ -65,6 +68,8 @@ public class EventRequestsActivity extends AppCompatActivity
         rvEventRequests = findViewById(R.id.rv_events);
 
         rvEventRequests.setLayoutManager(new LinearLayoutManager(this));
+
+        tvPendingRequests = findViewById(R.id.tv_no_pending_requests);
 
         eventRequests = new ArrayList<EventRequest>();
 
@@ -119,6 +124,10 @@ public class EventRequestsActivity extends AppCompatActivity
                             String status = dataSnapshot.getValue(String.class);
 
                             eventRequests.add(new EventRequest(eventId, status));
+                        }
+
+                        if (eventRequests.isEmpty()) {
+                            tvPendingRequests.setVisibility(View.VISIBLE);
                         }
 
                         //Notificamos que los datos del adaptador han cambiado

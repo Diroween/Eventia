@@ -2,6 +2,8 @@ package com.proyect.event;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,6 +34,7 @@ import java.util.Date;
 public class PreviousEventsActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
+    TextView previousEvents;
     CalendarFragmentAdapter calendarFragmentAdapter;
     ArrayList<Event> pastEvents;
 
@@ -56,6 +59,7 @@ public class PreviousEventsActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
+        previousEvents = findViewById(R.id.tv_no_previous_events);
         recyclerView = findViewById(R.id.rvPastEvents);
         pastEvents = new ArrayList<>();
 
@@ -129,6 +133,11 @@ public class PreviousEventsActivity extends AppCompatActivity {
                         }
 
                         pastEvents.sort(new EventDateComparator());
+
+                        //si no hay solicitudes mostramos el texto de advertencia
+                        if (pastEvents.isEmpty()) {
+                            previousEvents.setVisibility(View.VISIBLE);
+                        }
 
                         //Le decimos al adaptador que la lista ha cambiado sus datos
                         calendarFragmentAdapter.notifyDataSetChanged();

@@ -55,6 +55,7 @@ public class FriendsFragment extends Fragment
     private ArrayList<User> friends;
     private DatabaseReference databaseReference;
     private TextView tvFriendRequests;
+    TextView tvAddFriends;
 
     /**
      * Dos botones:
@@ -115,6 +116,7 @@ public class FriendsFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         tvFriendRequests = view.findViewById(R.id.tv_friend_req);
+        tvAddFriends = view.findViewById(R.id.tv_add_friends);
 
         //Inicializamos el Recyclerview y le asignamos un manejador de layout
         rvFriends = view.findViewById(R.id.rv_friends);
@@ -185,6 +187,12 @@ public class FriendsFragment extends Fragment
                                         }
                                     });
                         }
+
+
+                        //si no hay amistades mostramos el texto de advertencia
+                        if (snapshot.getChildrenCount() == 0) {
+                            tvAddFriends.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     /**
@@ -198,7 +206,7 @@ public class FriendsFragment extends Fragment
                     }
                 });
 
-        checkPendingEventRequests();
+        checkPendingFriendRequests();
 
         //Asignamos el botón de las peticiones
         fbFriendRequests = view.findViewById(R.id.fb_requests);
@@ -245,7 +253,7 @@ public class FriendsFragment extends Fragment
         return inflater.inflate(R.layout.fragment_friends, container, false);
     }
 
-    private void checkPendingEventRequests()
+    private void checkPendingFriendRequests()
     {
         //Cogemos la referencia a las invitaciones de amistad que tiene el usuario
         databaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -276,6 +284,6 @@ public class FriendsFragment extends Fragment
     public void onResume()
     {
         super.onResume();
-        checkPendingEventRequests();
+        checkPendingFriendRequests();
     }
 }

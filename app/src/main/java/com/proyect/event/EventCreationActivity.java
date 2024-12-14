@@ -428,6 +428,12 @@ public class EventCreationActivity extends AppCompatActivity
                                         Toast.makeText(this,
                                                 R.string.eventcreated,
                                                 Toast.LENGTH_SHORT).show();
+
+                                        //Quizás sería interesante implementar en esta sección
+                                        //NotificationHelper.enqueueNotifications(getContext(), event, NotificationHelper.getSecondsUntilEvent(event));
+
+                                        //ya que se reducirían los borrados y creaciones de trabajos constantes desde CalendarFragment
+
                                     }
                                     //Si no, se indica con un toast
                                     else

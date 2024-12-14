@@ -34,7 +34,7 @@
             android:scaleType="centerCrop"
             android:contentDescription="@string/app_name"
             android:src="@drawable/baseline_tag_faces_128"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="5dp"
             android:layout_gravity="end"/>
 
     </androidx.appcompat.widget.Toolbar>
@@ -61,5 +61,18 @@
         app:layout_constraintTop_toBottomOf="@id/tv_friends"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="15dp"/>
+
+    <TextView
+        android:id="@+id/tv_no_pending_requests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/gabriela"
+        android:text="@string/nopendingrequests"
+        android:textSize="25sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

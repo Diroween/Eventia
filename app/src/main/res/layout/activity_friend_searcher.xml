@@ -35,7 +35,7 @@
             android:scaleType="centerCrop"
             android:contentDescription="@string/app_name"
             android:src="@drawable/baseline_tag_faces_128"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="5dp"
             android:layout_gravity="end"/>
 
     </androidx.appcompat.widget.Toolbar>

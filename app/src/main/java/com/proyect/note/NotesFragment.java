@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class NotesFragment extends Fragment
 
     FloatingActionButton fabAddNote;
     RecyclerView rvNotes;
+    TextView tvAddNotes;
     private SwipeRefreshLayout srlNotes;
     NotesAdapter adapter;
     ArrayList<Note> arrayNotes;
@@ -135,6 +137,7 @@ public class NotesFragment extends Fragment
         //inicializamos el recylerview y el swiperefresh indicando que son los del layout
         rvNotes = view.findViewById(R.id.rv_notes);
         srlNotes = view.findViewById(R.id.srl_notes);
+        tvAddNotes = view.findViewById(R.id.tv_add_notes);
 
         //inicializamos el adaptador y le pasamos como argumento el array de nombres y el contexto
         adapter = new NotesAdapter(getContext(), arrayNotes);
@@ -221,6 +224,12 @@ public class NotesFragment extends Fragment
                 //Notificamos los cambios al adaptador en esa posición
                 adapter.notifyItemRemoved(position);
 
+                if (arrayNotes.isEmpty()) {
+                    tvAddNotes.setVisibility(View.VISIBLE);
+                } else {
+                    tvAddNotes.setVisibility(View.GONE);
+                }
+
                 //motificamos que se ha borrado la nota
                 Toast.makeText(view.getContext(), R.string.deletednote, Toast.LENGTH_SHORT).show();
             }
@@ -237,6 +246,11 @@ public class NotesFragment extends Fragment
     public void onResume() {
         super.onResume();
         refreshNotes();
+        if (arrayNotes.isEmpty()) {
+            tvAddNotes.setVisibility(View.VISIBLE);
+        } else {
+            tvAddNotes.setVisibility(View.GONE);
+        }
     }
 
     public void refreshNotes() {

@@ -181,6 +181,9 @@ public class FriendSearcherActivity extends AppCompatActivity {
             if (!etUsername.getText().toString().isEmpty())
             {
                 searchUsers(etUsername.getText().toString());
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.usernonselected,
+                        Toast.LENGTH_SHORT).show();
             }
         });
 

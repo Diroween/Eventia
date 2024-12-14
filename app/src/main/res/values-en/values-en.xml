@@ -122,6 +122,11 @@
     <string name="event_notificationtitle_7d">Your event: %1$s will take place in 7 days!</string>
     <string name="event_notificationmessage">Location: %1$s</string>
     <string name="event_notificationchannel">Event notifications</string>
+    <string name="nopreviousevents">There\'s no previous events</string>
+    <string name="nocurrentevents">There\'s no current events!</string>
+    <string name="addfriends">Add a new friend!</string>
+    <string name="nopendingrequests">There\'s no pending requests</string>
+    <string name="addnotes">Add a new note!</string>
 
     <string-array name="array_config">
         <item name="colors">Colors</item>
