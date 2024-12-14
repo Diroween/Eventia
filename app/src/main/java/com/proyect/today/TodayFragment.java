@@ -139,10 +139,6 @@ public class TodayFragment extends Fragment
             {
                 loadUserEvents();
 
-                //Le indicamos al adaptardor que ha habido cambios
-                //y le forzamosa actualizarse
-                adapter.notifyDataSetChanged();
-
                 //Hacemos que la flecha de refrescar desaparezca
                 srlToday.setRefreshing(false);
             }
@@ -194,69 +190,69 @@ public class TodayFragment extends Fragment
                         //Vaciamos la arraylist por si hubiera alguno todavía
                         todayEvents.clear();
 
-                        //Dentro del bucle:
-                        //Creamos un evento para cada coincidencia de la base de datos
-                        //Si el usuario está registrado en ese evento
-                        //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Event event = dataSnapshot.getValue(Event.class);
+                            //Dentro del bucle:
+                            //Creamos un evento para cada coincidencia de la base de datos
+                            //Si el usuario está registrado en ese evento
+                            //se pasa a tratar los datos del evento
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                Event event = dataSnapshot.getValue(Event.class);
 
-                            if (event != null && dataSnapshot.child("registeredUsers")
-                                    .hasChild(user.getUid()))
-                            {
-                                try
-                                {
-                                    //Establecemos un formato fecha/hora
-                                    SimpleDateFormat simpleDateFormat =
-                                            new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                if (event != null && dataSnapshot.child("registeredUsers")
+                                        .hasChild(user.getUid())) {
+                                    try {
+                                        //Establecemos un formato fecha/hora
+                                        SimpleDateFormat simpleDateFormat =
+                                                new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-                                    //Se recoge la fecha del evento
-                                    Date eventDate = simpleDateFormat.parse(event.getDate()
-                                            + " " + event.getHour());
+                                        //Se recoge la fecha del evento
+                                        Date eventDate = simpleDateFormat.parse(event.getDate()
+                                                + " " + event.getHour());
 
-                                    //Se coge una instancia de Calendar de Java
-                                    Calendar calendar = Calendar.getInstance();
+                                        //Se coge una instancia de Calendar de Java
+                                        Calendar calendar = Calendar.getInstance();
 
-                                    //Le decimos que se settee en el día del evento
-                                    calendar.setTime(eventDate);
+                                        //Le decimos que se settee en el día del evento
+                                        calendar.setTime(eventDate);
 
-                                    //Hacemos una nueva referencia que representa el día actual
-                                    Calendar today = Calendar.getInstance();
+                                        //Hacemos una nueva referencia que representa el día actual
+                                        Calendar today = Calendar.getInstance();
 
-                                    //Tomamos la fecha de hoy y la del evento y
-                                    // generamos un objeto LocalDate para comparar ambas
-                                    LocalDate ldt = today.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                                    ldt = LocalDate.of(ldt.getYear(), ldt.getMonthValue(), ldt.getDayOfMonth());
+                                        //Tomamos la fecha de hoy y la del evento y
+                                        // generamos un objeto LocalDate para comparar ambas
+                                        LocalDate ldt = today.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                                        ldt = LocalDate.of(ldt.getYear(), ldt.getMonthValue(), ldt.getDayOfMonth());
 
-                                    LocalDate ldt2 = eventDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                                    ldt2 = LocalDate.of(ldt2.getYear(), ldt2.getMonthValue(), ldt2.getDayOfMonth());
+                                        LocalDate ldt2 = eventDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                                        ldt2 = LocalDate.of(ldt2.getYear(), ldt2.getMonthValue(), ldt2.getDayOfMonth());
 
-                                    //Si coinciden, añadimos el evento al array
-                                    if (ldt.equals(ldt2)) {
-                                        todayEvents.add(event);
+                                        //Si coinciden, añadimos el evento al array
+                                        if (ldt.equals(ldt2)) {
+                                            todayEvents.add(event);
+                                        }
+
                                     }
 
-                                }
-
-                                //Si no se consigue parsear bien la fecha se recoge una excepción
-                                catch (ParseException e)
-                                {
-                                    throw new RuntimeException(e);
+                                    //Si no se consigue parsear bien la fecha se recoge una excepción
+                                    catch (ParseException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             }
-                        }
 
-                        //Ordenamos los eventos por fecha y hora
-                        //para ello ordenamos el arraylist
+                            //Ordenamos los eventos por fecha y hora
+                            //para ello ordenamos el arraylist
 
-                        todayEvents.sort(new EventDateComparator());
+                            todayEvents.sort(new EventDateComparator());
 
-                        if (todayEvents.isEmpty()) {
+                            //Le decimos al adaptador que la lista ha cambiado sus datos
+                            adapter.notifyDataSetChanged();
+
+                        if (adapter.isEmpty()) {
                             tvCurrentEvents.setVisibility(View.VISIBLE);
+                        } else {
+                            tvCurrentEvents.setVisibility(View.GONE);
                         }
 
-                        //Le decimos al adaptador que la lista ha cambiado sus datos
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
