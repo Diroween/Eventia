@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.proyect.authentication.LoginActivity;
 
 import java.util.Timer;
@@ -56,6 +57,9 @@ public class Splash extends AppCompatActivity {
 
         //Hacemos instancia de la base de datos de autenticación
         firebaseAuth = FirebaseAuth.getInstance();
+
+        //Hacemos que la rinstancia a la base de datos se ponga en marcha
+        FirebaseDatabase.getInstance().goOnline();
 
         //Se fuerza a la aplicación a mostrarse en vertical
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

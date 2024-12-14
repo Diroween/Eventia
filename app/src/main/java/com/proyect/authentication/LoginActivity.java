@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.proyect.MainActivity;
 import com.proyect.R;
 
@@ -187,6 +188,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             //Creamos un intent de la actividad principal y cerramos esta
                             //y el registro en caso de que estuviese abierta
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
+
+                            //Hacemos que la instancia a la base de datos se inicie
+                            FirebaseDatabase.getInstance().goOnline();
 
                             startActivity(i);
 

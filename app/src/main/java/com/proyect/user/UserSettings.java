@@ -149,6 +149,9 @@ public class UserSettings extends AppCompatActivity {
                 //Cancelamos todos los trabajos/notificaciones pendientes
                 WorkManager.getInstance(getApplicationContext()).cancelAllWork();
 
+                //Hacemos que la instancia a la base de datos se cierre
+                FirebaseDatabase.getInstance().goOffline();
+
                 //Iniciamos la actividad
                 startActivity(intent);
 

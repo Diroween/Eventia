@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.proyect.calendar.CalendarFragment;
 import com.proyect.friend.FriendsFragment;
 import com.proyect.note.NotesFragment;
@@ -169,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(fragment instanceof CalendarFragment)
                 {
+                    //Cerramos la instancia a la base de datos
+                    FirebaseDatabase.getInstance().goOffline();
+
                     finish();
                 }
                 else

@@ -204,10 +204,11 @@ public class CalendarFragment extends Fragment {
      */
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
-        loadUserEvents();
-        //checkPendingEventRequests();
+            loadUserEvents();
+            //checkPendingEventRequests();
     }
 
     /**
@@ -239,12 +240,15 @@ public class CalendarFragment extends Fragment {
                         //Creamos un evento para cada coincidencia de la base de datos
                         //Si el usuario está registrado en ese evento
                         //se pasa a tratar los datos del evento
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
                             Event event = dataSnapshot.getValue(Event.class);
 
                             if (event != null && dataSnapshot.child("registeredUsers")
-                                    .hasChild(user.getUid())) {
-                                try {
+                                    .hasChild(user.getUid()))
+                            {
+                                try
+                                {
                                     //Formateamos las fechas guardar
                                     Date date = sdf.parse(event.getDate());
                                     String formattedDate = sdf.format(date);
@@ -281,27 +285,47 @@ public class CalendarFragment extends Fragment {
                                     if (calendar.after(today))
                                     {
                                         nextEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(ResourcesCompat
-                                                .getDrawable(getResources(),
-                                                        R.drawable.calendar_day_current,
-                                                        null));
+
+                                        //Se le incluye el color correspondiente siempre y cuando
+                                        //el fragmento esté cargado correctamente en la app
+                                        if(isAdded())
+                                        {
+                                            calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                    .getDrawable(getResources(),
+                                                            R.drawable.calendar_day_current,
+                                                            null));
+                                        }
                                         //calendarDay.setLabelColor(R.color.black);
                                     }
                                     else if (calendar.before(today))
                                     {
                                         pastEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(ResourcesCompat
-                                                .getDrawable(getResources(),
-                                                        R.drawable.calendar_day_past_event,
-                                                        null));
+
+                                        //Se le incluye el color correspondiente siempre y cuando
+                                        //el fragmento esté cargado correctamente en la app
+                                        if(isAdded())
+                                        {
+                                            pastEvents.add(event);
+                                            calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                    .getDrawable(getResources(),
+                                                            R.drawable.calendar_day_past_event,
+                                                            null));
+                                        }
                                         //calendarDay.setLabelColor(R.color.black);
                                     }
                                     else
                                     {
                                         nextEvents.add(event);
-                                        calendarDay.setBackgroundDrawable(ResourcesCompat
-                                                .getDrawable(getResources(),
-                                                        R.drawable.calendar_day_current, null));
+
+                                        //Se le incluye el color correspondiente siempre y cuando
+                                        //el fragmento esté cargado correctamente en la app
+                                        if(isAdded())
+                                        {
+
+                                            calendarDay.setBackgroundDrawable(ResourcesCompat
+                                                    .getDrawable(getResources(),
+                                                            R.drawable.calendar_day_current, null));
+                                        }
                                     }
 
                                     //Añadimos el día al calendario
@@ -309,12 +333,17 @@ public class CalendarFragment extends Fragment {
                                     //días pasados donde también tuvo evento el usuario
                                     calendarDays.add(calendarDay);
 
-                                    //Programamos las notificaciones del evento empleando el calculo de getSecondsUntilEvent()
-                                    NotificationHelper.enqueueNotifications(getContext(), event, NotificationHelper.getSecondsUntilEvent(event));
+                                    if(isAdded())
+                                    {
+                                        //Programamos las notificaciones del evento empleando el calculo de getSecondsUntilEvent()
+                                        NotificationHelper.enqueueNotifications(getContext(), event, NotificationHelper.getSecondsUntilEvent(event));
+                                    }
+
                                 }
 
                                 //Si no se consigue parsear bien la fecha se recoge una excepción
-                                catch (ParseException e) {
+                                catch (ParseException e)
+                                {
                                     throw new RuntimeException(e);
                                 }
                             }
